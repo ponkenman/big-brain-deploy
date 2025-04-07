@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { HomePage } from './pages/login';
+import { HomePage } from './pages/login.tsx';
 
 function App() {
   return (
