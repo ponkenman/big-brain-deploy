@@ -1,7 +1,7 @@
 interface FetchOptions {
   method: "GET"|"POST"|"PUT"|"DELETE",
   headers: Record<string, string>,
-  body?: BodyInit
+  body?: string
 }
 
 export async function fetchBackend(
