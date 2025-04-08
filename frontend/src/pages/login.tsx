@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { fetchBackend } from "../helpers";
+import { Link, useNavigate } from "react-router-dom";
 
-export function HomePage() {
+export function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const navigate = useNavigate();
 
   async function login() {
     const body = {
@@ -16,7 +18,7 @@ export function HomePage() {
     if (response.error) {
       console.log(response);
     } else {
-      console.log("Happy!");
+      navigate("/dashboard");
     }
   }
 
@@ -28,7 +30,12 @@ export function HomePage() {
 
   return (<>
     <h1> Login </h1>
+    <Link to="/register">Register instead</Link>
     <form>
+      <div>
+        <label>Name</label>
+        <input onChange={e => setName(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
+      </div>
       <div>
         <label>Email</label>
         <input onChange={e => setEmail(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
@@ -36,10 +43,6 @@ export function HomePage() {
       <div>
         <label>Password</label>
         <input onChange={e => setPassword(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
-      </div>
-      <div>
-        <label>Name</label>
-        <input onChange={e => setName(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
       </div>
       <button type="button" onClick={login}> Login</button>
     </form>
