@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { fetchBackend } from "../helpers";
+import GameCard from "../components/gameCard";
 
 export function DashboardScreen () {
   const navigate = useNavigate();
@@ -19,6 +20,10 @@ export function DashboardScreen () {
 
   return (<>
     <h1>Welcome to dashboard!</h1>
+    <div>
+      <h2>My games</h2>
+      <GameCard title="My game 1" numQuestions={2} totalDuration={3}/>
+    </div>
     <button type="button" onClick={logout}>Logout</button>
   </>);
 }

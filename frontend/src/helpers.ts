@@ -23,5 +23,5 @@ export async function fetchBackend(
   }
 
   const response = await fetch(urlMain + urlFragment, fetchOptions);
-  return response.json();
+  return await response.json();
 }
