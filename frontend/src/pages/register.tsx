@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { fetchBackend } from "../helpers";
 import React, { useState } from "react";
+import Navbar from "../components/navbar";
 
 export function RegisterScreen() {
   const [name, setName] = useState("");
@@ -35,6 +36,7 @@ export function RegisterScreen() {
   }
 
   return (<>
+    <Navbar />
     <h1>Register</h1>
     <Link to="/login">Login instead</Link>
     <form>

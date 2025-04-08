@@ -1,9 +1,17 @@
+import { Link } from "react-router-dom";
+import Button from "./button";
 
 export default function Navbar() {
   return (
-    <nav className="bg-rose-500">
-      <div>bigbrain</div>
-      <button type="button">Register</button>
-      <button type="button">Login</button>
+    <nav className="bg-indigo-300 flex flex-row justify-between items-center h-15 px-4 top-0 sticky">
+      <div className="text-lg font-bold italic">bigbrain</div>
+      <div className="items-center flex flex-row gap-2 justify-evenly">
+        <Link to="/register">
+          <Button text="Register" color="indigo-200" hoverColor="indigo-400"/>
+        </Link>
+        <Link to="/login">
+          <Button text="Login" color="indigo-200 "hoverColor="indigo-400" />
+        </Link>
+      </div>
     </nav>);
 }
