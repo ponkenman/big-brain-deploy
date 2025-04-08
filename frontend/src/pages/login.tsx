@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { fetchBackend } from "../helpers";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import Button from "../components/button";
+import TextInput from "../components/textInput";
 
 export function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -25,33 +26,19 @@ export function LoginScreen() {
     }
   }
 
-  function loginIfEnter(event: React.KeyboardEvent) {
-    if (event.key === "Enter") {
-      login();
-    }
-  }
-
   return (<>
     <Navbar />
     <main className="bg-indigo-50 p-7 h-dvh">
-      <h1 className="text-4xl font-semibold">Login</h1>
-      <form>
-        <div>
-          <label>Name</label>
-          <input type="name"  onChange={e => setName(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
+      <h1 className="text-4xl font-semibold pb-7">Login</h1>
+      <form className="rounded-md bg-indigo-100 p-4">
+        <TextInput labelName="Name" id="login-name" type="text" set={setName} onEnter={login} />
+        <TextInput labelName="Email" id="login-email" type="email" set={setEmail} onEnter={login} />
+        <TextInput labelName="Password" id="login-password" type="password" set={setPassword} onEnter={login} />
+        <div className="pt-2">
+          <Button text="Login" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={login}/>
+          <Link to="/register" className="underline ml-3">Register instead</Link>
         </div>
-        <div>
-          <label>Email</label>
-          <input type="email" onChange={e => setEmail(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
-        </div>
-        <div>
-          <label>Password</label>
-          <input type="password" onChange={e => setPassword(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
-        </div>
-        <Button text="Login" color="indigo-200" hoverColor="indigo-400" onClick={login}/>
       </form>
-      <Link to="/register">Register instead</Link>
     </main>
-
   </>);
 }

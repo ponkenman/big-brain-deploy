@@ -7,10 +7,10 @@ export default function Navbar() {
       <div className="text-lg font-bold italic">bigbrain</div>
       <div className="items-center flex flex-row gap-2 justify-evenly">
         <Link to="/register">
-          <Button text="Register" color="indigo-200" hoverColor="indigo-400"/>
+          <Button text="Register" color="bg-indigo-200" hoverColor="hover:bg-indigo-400"/>
         </Link>
         <Link to="/login">
-          <Button text="Login" color="indigo-200 "hoverColor="indigo-400" />
+          <Button text="Login" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
         </Link>
       </div>
     </nav>);
