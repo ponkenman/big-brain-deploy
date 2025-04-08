@@ -18,6 +18,7 @@ export function LoginScreen() {
     if (response.error) {
       console.log(response);
     } else {
+      localStorage.setItem("token", response.token);
       navigate("/dashboard");
     }
   }
@@ -34,15 +35,15 @@ export function LoginScreen() {
     <form>
       <div>
         <label>Name</label>
-        <input onChange={e => setName(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
+        <input type="name"  onChange={e => setName(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
       </div>
       <div>
         <label>Email</label>
-        <input onChange={e => setEmail(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
+        <input type="email" onChange={e => setEmail(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
       </div>
       <div>
         <label>Password</label>
-        <input onChange={e => setPassword(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
+        <input type="password" onChange={e => setPassword(e.target.value)} onKeyDown={e => loginIfEnter(e)}></input>
       </div>
       <button type="button" onClick={login}> Login</button>
     </form>

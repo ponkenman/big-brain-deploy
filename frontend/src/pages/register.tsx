@@ -3,12 +3,17 @@ import { fetchBackend } from "../helpers";
 import React, { useState } from "react";
 
 export function RegisterScreen() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
 
   async function register() {
+    if (password !== confirmPassword) {
+      console.log("Passwords don't match!");
+      return;
+    }
     const body = {
       email: email,
       password: password,
@@ -18,6 +23,7 @@ export function RegisterScreen() {
     if (response.error) {
       console.log(response);
     } else {
+      localStorage.setItem("token", response.token);
       navigate("/dashboard");
     }
   }
@@ -34,15 +40,19 @@ export function RegisterScreen() {
     <form>
       <div>
         <label>Name</label>
-        <input onChange={e => setName(e.target.value)} onKeyDown={e => submitIfEnter(e)}></input>
+        <input type="text" onChange={e => setName(e.target.value)} onKeyDown={e => submitIfEnter(e)}></input>
       </div>
       <div>
         <label>Email</label>
-        <input onChange={e => setEmail(e.target.value)} onKeyDown={e => submitIfEnter(e)}></input>
+        <input type="email" onChange={e => setEmail(e.target.value)} onKeyDown={e => submitIfEnter(e)}></input>
       </div>
       <div>
         <label>Password</label>
-        <input onChange={e => setPassword(e.target.value)} onKeyDown={e => submitIfEnter(e)}></input>
+        <input type="password" onChange={e => setPassword(e.target.value)} onKeyDown={e => submitIfEnter(e)}></input>
+      </div>
+      <div>
+        <label>Confirm Password</label>
+        <input type="password" onChange={e => setConfirmPassword(e.target.value)} onKeyDown={e => submitIfEnter(e)}></input>
       </div>
       <button type="button" onClick={register}>Register</button>
     </form>
