@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # modules
-frontend/package-lock.json
+package-lock.json

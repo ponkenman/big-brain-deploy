@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { fetchBackend } from "../helpers";
 import { Link, useNavigate } from "react-router-dom";
+import Navbar from "../components/navbar";
 
 export function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -30,6 +31,7 @@ export function LoginScreen() {
   }
 
   return (<>
+    <Navbar />
     <h1> Login </h1>
     <Link to="/register">Register instead</Link>
     <form>
