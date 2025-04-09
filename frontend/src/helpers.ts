@@ -1,3 +1,6 @@
+import React from "react";
+import { AlertData } from "./components/alert";
+
 interface FetchOptions {
   method: "GET"|"POST"|"PUT"|"DELETE",
   headers: Record<string, string>,
@@ -24,4 +27,9 @@ export async function fetchBackend(
 
   const response = await fetch(urlMain + urlFragment, fetchOptions);
   return await response.json();
+}
+
+export function createAlert(message: string, alerts: AlertData[], setAlerts: React.Dispatch<React.SetStateAction<AlertData[]>>, alertId: number, setAlertId: React.Dispatch<React.SetStateAction<number>>) {
+  setAlerts([...alerts, { message: message, key: alertId }]);
+  setAlertId(alertId + 1);
 }

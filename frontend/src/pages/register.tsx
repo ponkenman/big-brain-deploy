@@ -1,20 +1,23 @@
 import { Link, useNavigate } from "react-router-dom";
-import { fetchBackend } from "../helpers";
-import React, { useState } from "react";
+import { createAlert, fetchBackend } from "../helpers";
+import { useState } from "react";
 import Navbar from "../components/navbar";
 import TextInput from "../components/textInput";
 import Button from "../components/button";
+import { AlertData, AlertMenu } from "../components/alert";
 
 export function RegisterScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [alertId, setAlertId] = useState(0);
+  const [alerts, setAlerts] = useState<AlertData[]>([]);
   const navigate = useNavigate();
 
   async function register() {
     if (password !== confirmPassword) {
-      console.log("Passwords don't match!");
+      createAlert("Passwords do not match", alerts, setAlerts, alertId, setAlertId);
       return;
     }
     const body = {
@@ -24,16 +27,10 @@ export function RegisterScreen() {
     }
     const response = await fetchBackend("POST", "/admin/auth/register", body);
     if (response.error) {
-      console.log(response);
+      createAlert(response.error, alerts, setAlerts, alertId, setAlertId);
     } else {
       localStorage.setItem("token", response.token);
       navigate("/dashboard");
-    }
-  }
-
-  function submitIfEnter(event: React.KeyboardEvent) {
-    if (event.key === "Enter") {
-      register();
     }
   }
 
@@ -52,5 +49,6 @@ export function RegisterScreen() {
         </div>
       </form>
     </main>
+    <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>);
 }

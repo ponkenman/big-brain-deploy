@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fetchBackend } from "../helpers";
+import { createAlert, fetchBackend } from "../helpers";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import Button from "../components/button";
@@ -22,16 +22,11 @@ export function LoginScreen() {
     }
     const response = await fetchBackend("POST", "/admin/auth/login", body);
     if (response.error) {
-      createError(response.error);
+      createAlert(response.error, alerts, setAlerts, alertId, setAlertId);
     } else {
       localStorage.setItem("token", response.token);
       navigate("/dashboard");
     }
-  }
-
-  function createError(message: string) {
-    setAlerts([...alerts, { message: message, key: alertId }]);
-    setAlertId(alertId + 1);
   }
 
   return (<>
