@@ -49,7 +49,14 @@ export function RegisterScreen() {
   }
 
   return (<>
-    <Navbar />
+    <Navbar>
+      <Link to="/register">
+        <Button text="Register" color="bg-indigo-200" hoverColor="hover:bg-indigo-400"/>
+      </Link>
+      <Link to="/login">
+        <Button text="Login" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
+      </Link>
+    </Navbar>
     <main className="bg-indigo-50 p-7 h-dvh">
       <h1 className="text-4xl font-semibold pb-7">Register</h1>
       <form className="rounded-md bg-indigo-100 p-4">
