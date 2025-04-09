@@ -18,16 +18,16 @@ export function RegisterScreen() {
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
 
   async function register() {
+    if (name === "") {
+      createAlert("Name is empty!");
+      return;
+    }
     if (email === "") {
       createAlert("Email is empty!");
       return;
     }
     if (password === "") {
       createAlert("Password is empty!");
-      return;
-    }
-    if (name === "") {
-      createAlert("Name is empty!");
       return;
     }
     if (password !== confirmPassword) {

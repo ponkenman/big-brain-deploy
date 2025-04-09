@@ -17,14 +17,17 @@ export function LoginScreen() {
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
 
   async function login() {
+    if (name === "") {
+      createAlert("Name is empty!");
+      return;
+    }
     if (email === "") {
       createAlert("Email is empty!");
+      return;
     }
     if (password === "") {
       createAlert("Password is empty!");
-    }
-    if (name === "") {
-      createAlert("Name is empty!");
+      return;
     }
     const body = {
       email: email,
