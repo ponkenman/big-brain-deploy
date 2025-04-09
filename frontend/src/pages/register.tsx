@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { createAlert, fetchBackend } from "../helpers";
+import { fetchBackend, initialiseAlerts } from "../helpers";
 import { useState } from "react";
 import Navbar from "../components/navbar";
 import TextInput from "../components/textInput";
@@ -15,9 +15,23 @@ export function RegisterScreen() {
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const navigate = useNavigate();
 
+  const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
+
   async function register() {
+    if (email === "") {
+      createAlert("Email is empty!");
+      return;
+    }
+    if (password === "") {
+      createAlert("Password is empty!");
+      return;
+    }
+    if (name === "") {
+      createAlert("Name is empty!");
+      return;
+    }
     if (password !== confirmPassword) {
-      createAlert("Passwords do not match", alerts, setAlerts, alertId, setAlertId);
+      createAlert("Passwords do not match");
       return;
     }
     const body = {
@@ -27,7 +41,7 @@ export function RegisterScreen() {
     }
     const response = await fetchBackend("POST", "/admin/auth/register", body);
     if (response.error) {
-      createAlert(response.error, alerts, setAlerts, alertId, setAlertId);
+      createAlert(response.error);
     } else {
       localStorage.setItem("token", response.token);
       navigate("/dashboard");

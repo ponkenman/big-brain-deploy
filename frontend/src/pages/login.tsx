@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createAlert, fetchBackend } from "../helpers";
+import { initialiseAlerts, fetchBackend } from "../helpers";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import Button from "../components/button";
@@ -14,7 +14,18 @@ export function LoginScreen() {
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const navigate = useNavigate();
 
+  const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
+
   async function login() {
+    if (email === "") {
+      createAlert("Email is empty!");
+    }
+    if (password === "") {
+      createAlert("Password is empty!");
+    }
+    if (name === "") {
+      createAlert("Name is empty!");
+    }
     const body = {
       email: email,
       password: password,
@@ -22,7 +33,7 @@ export function LoginScreen() {
     }
     const response = await fetchBackend("POST", "/admin/auth/login", body);
     if (response.error) {
-      createAlert(response.error, alerts, setAlerts, alertId, setAlertId);
+      createAlert(response.error);
     } else {
       localStorage.setItem("token", response.token);
       navigate("/dashboard");

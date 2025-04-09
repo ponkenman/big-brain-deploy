@@ -29,7 +29,9 @@ export async function fetchBackend(
   return await response.json();
 }
 
-export function createAlert(message: string, alerts: AlertData[], setAlerts: React.Dispatch<React.SetStateAction<AlertData[]>>, alertId: number, setAlertId: React.Dispatch<React.SetStateAction<number>>) {
-  setAlerts([...alerts, { message: message, key: alertId }]);
-  setAlertId(alertId + 1);
+export function initialiseAlerts(alerts: AlertData[], setAlerts: React.Dispatch<React.SetStateAction<AlertData[]>>, alertId: number, setAlertId: React.Dispatch<React.SetStateAction<number>>) {
+  return function(message: string) {
+    setAlerts([...alerts, { message: message, key: alertId }]);
+    setAlertId(alertId + 1);
+  }
 }
