@@ -85,7 +85,7 @@ export function DashboardScreen () {
           return (
             <div key={game.id}>
               <h1>Game {index + 1}!</h1>
-              <GameCard title={game.name} numQuestions={index} totalDuration={calcTotalDuration(game.questions)}/>
+              <GameCard title={game.name} numQuestions={index} totalDuration={calcTotalDuration(game.questions)} id={game.id} refreshGames={() => setRefresh(refresh + 1)}/>
             </div>
           )
         })
