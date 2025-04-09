@@ -2,6 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { fetchBackend } from "../helpers";
 import React, { useState } from "react";
 import Navbar from "../components/navbar";
+import TextInput from "../components/textInput";
+import Button from "../components/button";
 
 export function RegisterScreen() {
   const [name, setName] = useState("");
@@ -37,26 +39,18 @@ export function RegisterScreen() {
 
   return (<>
     <Navbar />
-    <h1>Register</h1>
-    <Link to="/login">Login instead</Link>
-    <form>
-      <div>
-        <label>Name</label>
-        <input type="text" onChange={e => setName(e.target.value)} onKeyDown={e => submitIfEnter(e)}></input>
-      </div>
-      <div>
-        <label>Email</label>
-        <input type="email" onChange={e => setEmail(e.target.value)} onKeyDown={e => submitIfEnter(e)}></input>
-      </div>
-      <div>
-        <label>Password</label>
-        <input type="password" onChange={e => setPassword(e.target.value)} onKeyDown={e => submitIfEnter(e)}></input>
-      </div>
-      <div>
-        <label>Confirm Password</label>
-        <input type="password" onChange={e => setConfirmPassword(e.target.value)} onKeyDown={e => submitIfEnter(e)}></input>
-      </div>
-      <button type="button" onClick={register}>Register</button>
-    </form>
+    <main className="bg-indigo-50 p-7 h-dvh">
+      <h1 className="text-4xl font-semibold pb-7">Register</h1>
+      <form className="rounded-md bg-indigo-100 p-4">
+        <TextInput labelName="Name" id="register-name" type="text" set={setName} onEnter={register} />
+        <TextInput labelName="Email" id="register-email" type="email" set={setEmail} onEnter={register} />
+        <TextInput labelName="Create password" id="register-password" type="password" set={setPassword} onEnter={register} />
+        <TextInput labelName="Confirm password" id="register-password-confirm" type="password" set={setConfirmPassword} onEnter={register} />
+        <div className="pt-2">
+          <Button text="Register" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={register}/>
+          <Link to="/login" className="underline ml-3 text-base">Login instead</Link>
+        </div>
+      </form>
+    </main>
   </>);
 }

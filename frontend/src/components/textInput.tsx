@@ -10,6 +10,6 @@ export default function TextInput(props: { labelName: string, id: string, type: 
 
   return (<div className="py-2">
     <label htmlFor={props.id} className="text-lg font-medium mb-2">{props.labelName}</label>
-    <input type="text" id={props.id} onChange={e => props.set(e.target.value)} onKeyDown={e => ifEnter(e)} className="block mt-2 rounded-sm border border-black bg-white"></input>
+    <input type={props.type} id={props.id} onChange={e => props.set(e.target.value)} onKeyDown={e => ifEnter(e)} className="block mt-2 rounded-sm border border-black bg-white"></input>
   </div>);
 }

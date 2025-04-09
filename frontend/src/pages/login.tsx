@@ -4,11 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import Button from "../components/button";
 import TextInput from "../components/textInput";
+import { AlertData, AlertMenu } from "../components/alert";
 
 export function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [alertId, setAlertId] = useState(0);
+  const [alerts, setAlerts] = useState<AlertData[]>([]);
   const navigate = useNavigate();
 
   async function login() {
@@ -19,11 +22,16 @@ export function LoginScreen() {
     }
     const response = await fetchBackend("POST", "/admin/auth/login", body);
     if (response.error) {
-      console.log(response);
+      createError(response.error);
     } else {
       localStorage.setItem("token", response.token);
       navigate("/dashboard");
     }
+  }
+
+  function createError(message: string) {
+    setAlerts([...alerts, { message: message, key: alertId }]);
+    setAlertId(alertId + 1);
   }
 
   return (<>
@@ -36,9 +44,10 @@ export function LoginScreen() {
         <TextInput labelName="Password" id="login-password" type="password" set={setPassword} onEnter={login} />
         <div className="pt-2">
           <Button text="Login" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={login}/>
-          <Link to="/register" className="underline ml-3">Register instead</Link>
+          <Link to="/register" className="underline ml-3 text-base">Register instead</Link>
         </div>
       </form>
     </main>
+    <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>);
 }
