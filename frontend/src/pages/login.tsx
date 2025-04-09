@@ -39,6 +39,7 @@ export function LoginScreen() {
       createAlert(response.error);
     } else {
       localStorage.setItem("token", response.token);
+      localStorage.setItem("email", email);
       navigate("/dashboard");
     }
   }

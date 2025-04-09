@@ -10,7 +10,7 @@ interface FetchOptions {
 export async function fetchBackend(
   httpMethod: "GET"|"POST"|"PUT"|"DELETE", 
   urlFragment: string,
-  options?: Record<string, string>,
+  options?: Record<string, string> | Object,
   token?: string
 ) {
   const urlMain = "http://localhost:5005";

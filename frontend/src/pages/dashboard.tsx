@@ -1,8 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { fetchBackend } from "../helpers";
 import GameCard from "../components/gameCard";
 import {useState} from "react";
 import {useEffect} from "react";
+import Button from "../components/button";
+import Navbar from "../components/navbar";
+import CreateGameForm from "../components/createGameForm";
 
 type Questions = {
   id: string,
@@ -23,6 +26,8 @@ type Game = {
 
 export function DashboardScreen () {
   const [games, setGames] = useState<Game[]>([]);
+  const [showCreateGameForm, setShowCreateGameForm] = useState(false);
+  const [refresh, setRefresh] = useState(0);
 
   const navigate = useNavigate();
   async function logout() {
@@ -54,18 +59,23 @@ export function DashboardScreen () {
 
   const calcTotalDuration = (questions: Questions[]): number => {
     let totalDuration = 0;
-    for (const currQuestion of questions) {
-      totalDuration += currQuestion.duration
-    }
-
+    // for (const currQuestion of questions) {
+    //   totalDuration += currQuestion.duration
+    // }
     return totalDuration;
   }
 
   useEffect(() => {
     getGames();
-  }, []);
+  }, [refresh]);
 
   return (<>
+    <Navbar>
+        <Button text="Create Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => setShowCreateGameForm(true)}/>
+    </Navbar>
+
+    {showCreateGameForm && <CreateGameForm closeForm={() => setShowCreateGameForm(false)} refreshGames={() => setRefresh(refresh + 1)}/>}
+
     <h1>Welcome to dashboard!</h1>
     <div>
       {games.length === 0 ? (
@@ -73,14 +83,14 @@ export function DashboardScreen () {
       ) : (
         games.map((game, index) => {
           return (
-            <>
+            <div key={game.id}>
               <h1>Game {index + 1}!</h1>
-              <GameCard title={game.name} numQuestions={game.questions.length} totalDuration={calcTotalDuration(game.questions)}/>
-            </>
+              <GameCard title={game.name} numQuestions={index} totalDuration={calcTotalDuration(game.questions)}/>
+            </div>
           )
         })
       )}
     </div>
-    <button type="button" onClick={logout}>Logout</button>
+    <Button text="Logout" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={logout}/>
   </>);
 }
