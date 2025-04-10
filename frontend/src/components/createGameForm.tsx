@@ -119,8 +119,8 @@ export default function CreateGameForm({ closeForm, refreshGames }: createGameFo
   return (<>
       {modal && (
         <Modal>
-            <TextInput labelName="Game Name" id="game-name" type="text" set={setName} onEnter={createGame} />
-            <TextInput labelName="Game Thumbnail" id="game-thumnail" type="text" set={setThumbnail} onEnter={createGame} />
+            <TextInput labelName="Game Name" id="game-name" type="text" value={name} set={setName} onEnter={createGame} />
+            <TextInput labelName="Game Thumbnail" id="game-thumnail" type="text" value={thumbnail} set={setThumbnail} onEnter={createGame} />
             <Questions labelName="Questions" id="game-questions" questions={questions} set={setQuestions} onEnter={createGame} />
             <Button text="Submit" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={createGame}/>
             <Button text="Cancel" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={closeForm}/>

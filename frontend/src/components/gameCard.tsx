@@ -38,13 +38,12 @@ export default function GameCard(props: {title: string, questions: Question[], t
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [showEditGameForm, setShowEditGameForm] = useState(false);
-  const [refresh, setRefresh] = useState(0);
 
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
 
   useEffect(() => {
     getGames();
-  }, [refresh]);
+  }, []);
 
   async function getGames() {
     const token = localStorage.getItem("token");

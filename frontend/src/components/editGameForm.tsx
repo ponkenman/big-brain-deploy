@@ -5,6 +5,7 @@ import { AlertData, AlertMenu } from "./alert";
 import Modal from "../components/modal";
 import Button from "../components/button";
 import TextBox from "../components/textBox";
+import Questions from "../components/questions"
 
 type AnswersOptions = {
   text: string,
@@ -33,7 +34,7 @@ type Game = {
 
 export default function EditGameForm(props: {title: string, questions: Question[], thumbnail: string, id: number, closeForm: () => void, refreshGames: () => void}) {
   const [name, setName] = useState(props.title);
-  const [questions, setQuestions] = useState(props.questions);
+  const [questions, setQuestions] = useState<Question[]>(props.questions);
   const [thumbnail, setThumbnail] = useState(props.thumbnail);
   const [alertId, setAlertId] = useState(0);
   const [alerts, setAlerts] = useState<AlertData[]>([]);
@@ -118,8 +119,13 @@ export default function EditGameForm(props: {title: string, questions: Question[
     {modal && (
       <Modal>
         <TextBox text={name} labelName="Name" id="game-name" type="text" set={setName} onEnter={editGame} />
-        <TextBox text="question" labelName="Question" id="game-questions" type="text" set={setQuestions} onEnter={editGame} />
         <TextBox text={thumbnail} labelName="Thumbnail" id="game-thumnail" type="text" set={setThumbnail} onEnter={editGame} />
+        <Questions 
+          labelName="Questions" 
+          id="game-questions" 
+          questions={questions} 
+          set={setQuestions} 
+        />
         <Button text="Submit" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={editGame}/>
         <Button text="Cancel" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={props.closeForm}/>
       </Modal>

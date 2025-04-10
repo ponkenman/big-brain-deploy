@@ -83,12 +83,12 @@ export default function Questions(props: {labelName: string, id: string, questio
             judgement-choice
           </label>
         </div>
-        <TextInput labelName={`Question ${index + 1} Media`} id={`question${index}-media`} type="text" set={setMedia} onEnter={() => updatedQuestion(index, {media: media})} />
-        <TextInput labelName={`Question ${index + 1}`} id={`question${index}-text`} type="text" set={setCurrQuestion} onEnter={() => updatedQuestion(index, {question: currQuestion})} />
+        <TextInput labelName={`Question ${index + 1} Media`} id={`question${index}-media`} type="text" value={question.media} set={setMedia} onEnter={() => updatedQuestion(index, {media: media})} />
+        <TextInput labelName={`Question ${index + 1}`} id={`question${index}-text`} type="text" value={question.question} set={setCurrQuestion} onEnter={() => updatedQuestion(index, {question: currQuestion})} />
         {question.answers.map((answer, answerIndex) => {
           return (
             <div key={answerIndex}>Answer {answerIndex + 1}: 
-              <TextInput labelName="Answer" id={`question${index}-answer${answerIndex}`} type="text" set={setCurrAnswerText} onEnter={() => updateAnswer(index, answerIndex, {text: currAnswerText})} />
+              <TextInput labelName="Answer" id={`question${index}-answer${answerIndex}`} type="text" value={answer.text} set={setCurrAnswerText} onEnter={() => updateAnswer(index, answerIndex, {text: currAnswerText})} />
               <label className="text-lg font-medium mb-2">
                 <input type="radio" name={`question${index}-answer${answerIndex}-correct`} value="True" onChange={() => updateAnswer(index, answerIndex, {correct: true})}/>
                 Correct
@@ -100,8 +100,8 @@ export default function Questions(props: {labelName: string, id: string, questio
             </div>
           )
         })}
-        <TextInput labelName="Duration" id={`question${index}-duration`} type="text" set={setDuration} onEnter={() => updatedQuestion(index, {duration: duration})} />
-        <TextInput labelName="Points" id={`question${index}-points`} type="text" set={setPoints} onEnter={() => updatedQuestion(index, {points: points})} />
+        <TextInput labelName="Duration" id={`question${index}-duration`} type="text" value={question.duration} set={setDuration} onEnter={() => updatedQuestion(index, {duration: duration})} />
+        <TextInput labelName="Points" id={`question${index}-points`} type="text" value={question.points} set={setPoints} onEnter={() => updatedQuestion(index, {points: points})} />
         {question.answers.length < 6 && (
           <Button text="Add Answers" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => addAnswer(index)}/>
         )}

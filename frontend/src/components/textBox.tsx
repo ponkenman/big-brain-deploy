@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function TextBox(props: {text: string, labelName: string, id: string, type: string, onEnter?: () => void; set: React.Dispatch<React.SetStateAction<string>> }) {
+export default function TextBox(props: {text: string, labelName: string, id: string, type: string, onEnter?: () => void; set: React.Dispatch<React.SetStateAction<any>> }) {
     
   function ifEnter(event: React.KeyboardEvent) {
     if (props.onEnter && event.key === "Enter") {
