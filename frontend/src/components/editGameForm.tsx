@@ -6,12 +6,20 @@ import Modal from "../components/modal";
 import Button from "../components/button";
 import TextBox from "../components/textBox";
 
-// type Questions = {
-//   id: string,
-//   question: string,
-//   answer: string,
-//   duration: number
-// }
+type AnswersOptions = {
+  text: string,
+  correct: boolean
+}
+
+type Question = {
+  id: number,
+  type: string,
+  media: string,
+  question: string,
+  answers: AnswersOptions[],
+  duration: number
+  points: number
+}
 
 type Game = {
   id: number,
@@ -20,11 +28,10 @@ type Game = {
   owner: string,
   active: number,
   createdAt: string,
-  questions: string
+  questions: Question[]
 }
 
-
-export default function EditGameForm(props: {title: string, questions: string, thumbnail: string, id: number, closeForm: () => void, refreshGames: () => void}) {
+export default function EditGameForm(props: {title: string, questions: Question[], thumbnail: string, id: number, closeForm: () => void, refreshGames: () => void}) {
   const [name, setName] = useState(props.title);
   const [questions, setQuestions] = useState(props.questions);
   const [thumbnail, setThumbnail] = useState(props.thumbnail);
@@ -59,7 +66,7 @@ export default function EditGameForm(props: {title: string, questions: string, t
       createAlert("Name is empty!");
       return;
     }
-    if (questions === "") {
+    if (questions.length === 0) {
       createAlert("Questions is empty!");
       return;
     }
@@ -111,7 +118,7 @@ export default function EditGameForm(props: {title: string, questions: string, t
     {modal && (
       <Modal>
         <TextBox text={name} labelName="Name" id="game-name" type="text" set={setName} onEnter={editGame} />
-        <TextBox text={questions} labelName="Question" id="game-questions" type="text" set={setQuestions} onEnter={editGame} />
+        <TextBox text="question" labelName="Question" id="game-questions" type="text" set={setQuestions} onEnter={editGame} />
         <TextBox text={thumbnail} labelName="Thumbnail" id="game-thumnail" type="text" set={setThumbnail} onEnter={editGame} />
         <Button text="Submit" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={editGame}/>
         <Button text="Cancel" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={props.closeForm}/>

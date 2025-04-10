@@ -7,12 +7,20 @@ import Button from "../components/button";
 import Navbar from "../components/navbar";
 import CreateGameForm from "../components/createGameForm";
 
-// type Questions = {
-//   id: string,
-//   question: string,
-//   answer: string,
-//   duration: number
-// }
+type AnswersOptions = {
+  text: string,
+  correct: boolean
+}
+
+type Question = {
+  id: number,
+  type: string,
+  media: string,
+  question: string,
+  answers: AnswersOptions[],
+  duration: number
+  points: number
+}
 
 type Game = {
   id: number,
@@ -21,7 +29,7 @@ type Game = {
   owner: string,
   active: number,
   createdAt: Date,
-  questions: string
+  questions: Question[]
 }
 
 export function DashboardScreen () {
@@ -57,13 +65,12 @@ export function DashboardScreen () {
     }
   };
 
-  // const calcTotalDuration = (questions: Questions[]): number => {
-  const calcTotalDuration = (questions: string): number => {
-
+  const calcTotalDuration = (questions: Question[]): number => {
     let totalDuration = 0;
     // for (const currQuestion of questions) {
     //   totalDuration += currQuestion.duration
     // }
+  
     return totalDuration;
   }
 

@@ -5,6 +5,21 @@ import { AlertData, AlertMenu } from "./alert";
 import { initialiseAlerts, fetchBackend } from "../helpers";
 import EditGameForm from "../components/editGameForm";
 
+type AnswersOptions = {
+  text: string,
+  correct: boolean
+}
+
+type Question = {
+  id: number,
+  type: string,
+  media: string,
+  question: string,
+  answers: AnswersOptions[],
+  duration: number
+  points: number
+}
+
 type Game = {
   id: number,
   name: string,
@@ -15,7 +30,7 @@ type Game = {
   questions: string
 }
 
-export default function GameCard(props: {title: string, questions: string, thumbnail: string, numQuestions: number, totalDuration: number, id: number, refreshGames: () => void}) {
+export default function GameCard(props: {title: string, questions: Question[], thumbnail: string, numQuestions: number, totalDuration: number, id: number, refreshGames: () => void}) {
   const [modal, setModal] = useState(false);
   const openModal = () => setModal(true);
   const closeModal = () => setModal(false);
