@@ -3,7 +3,6 @@ import {useEffect} from "react";
 import TextInput from "./textInput";
 import { initialiseAlerts, fetchBackend } from "../helpers";
 import { AlertData, AlertMenu } from "./alert";
-import { useNavigate } from "react-router-dom";
 import Modal from "../components/modal";
 import Button from "../components/button";
 
@@ -35,7 +34,6 @@ export default function CreateGameForm({ closeForm, refreshGames }: createGameFo
   const [alertId, setAlertId] = useState(0);
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const [games, setGames] = useState<Game[]>([]);
-  const [refresh, setRefresh] = useState(0);
   
   const [modal] = useState(true);
 
@@ -43,7 +41,7 @@ export default function CreateGameForm({ closeForm, refreshGames }: createGameFo
 
   useEffect(() => {
     getGames();
-  }, [refresh]);
+  }, []);
 
   async function getGames() {
     const token = localStorage.getItem("token");
@@ -58,10 +56,7 @@ export default function CreateGameForm({ closeForm, refreshGames }: createGameFo
     }
   };
 
-
   async function createGame() {
-    console.log("creating game");
-
     if (name === "") {
       createAlert("Name is empty!");
       return;
@@ -115,6 +110,7 @@ export default function CreateGameForm({ closeForm, refreshGames }: createGameFo
         <Modal>
             <TextInput labelName="Name" id="game-name" type="text" set={setName} onEnter={createGame} />
             <TextInput labelName="Question" id="game-questions" type="text" set={setQuestions} onEnter={createGame} />
+            <TextInput labelName="Thumbnail" id="game-thumnail" type="text" set={setQuestions} onEnter={createGame} />
             <Button text="Submit" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={createGame}/>
             <Button text="Cancel" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={closeForm}/>
         </Modal>

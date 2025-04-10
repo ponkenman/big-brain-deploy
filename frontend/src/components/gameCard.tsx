@@ -3,6 +3,7 @@ import {useState, useEffect} from "react";
 import Button from "../components/button";
 import { AlertData, AlertMenu } from "./alert";
 import { initialiseAlerts, fetchBackend } from "../helpers";
+import EditGameForm from "../components/editGameForm";
 
 type Game = {
   id: number,
@@ -14,19 +15,21 @@ type Game = {
   questions: string
 }
 
-export default function GameCard(props: {title: string, numQuestions: number, totalDuration: number, id: number, refreshGames: () => void}) {
+export default function GameCard(props: {title: string, questions: string, thumbnail: string, numQuestions: number, totalDuration: number, id: number, refreshGames: () => void}) {
   const [modal, setModal] = useState(false);
   const openModal = () => setModal(true);
   const closeModal = () => setModal(false);
   const [alertId, setAlertId] = useState(0);
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const [games, setGames] = useState<Game[]>([]);
+  const [showEditGameForm, setShowEditGameForm] = useState(false);
+  const [refresh, setRefresh] = useState(0);
 
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
 
-    useEffect(() => {
-      getGames();
-    }, []);
+  useEffect(() => {
+    getGames();
+  }, [refresh]);
 
   async function getGames() {
     const token = localStorage.getItem("token");
@@ -75,8 +78,17 @@ export default function GameCard(props: {title: string, numQuestions: number, to
     <p>{props.numQuestions} Questions</p>
     <p>{props.totalDuration} seconds</p>
     <img src="" alt={`Thumbnail for ${props.title}`}></img>
-    <Button text="Edit Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={openModal}/>
+    <Button text="Edit Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => setShowEditGameForm(true)}/>
     <Button text="Delete Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={openModal}/>
+    {showEditGameForm && 
+      <EditGameForm 
+      title={props.title} 
+      questions={props.questions} 
+      thumbnail={props.thumbnail} 
+      id={props.id} 
+      closeForm={() => setShowEditGameForm(false)} 
+      refreshGames={() => props.refreshGames()}
+    />}
     {modal && (
       <Modal>
         <h1>Delete this game</h1>

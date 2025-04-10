@@ -7,12 +7,12 @@ import Button from "../components/button";
 import Navbar from "../components/navbar";
 import CreateGameForm from "../components/createGameForm";
 
-type Questions = {
-  id: string,
-  question: string,
-  answer: string,
-  duration: number
-}
+// type Questions = {
+//   id: string,
+//   question: string,
+//   answer: string,
+//   duration: number
+// }
 
 type Game = {
   id: number,
@@ -21,13 +21,13 @@ type Game = {
   owner: string,
   active: number,
   createdAt: Date,
-  questions: Questions[]
+  questions: string
 }
 
 export function DashboardScreen () {
   const [games, setGames] = useState<Game[]>([]);
   const [showCreateGameForm, setShowCreateGameForm] = useState(false);
-  const [refresh, setRefresh] = useState(0);
+  const [refreshGames, setRefreshGames] = useState(0);
 
   const navigate = useNavigate();
   async function logout() {
@@ -57,7 +57,9 @@ export function DashboardScreen () {
     }
   };
 
-  const calcTotalDuration = (questions: Questions[]): number => {
+  // const calcTotalDuration = (questions: Questions[]): number => {
+  const calcTotalDuration = (questions: string): number => {
+
     let totalDuration = 0;
     // for (const currQuestion of questions) {
     //   totalDuration += currQuestion.duration
@@ -67,14 +69,14 @@ export function DashboardScreen () {
 
   useEffect(() => {
     getGames();
-  }, [refresh]);
+  }, [refreshGames]);
 
   return (<>
     <Navbar>
         <Button text="Create Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => setShowCreateGameForm(true)}/>
     </Navbar>
 
-    {showCreateGameForm && <CreateGameForm closeForm={() => setShowCreateGameForm(false)} refreshGames={() => setRefresh(refresh + 1)}/>}
+    {showCreateGameForm && <CreateGameForm closeForm={() => setShowCreateGameForm(false)} refreshGames={() => setRefreshGames(refreshGames + 1)}/>}
 
     <h1>Welcome to dashboard!</h1>
     <div>
@@ -85,7 +87,13 @@ export function DashboardScreen () {
           return (
             <div key={game.id}>
               <h1>Game {index + 1}!</h1>
-              <GameCard title={game.name} numQuestions={index} totalDuration={calcTotalDuration(game.questions)} id={game.id} refreshGames={() => setRefresh(refresh + 1)}/>
+              <GameCard title={game.name} 
+              questions={game.questions} 
+              thumbnail={game.thumbnail} 
+              numQuestions={index} 
+              totalDuration={calcTotalDuration(game.questions)} 
+              id={game.id} 
+              refreshGames={() => setRefreshGames(refreshGames + 1)}/>
             </div>
           )
         })
