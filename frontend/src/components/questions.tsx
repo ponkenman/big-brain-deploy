@@ -10,16 +10,15 @@ type AnswersOptions = {
 type Question = {
   id: number,
   type: string,
-  thumbnail: string,
+  media: string,
   question: string,
   answers: AnswersOptions[],
   duration: number
   points: number
 }
 
-export default function Questions(props: {text: string, labelName: string, id: string, type: string, onEnter?: () => void; set: React.Dispatch<React.SetStateAction<string>> }) {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [thumbnail, setThumbnail] = useState("");
+export default function Questions(props: {labelName: string, id: string, questions: Question[], onEnter?: () => void; set: React.Dispatch<React.SetStateAction<any>> }) {
+  const [media, setMedia] = useState("");
   const [currQuestion, setCurrQuestion] = useState("");
   const [currAnswerText, setCurrAnswerText] = useState("");
   const [duration, setDuration] = useState(10);
@@ -27,68 +26,86 @@ export default function Questions(props: {text: string, labelName: string, id: s
 
   function addQuestions() {
     const newQuestion: Question = {
-      id: questions.length + 1,
+      id: props.questions.length + 1,
       type: "",
-      thumbnail: "",
+      media: "",
       question: "",
       answers: [
-        {text: "", correct: false},
         {text: "", correct: false}
       ],
       duration: 10,
       points: 1
     }
 
-    setQuestions([...questions, newQuestion]);
+    props.set([...props.questions, newQuestion]);
   }
 
   function updatedQuestion (index: number, update: Partial<Question>) {
-    const updatedQuestions = [...questions];
+    const updatedQuestions = [...props.questions];
     updatedQuestions[index] = {...updatedQuestions[index], ...update}
-    setQuestions(updatedQuestions);
+    props.set(updatedQuestions);
   }
 
   function updateAnswer (questionIndex: number, answerIndex: number, update: Partial<AnswersOptions>) {
-    const updatedQuestions = [...questions];
+    const updatedQuestions = [...props.questions];
     const updatedAnswers = [...updatedQuestions[questionIndex].answers];
     updatedAnswers[answerIndex] = {...updatedAnswers[answerIndex], ...update};
     updatedQuestions[questionIndex].answers = updatedAnswers;
 
-    setQuestions(updatedQuestions);
+    props.set(updatedQuestions);
   }
 
   function addAnswer(questionIndex: number) {
-    const updatedQuestions = [...questions];
+    const updatedQuestions = [...props.questions];
     updatedQuestions[questionIndex].answers.push({text: "", correct: false});
-    setQuestions(updatedQuestions);
+    props.set(updatedQuestions);
   }
 
 
   return (<div className="py-2">
-    <label htmlFor={props.id} className="text-lg font-medium mb-2">{props.labelName}</label>
-    {questions.map((question, index) => {
-      return (<>
+    <div>
+      <label htmlFor={props.id} className="text-lg font-medium mb-2">{props.labelName}</label>
+    </div>
+    {props.questions.map((question, index) => {
+      return (<div key={question.id}>
         <label className="text-lg font-medium mb-2">Question Type</label>
-        {["single-choice", "multiple-choice", "judgement"].map((type) => {
-          <input type="radio" name={`question${index}-type`} value={type} onChange={() => updatedQuestion(index, {type: type})}/>
-        })}
-        <TextInput labelName="Thumbnail" id={`question${index}-thumbnail`} type="text" set={setThumbnail} onEnter={() => updatedQuestion(index, {thumbnail: thumbnail})} />
-        <TextInput labelName="Question" id={`question${index}-text`} type="text" set={setCurrQuestion} onEnter={() => updatedQuestion(index, {question: currQuestion})} />
+        <div>
+          <label className="text-lg font-medium mb-2">
+            <input type="radio" name={`question${index}-type1`} value={"single-choice"} onChange={() => updatedQuestion(index, {type: "single-choice"})}/>
+            single-choice
+          </label>
+          <label className="text-lg font-medium mb-2">
+            <input type="radio" name={`question${index}-type2`} value={"multiple-choice"} onChange={() => updatedQuestion(index, {type: "multiple-choice"})}/>
+            multiple-choice
+          </label>
+          <label className="text-lg font-medium mb-2">
+            <input type="radio" name={`question${index}-type3`} value={"judgement-choice"} onChange={() => updatedQuestion(index, {type: "judgement-choice"})}/>
+            judgement-choice
+          </label>
+        </div>
+        <TextInput labelName={`Question ${index + 1} Media`} id={`question${index}-media`} type="text" set={setMedia} onEnter={() => updatedQuestion(index, {media: media})} />
+        <TextInput labelName={`Question ${index + 1}`} id={`question${index}-text`} type="text" set={setCurrQuestion} onEnter={() => updatedQuestion(index, {question: currQuestion})} />
         {question.answers.map((answer, answerIndex) => {
           return (
-            <p>Answer {answerIndex + 1}: 
+            <div key={answerIndex}>Answer {answerIndex + 1}: 
               <TextInput labelName="Answer" id={`question${index}-answer${answerIndex}`} type="text" set={setCurrAnswerText} onEnter={() => updateAnswer(index, answerIndex, {text: currAnswerText})} />
-              <input type="radio" name={`question${index}-answer${answerIndex}-correct`} value="True" onChange={() => updateAnswer(index, answerIndex, {correct: true})}/>
-              <input type="radio" name={`question${index}-answer${answerIndex}-incorrect`} value="False" onChange={() => updateAnswer(index, answerIndex, {correct: false})}/>
-            </p>
+              <label className="text-lg font-medium mb-2">
+                <input type="radio" name={`question${index}-answer${answerIndex}-correct`} value="True" onChange={() => updateAnswer(index, answerIndex, {correct: true})}/>
+                Correct
+              </label>
+              <label className="text-lg font-medium mb-2">
+                <input type="radio" name={`question${index}-answer${answerIndex}-incorrect`} value="False" onChange={() => updateAnswer(index, answerIndex, {correct: false})}/>
+                Incorrect
+              </label>
+            </div>
           )
         })}
+        <TextInput labelName="Duration" id={`question${index}-duration`} type="text" set={setDuration} onEnter={() => updatedQuestion(index, {duration: duration})} />
+        <TextInput labelName="Points" id={`question${index}-points`} type="text" set={setPoints} onEnter={() => updatedQuestion(index, {points: points})} />
         {question.answers.length < 6 && (
           <Button text="Add Answers" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => addAnswer(index)}/>
         )}
-        <TextInput labelName="Duration" id={`question${index}-duration`} type="text" set={setDuration} onEnter={() => updatedQuestion(index, {duration: duration})} />
-        <TextInput labelName="Points" id={`question${index}-points`} type="text" set={setPoints} onEnter={() => updatedQuestion(index, {points: points})} />
-      </>)
+      </div>)
     })}
     <Button text="Add Questions" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={addQuestions}/>
   </div>);

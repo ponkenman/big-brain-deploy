@@ -53,11 +53,8 @@ export default function GameCard(props: {title: string, questions: string, thumb
       return;
     }
 
-    console.log(props.id);
     const updatedGames = games.filter(game => game.id !== props.id);
-    console.log(updatedGames);
     setGames(updatedGames);
-    
 
     const body = {
       games: updatedGames
