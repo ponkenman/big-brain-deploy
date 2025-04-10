@@ -61,6 +61,10 @@ export default function Questions(props: {labelName: string, id: string, questio
     props.set(updatedQuestions);
   }
 
+  function deleteQuestion(id: number) {
+    const updatedQuestions = props.questions.filter((currQuestion) => currQuestion.id !== id);
+    props.set(updatedQuestions);
+  }
 
   return (<div className="py-2">
     <div>
@@ -68,6 +72,10 @@ export default function Questions(props: {labelName: string, id: string, questio
     </div>
     {props.questions.map((question, index) => {
       return (<div key={question.id}>
+        <div>
+          <TextInput labelName={`Question ${index + 1}`} id={`question${index}-text`} type="text" value={question.question} set={setCurrQuestion} onEnter={() => updatedQuestion(index, {question: currQuestion})} />
+          <Button text="Delete Question" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => deleteQuestion(question.id)}/>
+        </div>
         <label className="text-lg font-medium mb-2">Question Type</label>
         <div>
           <label className="text-lg font-medium mb-2">
@@ -84,7 +92,6 @@ export default function Questions(props: {labelName: string, id: string, questio
           </label>
         </div>
         <TextInput labelName={`Question ${index + 1} Media`} id={`question${index}-media`} type="text" value={question.media} set={setMedia} onEnter={() => updatedQuestion(index, {media: media})} />
-        <TextInput labelName={`Question ${index + 1}`} id={`question${index}-text`} type="text" value={question.question} set={setCurrQuestion} onEnter={() => updatedQuestion(index, {question: currQuestion})} />
         {question.answers.map((answer, answerIndex) => {
           return (
             <div key={answerIndex}>Answer {answerIndex + 1}: 
