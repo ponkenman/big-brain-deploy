@@ -4,7 +4,7 @@ import { initialiseAlerts, fetchBackend } from "../helpers";
 import { AlertData, AlertMenu } from "./alert";
 import Modal from "../components/modal";
 import Button from "../components/button";
-import TextBox from "../components/textBox";
+import TextInput from "../components/textInput";
 import Questions from "../components/questions"
 
 type AnswersOptions = {
@@ -118,8 +118,8 @@ export default function EditGameForm(props: {title: string, questions: Question[
   return (<>
     {modal && (
       <Modal>
-        <TextBox text={name} labelName="Name" id="game-name" type="text" set={setName} onEnter={editGame} />
-        <TextBox text={thumbnail} labelName="Thumbnail" id="game-thumnail" type="text" set={setThumbnail} onEnter={editGame} />
+        <TextInput labelName="Name" id="game-name" type="text" set={setName} onEnter={editGame} />
+        <TextInput labelName="Thumbnail" id="game-thumnail" type="text" set={setThumbnail} onEnter={editGame} />
         <Questions 
           labelName="Questions" 
           id="game-questions" 

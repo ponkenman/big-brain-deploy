@@ -35,19 +35,17 @@ type Game = {
 type createGameFormProps = {
   closeForm: () => void;
   refreshGames: () => void;
+  createAlert: (message: string) => void;
 };
 
-export default function CreateGameForm({ closeForm, refreshGames }: createGameFormProps) {
+export default function CreateGameForm({ closeForm, refreshGames, createAlert }: createGameFormProps) {
   const [name, setName] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [thumbnail, setThumbnail] = useState("");
-  const [alertId, setAlertId] = useState(0);
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
+  const [confirmNoQuestions, setConfirmNoQuestions] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
   
   const [modal] = useState(true);
-
-  const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
 
   useEffect(() => {
     getGames();
@@ -71,9 +69,8 @@ export default function CreateGameForm({ closeForm, refreshGames }: createGameFo
       createAlert("Name is empty!");
       return;
     }
-    console.log(questions);
-    if (questions.length === 0) {
-      createAlert("Questions is empty!");
+    if (questions.length === 0 && !confirmNoQuestions) {
+      setConfirmNoQuestions(true);
       return;
     }
     
@@ -116,17 +113,24 @@ export default function CreateGameForm({ closeForm, refreshGames }: createGameFo
     closeForm();
   }
 
+  useEffect(() => {
+    if (questions.length !== 0) {
+      setConfirmNoQuestions(false);
+    }
+  }, [questions]);
+
   return (<>
       {modal && (
         <Modal>
-            <TextInput labelName="Game Name" id="game-name" type="text" value={name} set={setName} onEnter={createGame} />
-            <TextInput labelName="Game Thumbnail" id="game-thumnail" type="text" value={thumbnail} set={setThumbnail} onEnter={createGame} />
+            <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} set={setName} onEnter={createGame} />
+            <TextInput labelName="Game Thumbnail" id="game-thumnail" type="text" defaultValue={thumbnail} set={setThumbnail} onEnter={createGame} />
             <Questions labelName="Questions" id="game-questions" questions={questions} set={setQuestions} onEnter={createGame} />
-            <Button text="Submit" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={createGame}/>
-            <Button text="Cancel" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={closeForm}/>
+            { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
+            <div className="flex flex-row gap-2">
+            <Button text="Submit" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={createGame}/>
+            <Button text="Cancel" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={closeForm}/>
+            </div>
         </Modal>
       )}
-    
-    <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>);
 }

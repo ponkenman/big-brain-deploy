@@ -107,13 +107,13 @@ export default function Questions(props: {labelName: string, id: string, questio
             </div>
           )
         })}
-        <TextInput labelName="Duration" id={`question${index}-duration`} type="text" value={question.duration} set={setDuration} onEnter={() => updatedQuestion(index, {duration: duration})} />
-        <TextInput labelName="Points" id={`question${index}-points`} type="text" value={question.points} set={setPoints} onEnter={() => updatedQuestion(index, {points: points})} />
+        <TextInput labelName="Duration" id={`question${index}-duration`} type="text" defaultValue={question.duration} set={setDuration} onEnter={() => updatedQuestion(index, {duration: duration})} />
+        <TextInput labelName="Points" id={`question${index}-points`} type="text" defaultValue={question.points} set={setPoints} onEnter={() => updatedQuestion(index, {points: points})} />
         {question.answers.length < 6 && (
           <Button text="Add Answers" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => addAnswer(index)}/>
         )}
       </div>)
     })}
-    <Button text="Add Questions" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={addQuestions}/>
+    <Button text="Add Questions" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={addQuestions}/>
   </div>);
 }

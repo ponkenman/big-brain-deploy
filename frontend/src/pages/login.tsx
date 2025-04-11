@@ -53,7 +53,7 @@ export function LoginScreen() {
         <Button text="Login" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
       </Link>
     </Navbar>
-    <main className="bg-indigo-50 p-7 h-dvh">
+    <main className="bg-indigo-50 p-7 h-dvh absolute top-15 w-screen">
       <h1 className="text-4xl font-semibold pb-7">Login</h1>
       <form className="rounded-md bg-indigo-100 p-4">
         <TextInput labelName="Name" id="login-name" type="text" set={setName} onEnter={login} />
