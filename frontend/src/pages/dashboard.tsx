@@ -1,17 +1,17 @@
 import { fetchBackend, initialiseAlerts } from "../helpers";
-import GameCard from "../components/gameCard";
+import GameCard from "../components/games/gameCard";
 import {useState} from "react";
 import {useEffect} from "react";
 import Button from "../components/buttons/button";
 import Navbar from "../components/navbar";
-import CreateGameForm from "../components/createGameForm";
+import CreateGameForm from "../components/games/createGameForm";
 import { AlertData, AlertMenu } from "../components/alert";
 import LogoutButton from "../components/buttons/logoutButton";
+import { Game } from "../types";
 
 export function DashboardScreen () {
   const [games, setGames] = useState<Game[]>([]);
   const [showCreateGameForm, setShowCreateGameForm] = useState(false);
-  const [refreshGames, setRefreshGames] = useState(0);
   const [alertId, setAlertId] = useState(0);
   const [alerts, setAlerts] = useState<AlertData[]>([]);
 
@@ -35,8 +35,10 @@ export function DashboardScreen () {
   }
 
   useEffect(() => {
-    getGames();
-  }, [refreshGames]);
+    if (games.length === 0) {
+      getGames();
+    }
+  }, [games]);
 
   return (<>
     <Navbar>

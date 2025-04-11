@@ -1,11 +1,11 @@
 import {useState} from "react";
 import {useEffect} from "react";
-import TextInput from "./forms/textInput";
-import { fetchBackend, fileToDataUrl } from "../helpers";
-import Modal from "../components/modal";
-import Button from "./buttons/button";
-import Questions from "./questions";
-import FileSelect from "./forms/fileInput";
+import TextInput from "../forms/textInput";
+import { fetchBackend, fileToDataUrl } from "../../helpers";
+import Modal from "../modal";
+import Button from "../buttons/button";
+import Questions from "../questions";
+import FileSelect from "../forms/fileInput";
 
 type AnswersOptions = {
   text: string,

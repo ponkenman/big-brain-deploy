@@ -1,9 +1,9 @@
-import Modal from "../components/modal";
+import Modal from "../modal";
 import {useState, useEffect} from "react";
-import Button from "./buttons/button";
-import { AlertData } from "./alert";
-import { initialiseAlerts, fetchBackend } from "../helpers";
-import EditGameForm from "../components/editGameForm";
+import Button from "../buttons/button";
+import { AlertData } from "../alert";
+import { initialiseAlerts, fetchBackend } from "../../helpers";
+import EditGameForm from "../editGameForm";
 import { useNavigate } from "react-router-dom";
 
 type AnswersOptions = {
