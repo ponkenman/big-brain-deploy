@@ -92,8 +92,9 @@ export default function GameCard(props: {title: string, questions: Question[], t
       <img src={props.thumbnail == "" ? "src/assets/default-game-icon.png" : props.thumbnail} alt={`Thumbnail for ${props.title}`} className="object-cover object-center h-40 w-auto" />
     </div>
     <div className="flex flex-row gap-2">
-      <Button text="Edit Game" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => setShowEditGameForm(true)}/>
-      <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
+      <Button text="Play" color="bg-emerald-200" hoverColor="hover:bg-emerald-400" />
+      <Button text="Edit" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => setShowEditGameForm(true)}/>
+      <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
     </div>
     {showEditGameForm && 
       <EditGameForm 

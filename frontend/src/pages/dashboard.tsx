@@ -7,6 +7,7 @@ import Button from "../components/buttons/button";
 import Navbar from "../components/navbar";
 import CreateGameForm from "../components/createGameForm";
 import { AlertData, AlertMenu } from "../components/alert";
+import LogoutButton from "../components/buttons/logoutButton";
 
 type AnswersOptions = {
   text: string,
@@ -39,23 +40,8 @@ export function DashboardScreen () {
   const [refreshGames, setRefreshGames] = useState(0);
   const [alertId, setAlertId] = useState(0);
   const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const navigate = useNavigate();
 
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
-
-  async function logout() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      return;
-    }
-    const response = await fetchBackend("POST", "/admin/auth/logout", undefined, token);
-    if (response.error) {
-      console.log(response.error);
-    } else {
-      localStorage.clear();
-      navigate("/login");
-    }
-  };
   
   async function getGames() {
     const token = localStorage.getItem("token");
@@ -80,7 +66,7 @@ export function DashboardScreen () {
 
   return (<>
     <Navbar>
-      <Button text="Logout" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={logout}/>
+      <LogoutButton />
     </Navbar>
     <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Dashboard</h1>
