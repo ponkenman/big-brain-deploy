@@ -78,7 +78,7 @@ export default function Questions(props: {labelName: string, id: string, questio
     <div className="mb-3">
       <label htmlFor={props.id} className="text-lg font-medium">{props.labelName}</label>
     </div>
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-4 mb-2">
       {props.questions.map((question, index) => {
         return (<article key={question.id} className="p-4 rounded-lg bg-indigo-300">
           <TextInput labelName={`Question ${index + 1}`} id={`question${index}-text`} type="text" value={question.question} set={setCurrQuestion} onEnter={() => updatedQuestion(index, {question: currQuestion})} />

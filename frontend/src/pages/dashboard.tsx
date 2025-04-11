@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { fetchBackend, initialiseAlerts } from "../helpers";
 import GameCard from "../components/gameCard";
 import {useState} from "react";
@@ -8,31 +7,6 @@ import Navbar from "../components/navbar";
 import CreateGameForm from "../components/createGameForm";
 import { AlertData, AlertMenu } from "../components/alert";
 import LogoutButton from "../components/buttons/logoutButton";
-
-type AnswersOptions = {
-  text: string,
-  correct: boolean
-}
-
-type Question = {
-  id: number,
-  type: string,
-  media: string,
-  question: string,
-  answers: AnswersOptions[],
-  duration: number
-  points: number
-}
-
-type Game = {
-  id: number,
-  name: string,
-  thumbnail: string,
-  owner: string,
-  active: number,
-  createdAt: Date,
-  questions: Question[]
-}
 
 export function DashboardScreen () {
   const [games, setGames] = useState<Game[]>([]);
@@ -76,8 +50,9 @@ export function DashboardScreen () {
         {games.length === 0 ? (
           <p>You currently have no games!</p>
         ) : (
-          games.map((game, index) => {
-            console.log(game);
+
+          games.map((game, index) => {;
+            console.log(games);
             return (
               <div key={game.id}>
                 <GameCard title={game.name} 

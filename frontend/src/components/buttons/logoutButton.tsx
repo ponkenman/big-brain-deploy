@@ -3,19 +3,19 @@ import { fetchBackend } from "../../helpers";
 import Button from "./button";
 
 export default function LogoutButton() {
-    const navigate = useNavigate();
-    async function logout() {
+  const navigate = useNavigate();
+  async function logout() {
     const token = localStorage.getItem("token");
     if (!token) {
-        return;
+      return;
     }
     const response = await fetchBackend("POST", "/admin/auth/logout", undefined, token);
     if (response.error) {
-        console.log(response.error);
+      console.log(response.error);
     } else {
-        localStorage.clear();
-        navigate("/login");
+      localStorage.clear();
+      navigate("/login");
     }
-    };
-    return       <Button text="Logout" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={logout}/>;
+  };
+  return       <Button text="Logout" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={logout}/>;
 }

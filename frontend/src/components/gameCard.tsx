@@ -4,6 +4,7 @@ import Button from "./buttons/button";
 import { AlertData } from "./alert";
 import { initialiseAlerts, fetchBackend } from "../helpers";
 import EditGameForm from "../components/editGameForm";
+import { useNavigate } from "react-router-dom";
 
 type AnswersOptions = {
   text: string,
@@ -38,6 +39,7 @@ export default function GameCard(props: {title: string, questions: Question[], t
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [showEditGameForm, setShowEditGameForm] = useState(false);
+  const navigate = useNavigate();
 
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
 
@@ -93,7 +95,7 @@ export default function GameCard(props: {title: string, questions: Question[], t
     </div>
     <div className="flex flex-row gap-2">
       <Button text="Play" color="bg-emerald-200" hoverColor="hover:bg-emerald-400" />
-      <Button text="Edit" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => setShowEditGameForm(true)}/>
+      <Button text="Edit" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => navigate(`/game/${props.id}`)}/>
       <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
     </div>
     {showEditGameForm && 
