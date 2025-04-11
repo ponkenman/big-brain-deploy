@@ -38,6 +38,7 @@ export default function GameCard(props: {title: string, questions: Question[], t
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [showEditGameForm, setShowEditGameForm] = useState(false);
+  const [thumbnail, setThumbnail] = useState("");
 
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
 
@@ -88,7 +89,7 @@ export default function GameCard(props: {title: string, questions: Question[], t
     <p className="font-semibold">{props.title}</p>
     <p>{props.numQuestions} Questions</p>
     <p>{props.totalDuration} seconds</p>
-    <img src="" alt={`Thumbnail for ${props.title}`}></img>
+    <img src={thumbnail == "" ? "src/assets/default-game-icon.png" : thumbnail} alt={`Thumbnail for ${props.title}`}></img>
     <div className="flex flex-row gap-2">
     <Button text="Edit Game" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => setShowEditGameForm(true)}/>
     <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>

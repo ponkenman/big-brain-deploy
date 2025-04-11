@@ -62,7 +62,7 @@ export function fileToDataUrl(file: File) {
   }
   
   const reader = new FileReader();
-  const dataUrlPromise = new Promise((resolve,reject) => {
+  const dataUrlPromise = new Promise<string>((resolve,reject) => {
       reader.onerror = reject;
       reader.onload = () => resolve(reader.result);
   });
