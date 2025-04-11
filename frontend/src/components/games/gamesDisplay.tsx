@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import GameCard from "./gameCard";
-import { APIError, Game, Question } from "../../types";
+import { AlertFunc, APIError, Game } from "../../types";
 import { fetchBackend } from "../../helpers";
 import Button from "../buttons/button";
 import CreateGameForm from "./createGameForm";
 
-export function AdminGamesList(props: { createAlert: (message: string) => void }) {
+export function AdminGamesList(props: { createAlert: AlertFunc }) {
   const [games, setGames] = useState<Game[]>([]);
   const [gamesLength, setGamesLength] = useState(1);
   const [showCreateGameForm, setShowCreateGameForm] = useState(false);
@@ -34,20 +34,20 @@ export function AdminGamesList(props: { createAlert: (message: string) => void }
   }, [gamesLength]);
 
   return (<>
-      <Button text="Create Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => setShowCreateGameForm(true)}/>
-      <h2 className="text-3xl font-semibold py-7">Your games</h2>
-      <div className="grid gap-4 grid-cols-4">
-        {games.length === 0 ? (
-          <p>You currently have no games!</p>
-        ) : (
+    <Button text="Create Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => setShowCreateGameForm(true)}/>
+    <h2 className="text-3xl font-semibold py-7">Your games</h2>
+    <div className="grid gap-4 grid-cols-4">
+      {games.length === 0 ? (
+        <p>You currently have no games!</p>
+      ) : (
 
-          games.map((game, index) => {;
-            return (
-              <GameCard createAlert={props.createAlert} games={games} setGamesLength={setGamesLength} gameId={game.id} key={index}/>
-            )
-          })
-        )}
-      </div>
-      {showCreateGameForm && <CreateGameForm closeForm={() => setShowCreateGameForm(false)} games={games} setGamesLength={setGamesLength} createAlert={props.createAlert}/>}
+        games.map((game, index) => {;
+          return (
+            <GameCard createAlert={props.createAlert} games={games} setGamesLength={setGamesLength} gameId={game.id} key={index}/>
+          )
+        })
+      )}
+    </div>
+    {showCreateGameForm && <CreateGameForm closeForm={() => setShowCreateGameForm(false)} games={games} setGamesLength={setGamesLength} createAlert={props.createAlert}/>}
   </>);
 }

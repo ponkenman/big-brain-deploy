@@ -1,5 +1,5 @@
-import React from "react";
 import { AlertData } from "./components/alert";
+import { StateSetter } from "./types";
 
 interface FetchOptions {
   method: "GET"|"POST"|"PUT"|"DELETE",
@@ -29,7 +29,7 @@ export async function fetchBackend(
   return await response.json();
 }
 
-export function initialiseAlerts(alerts: AlertData[], setAlerts: React.Dispatch<React.SetStateAction<AlertData[]>>, alertId: number, setAlertId: React.Dispatch<React.SetStateAction<number>>) {
+export function initialiseAlerts(alerts: AlertData[], setAlerts: StateSetter<AlertData[]>, alertId: number, setAlertId: StateSetter<number>) {
   return function(message: string) {
     setAlerts([...alerts, { message: message, key: alertId }]);
     setAlertId(alertId + 1);

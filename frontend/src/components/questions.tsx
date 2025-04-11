@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from "react";
+import { useState } from "react";
 import TextInput from "./forms/textInput";
 import Button from "./buttons/button";
 import SelectMenu from "./forms/selectInput";
+import { StateSetter } from "../types";
 
 type AnswersOptions = {
   text: string,
@@ -24,7 +25,7 @@ enum QuestionType {
   JUDGEMENT = "Judgement"
 }
 
-export default function Questions(props: {labelName: string, id: string, questions: Question[], onEnter?: () => void; set: React.Dispatch<React.SetStateAction<Question[]>> }) {
+export default function Questions(props: {labelName: string, id: string, questions: Question[], onEnter?: () => void; set: StateSetter<Question[]> }) {
   const [media, setMedia] = useState("");
   const [currQuestion, setCurrQuestion] = useState("");
   const [currAnswerText, setCurrAnswerText] = useState("");

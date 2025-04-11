@@ -1,6 +1,6 @@
-import React from "react";
+import { StateSetter } from "../../types";
 
-export default function FileSelect(props: { labelName: string, id: string, set: React.Dispatch<React.SetStateAction<File | null>> }) {
+export default function FileSelect(props: { labelName: string, id: string, set: StateSetter<File | null> }) {
 
   return (<div className="py-2">
     <label htmlFor={props.id} className="text-lg font-medium mb-2">{props.labelName}</label>

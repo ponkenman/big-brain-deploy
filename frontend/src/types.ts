@@ -1,3 +1,5 @@
+import React from "react"
+
 export type AnswersOptions = {
   text: string,
   correct: boolean
@@ -27,3 +29,7 @@ export type Game = {
 export type APIError = {
   error: string
 }
+
+export type StateSetter<T> = React.Dispatch<React.SetStateAction<T>>;
+
+export type AlertFunc = (message: string) => void;

@@ -6,9 +6,9 @@ import Modal from "../modal";
 import Button from "../buttons/button";
 import Questions from "../questions";
 import FileSelect from "../forms/fileInput";
-import { Game, Question } from "../../types";
+import { AlertFunc, Game, Question, StateSetter } from "../../types";
 
-export default function CreateGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: React.Dispatch<React.SetStateAction<number>>, createAlert: (message: string) => void }) {
+export default function CreateGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number>, createAlert: AlertFunc }) {
   const [name, setName] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [thumbnailFile, setThumbnailFile] = useState<File|null>(null);

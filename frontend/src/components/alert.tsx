@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Button from "./buttons/button";
+import { StateSetter } from "../types";
 
 export interface AlertData {
     message: string;
     key: number
 }
 
-export function AlertMenu(props: { alerts: AlertData[], setAlerts: React.Dispatch<React.SetStateAction<AlertData[]>>} ) {
+export function AlertMenu(props: { alerts: AlertData[], setAlerts: StateSetter<AlertData[]>} ) {
   return (<section className="fixed z-1 right-0 bottom-0 m-5 flex flex-col gap-3">
     {props.alerts.map( a => <AlertPopup message={a.message} key={a.key}/>)}
   </section>);

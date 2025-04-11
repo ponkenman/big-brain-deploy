@@ -1,6 +1,7 @@
 import React from "react";
+import { StateSetter } from "../../types";
 
-export default function TextInput<T>(props: { labelName: string, id: string, type: string, defaultValue?: string, onEnter?: () => void; set: React.Dispatch<React.SetStateAction<T>> }) {
+export default function TextInput<T>(props: { labelName: string, id: string, type: string, defaultValue?: string, onEnter?: () => void; set: StateSetter<T> }) {
   function ifEnter(event: React.KeyboardEvent) {
     if (props.onEnter && event.key === "Enter") {
       props.onEnter();

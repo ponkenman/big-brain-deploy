@@ -31,10 +31,13 @@ export default [
       ...react.configs["jsx-runtime"].rules,
       ...reactHooks.configs.recommended.rules,
       "react-hooks/exhaustive-deps": "off",
-      "no-unused-vars": ["error", { 
-        "argsIgnorePattern": "^_",
-        "caughtErrorsIgnorePattern": "^_"
-      }],
+      // Note: following removed as incompatible with typescript
+      // "no-unused-vars": ["error", { 
+      //   "argsIgnorePattern": "^_",
+      //   "caughtErrorsIgnorePattern": "^_"
+      // }
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": ["error"],
       "react/jsx-no-target-blank": ["error", { enforceDynamicLinks: "always" }],
       "react-refresh/only-export-components": [
         "error",

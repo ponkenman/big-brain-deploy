@@ -1,13 +1,11 @@
 import Modal from "../modal";
-import {useState, useEffect} from "react";
+import { useState } from "react";
 import Button from "../buttons/button";
-import { AlertData } from "../alert";
-import { initialiseAlerts, fetchBackend } from "../../helpers";
-import EditGameForm from "./editGameForm";
+import { fetchBackend } from "../../helpers";
 import { useNavigate } from "react-router-dom";
-import { Game, Question } from "../../types";
+import { AlertFunc, Game, Question, StateSetter } from "../../types";
 
-export default function GameCard(props: { createAlert: (message: string) => void, games: Game[], setGamesLength: React.Dispatch<React.SetStateAction<number>>, gameId: number }) {
+export default function GameCard(props: { createAlert: AlertFunc, games: Game[], setGamesLength: StateSetter<number>, gameId: number }) {
   const [modal, setModal] = useState(false);
   const openModal = () => setModal(true);
   const closeModal = () => setModal(false);
