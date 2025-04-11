@@ -7,11 +7,10 @@ import EditGameForm from "./editGameForm";
 import { useNavigate } from "react-router-dom";
 import { Game, Question } from "../../types";
 
-export default function GameCard(props: { createAlert: (message: string) => void, games: Game[], setGames: React.Dispatch<React.SetStateAction<Game[]>>, gameId: number }) {
+export default function GameCard(props: { createAlert: (message: string) => void, games: Game[], setGamesLength: React.Dispatch<React.SetStateAction<number>>, gameId: number }) {
   const [modal, setModal] = useState(false);
   const openModal = () => setModal(true);
   const closeModal = () => setModal(false);
-  const [showEditGameForm, setShowEditGameForm] = useState(false);
   const navigate = useNavigate();
 
   const game = props.games.find(game => game.id === props.gameId) as Game;
@@ -29,14 +28,16 @@ export default function GameCard(props: { createAlert: (message: string) => void
     const body = {
       games: updatedGames
     }
+    console.log(body);
 
     const response = await fetchBackend("PUT", "/admin/games", body, token);
     if (response.error) {
       props.createAlert(response.error);
     } else {
       props.createAlert("Deleted a game!");
-      props.setGames([]);
+      props.setGamesLength(-1);
     }
+    closeModal();
   }
 
   const calcTotalDuration = (questions: Question[]): number => {

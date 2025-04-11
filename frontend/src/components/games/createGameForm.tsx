@@ -8,7 +8,7 @@ import Questions from "../questions";
 import FileSelect from "../forms/fileInput";
 import { Game, Question } from "../../types";
 
-export default function CreateGameForm(props: { closeForm: () => void, games: Game[], setGames: React.Dispatch<React.SetStateAction<Game[]>>, createAlert: (message: string) => void }) {
+export default function CreateGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: React.Dispatch<React.SetStateAction<number>>, createAlert: (message: string) => void }) {
   const [name, setName] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [thumbnailFile, setThumbnailFile] = useState<File|null>(null);
@@ -46,7 +46,7 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
     }
 
     const newGame = {
-      id: props.games.length + 1,
+      id: Math.floor(Math.random() * 1000000),
       name: name,
       thumbnail: thumbnailUrl,
       owner: email,
@@ -66,7 +66,8 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
       props.createAlert(response.error);
     } else {
       props.createAlert("Created a game!");
-      props.setGames([]);
+      console.log("Damn");
+      props.setGamesLength(-1);
     }
 
     props.closeForm();

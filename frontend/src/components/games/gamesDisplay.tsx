@@ -7,6 +7,7 @@ import CreateGameForm from "./createGameForm";
 
 export function AdminGamesList(props: { createAlert: (message: string) => void }) {
   const [games, setGames] = useState<Game[]>([]);
+  const [gamesLength, setGamesLength] = useState(1);
   const [showCreateGameForm, setShowCreateGameForm] = useState(false);
 
   async function getGames() {
@@ -19,14 +20,18 @@ export function AdminGamesList(props: { createAlert: (message: string) => void }
       console.log(response.error);
     } else {
       setGames(response.games.toSorted((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt)));
+      setGamesLength(response.games.length);
     }
   };
 
   useEffect(() => {
-    if (games.length === 0) {
+    console.log("Hook run since games updated!");
+    console.log(games.length);
+    console.log(gamesLength);
+    if (games.length !== gamesLength) {
       getGames();
     }
-  }, [games]);
+  }, [gamesLength]);
 
   return (<>
       <Button text="Create Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => setShowCreateGameForm(true)}/>
@@ -37,13 +42,12 @@ export function AdminGamesList(props: { createAlert: (message: string) => void }
         ) : (
 
           games.map((game, index) => {;
-            console.log(games);
             return (
-              <GameCard createAlert={props.createAlert} games={games} setGames={setGames} gameId={game.id} key={game.id}/>
+              <GameCard createAlert={props.createAlert} games={games} setGamesLength={setGamesLength} gameId={game.id} key={index}/>
             )
           })
         )}
       </div>
-      {showCreateGameForm && <CreateGameForm closeForm={() => setShowCreateGameForm(false)} games={games} setGames={setGames} createAlert={props.createAlert}/>}
+      {showCreateGameForm && <CreateGameForm closeForm={() => setShowCreateGameForm(false)} games={games} setGamesLength={setGamesLength} createAlert={props.createAlert}/>}
   </>);
 }
