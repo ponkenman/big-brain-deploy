@@ -1,9 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { fetchBackend, initialiseAlerts } from "../helpers";
 import GameCard from "../components/gameCard";
 import {useState} from "react";
 import {useEffect} from "react";
-import Button from "../components/button";
+import Button from "../components/buttons/button";
 import Navbar from "../components/navbar";
 import CreateGameForm from "../components/createGameForm";
 import { AlertData, AlertMenu } from "../components/alert";
@@ -71,12 +71,7 @@ export function DashboardScreen () {
   };
 
   const calcTotalDuration = (questions: Question[]): number => {
-    let totalDuration = 0;
-    // for (const currQuestion of questions) {
-    //   totalDuration += currQuestion.duration
-    // }
-  
-    return totalDuration;
+    return questions.reduce((prev, curr) => prev + curr.duration, 0);
   }
 
   useEffect(() => {
@@ -85,26 +80,26 @@ export function DashboardScreen () {
 
   return (<>
     <Navbar>
-        <Button text="Logout" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={logout}/>
+      <Button text="Logout" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={logout}/>
     </Navbar>
     <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Dashboard</h1>
       <Button text="Create Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => setShowCreateGameForm(true)}/>
-      <div className="pt-5">
+      <h2 className="text-3xl font-semibold py-7">Your games</h2>
+      <div className="grid gap-4 grid-cols-4">
         {games.length === 0 ? (
-          <h1>You currently have no games!</h1>
+          <p>You currently have no games!</p>
         ) : (
           games.map((game, index) => {
             return (
               <div key={game.id}>
-                <h1>Game {index + 1}!</h1>
                 <GameCard title={game.name} 
-                questions={game.questions} 
-                thumbnail={game.thumbnail} 
-                numQuestions={index} 
-                totalDuration={calcTotalDuration(game.questions)} 
-                id={game.id} 
-                refreshGames={() => setRefreshGames(refreshGames + 1)}/>
+                  questions={game.questions} 
+                  thumbnail={game.thumbnail} 
+                  numQuestions={index} 
+                  totalDuration={game.questions ? calcTotalDuration(game.questions) : 0} 
+                  id={game.id} 
+                  refreshGames={() => setRefreshGames(refreshGames + 1)}/>
               </div>
             )
           })

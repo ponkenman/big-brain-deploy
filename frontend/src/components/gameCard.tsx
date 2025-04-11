@@ -1,7 +1,7 @@
 import Modal from "../components/modal";
 import {useState, useEffect} from "react";
-import Button from "../components/button";
-import { AlertData, AlertMenu } from "./alert";
+import Button from "./buttons/button";
+import { AlertData } from "./alert";
 import { initialiseAlerts, fetchBackend } from "../helpers";
 import EditGameForm from "../components/editGameForm";
 
@@ -84,28 +84,30 @@ export default function GameCard(props: {title: string, questions: Question[], t
     }
   }
 
-  return (<article>
-    <p>{props.title}</p>
+  return (<article className="p-5 rounded-lg bg-indigo-200">
+    <p className="font-semibold">{props.title}</p>
     <p>{props.numQuestions} Questions</p>
     <p>{props.totalDuration} seconds</p>
     <img src="" alt={`Thumbnail for ${props.title}`}></img>
-    <Button text="Edit Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => setShowEditGameForm(true)}/>
-    <Button text="Delete Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={openModal}/>
+    <div className="flex flex-row gap-2">
+    <Button text="Edit Game" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => setShowEditGameForm(true)}/>
+    <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
+    </div>
     {showEditGameForm && 
       <EditGameForm 
-      title={props.title} 
-      questions={props.questions} 
-      thumbnail={props.thumbnail} 
-      id={props.id} 
-      closeForm={() => setShowEditGameForm(false)} 
-      refreshGames={() => props.refreshGames()}
-    />}
+        title={props.title} 
+        questions={props.questions} 
+        thumbnail={props.thumbnail} 
+        id={props.id} 
+        closeForm={() => setShowEditGameForm(false)} 
+        refreshGames={() => props.refreshGames()}
+      />}
     {modal && (
       <Modal>
         <h1>Delete this game</h1>
         <h2>Are you sure you want to delete this game?</h2>
-        <Button text="Delete Game" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={deleteGame}/>
-        <Button text="Cancel" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={closeModal}/>
+        <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteGame}/>
+        <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={closeModal}/>
       </Modal>
     )}
   </article>);

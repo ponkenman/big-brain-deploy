@@ -2,8 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { fetchBackend, initialiseAlerts } from "../helpers";
 import { useState } from "react";
 import Navbar from "../components/navbar";
-import TextInput from "../components/textInput";
-import Button from "../components/button";
+import TextInput from "../components/forms/textInput";
+import Button from "../components/buttons/button";
 import { AlertData, AlertMenu } from "../components/alert";
 
 export function RegisterScreen() {

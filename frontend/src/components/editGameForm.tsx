@@ -3,8 +3,8 @@ import {useEffect} from "react";
 import { initialiseAlerts, fetchBackend } from "../helpers";
 import { AlertData, AlertMenu } from "./alert";
 import Modal from "../components/modal";
-import Button from "../components/button";
-import TextInput from "../components/textInput";
+import Button from "./buttons/button";
+import TextInput from "./forms/textInput";
 import Questions from "../components/questions"
 
 type AnswersOptions = {

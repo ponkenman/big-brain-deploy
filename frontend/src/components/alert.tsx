@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Button from "./button";
+import Button from "./buttons/button";
 
 export interface AlertData {
     message: string;

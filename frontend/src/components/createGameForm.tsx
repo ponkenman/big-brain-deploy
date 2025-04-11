@@ -1,10 +1,9 @@
 import {useState} from "react";
 import {useEffect} from "react";
-import TextInput from "./textInput";
-import { initialiseAlerts, fetchBackend } from "../helpers";
-import { AlertData, AlertMenu } from "./alert";
+import TextInput from "./forms/textInput";
+import { fetchBackend } from "../helpers";
 import Modal from "../components/modal";
-import Button from "../components/button";
+import Button from "./buttons/button";
 import Questions from "./questions";
 
 type AnswersOptions = {
@@ -32,13 +31,7 @@ type Game = {
   questions: Question[]
 }
 
-type createGameFormProps = {
-  closeForm: () => void;
-  refreshGames: () => void;
-  createAlert: (message: string) => void;
-};
-
-export default function CreateGameForm({ closeForm, refreshGames, createAlert }: createGameFormProps) {
+export default function CreateGameForm(props: { closeForm: () => void, refreshGames: () => void, createAlert: (message: string) => void }) {
   const [name, setName] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [thumbnail, setThumbnail] = useState("");
@@ -66,7 +59,7 @@ export default function CreateGameForm({ closeForm, refreshGames, createAlert }:
 
   async function createGame() {
     if (name === "") {
-      createAlert("Name is empty!");
+      props.createAlert("Name is empty!");
       return;
     }
     if (questions.length === 0 && !confirmNoQuestions) {
@@ -76,12 +69,12 @@ export default function CreateGameForm({ closeForm, refreshGames, createAlert }:
     
     const token = localStorage.getItem("token");
     if (!token) {
-      createAlert("Invalid token!");
+      props.createAlert("Invalid token!");
       return;
     }
     const email = localStorage.getItem("email");
     if (!email) {
-      createAlert("Invalid email!");
+      props.createAlert("Invalid email!");
       return;
     }
 
@@ -104,13 +97,13 @@ export default function CreateGameForm({ closeForm, refreshGames, createAlert }:
 
     const response = await fetchBackend("PUT", "/admin/games", body, token);
     if (response.error) {
-      createAlert(response.error);
+      props.createAlert(response.error);
     } else {
-      createAlert("Created a game!");
-      refreshGames();
+      props.createAlert("Created a game!");
+      props.refreshGames();
     }
 
-    closeForm();
+    props.closeForm();
   }
 
   useEffect(() => {
@@ -120,17 +113,17 @@ export default function CreateGameForm({ closeForm, refreshGames, createAlert }:
   }, [questions]);
 
   return (<>
-      {modal && (
-        <Modal>
-            <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} set={setName} onEnter={createGame} />
-            <TextInput labelName="Game Thumbnail" id="game-thumnail" type="text" defaultValue={thumbnail} set={setThumbnail} onEnter={createGame} />
-            <Questions labelName="Questions" id="game-questions" questions={questions} set={setQuestions} onEnter={createGame} />
-            { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
-            <div className="flex flex-row gap-2">
-            <Button text="Submit" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={createGame}/>
-            <Button text="Cancel" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={closeForm}/>
-            </div>
-        </Modal>
-      )}
+    {modal && (
+      <Modal>
+        <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} set={setName} onEnter={createGame} />
+        <TextInput labelName="Game Thumbnail" id="game-thumnail" type="text" defaultValue={thumbnail} set={setThumbnail} onEnter={createGame} />
+        <Questions labelName="Questions" id="game-questions" questions={questions} set={setQuestions} onEnter={createGame} />
+        { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
+        <div className="flex flex-row gap-2">
+          <Button text="Submit" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={createGame}/>
+          <Button text="Cancel" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={props.closeForm}/>
+        </div>
+      </Modal>
+    )}
   </>);
 }
