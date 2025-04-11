@@ -38,7 +38,6 @@ export default function GameCard(props: {title: string, questions: Question[], t
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [showEditGameForm, setShowEditGameForm] = useState(false);
-  const [thumbnail, setThumbnail] = useState("");
 
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
 
@@ -85,14 +84,16 @@ export default function GameCard(props: {title: string, questions: Question[], t
     }
   }
 
-  return (<article className="p-5 rounded-lg bg-indigo-200">
+  return (<article className="p-5 rounded-lg bg-indigo-200 h-85">
     <p className="font-semibold">{props.title}</p>
     <p>{props.numQuestions} Questions</p>
     <p>{props.totalDuration} seconds</p>
-    <img src={thumbnail == "" ? "src/assets/default-game-icon.png" : thumbnail} alt={`Thumbnail for ${props.title}`}></img>
+    <div className="flex flex-row justify-center border rounded-xl overflow-hidden border-indigo-400 bg-indigo-300 my-4">
+      <img src={props.thumbnail == "" ? "src/assets/default-game-icon.png" : props.thumbnail} alt={`Thumbnail for ${props.title}`} className="object-cover object-center h-40 w-auto" />
+    </div>
     <div className="flex flex-row gap-2">
-    <Button text="Edit Game" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => setShowEditGameForm(true)}/>
-    <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
+      <Button text="Edit Game" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => setShowEditGameForm(true)}/>
+      <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
     </div>
     {showEditGameForm && 
       <EditGameForm 

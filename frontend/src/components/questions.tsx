@@ -79,34 +79,34 @@ export default function Questions(props: {labelName: string, id: string, questio
       <label htmlFor={props.id} className="text-lg font-medium">{props.labelName}</label>
     </div>
     <section className="flex flex-col gap-4">
-    {props.questions.map((question, index) => {
-      return (<article key={question.id} className="p-4 rounded-lg bg-indigo-300">
+      {props.questions.map((question, index) => {
+        return (<article key={question.id} className="p-4 rounded-lg bg-indigo-300">
           <TextInput labelName={`Question ${index + 1}`} id={`question${index}-text`} type="text" value={question.question} set={setCurrQuestion} onEnter={() => updatedQuestion(index, {question: currQuestion})} />
-        <SelectMenu labelName="Question Type" options={Object.values(QuestionType)} set={setQuestionType}></SelectMenu>
-        <TextInput labelName={`Question ${index + 1} Media`} id={`question${index}-media`} type="text" value={question.media} set={setMedia} onEnter={() => updatedQuestion(index, {media: media})} />
-        {question.answers.map((answer, answerIndex) => {
-          return (
-            <div key={answerIndex}>Answer {answerIndex + 1}: 
-              <TextInput labelName="Answer" id={`question${index}-answer${answerIndex}`} type="text" value={answer.text} set={setCurrAnswerText} onEnter={() => updateAnswer(index, answerIndex, {text: currAnswerText})} />
-              <label className="text-lg font-medium mb-2">
-                <input type="radio" name={`question${index}-answer${answerIndex}-correct`} value="True" onChange={() => updateAnswer(index, answerIndex, {correct: true})}/>
+          <SelectMenu labelName="Question Type" options={Object.values(QuestionType)} set={setQuestionType}></SelectMenu>
+          <TextInput labelName={`Question ${index + 1} Media`} id={`question${index}-media`} type="text" value={question.media} set={setMedia} onEnter={() => updatedQuestion(index, {media: media})} />
+          {question.answers.map((answer, answerIndex) => {
+            return (
+              <div key={answerIndex}>Answer {answerIndex + 1}: 
+                <TextInput labelName="Answer" id={`question${index}-answer${answerIndex}`} type="text" value={answer.text} set={setCurrAnswerText} onEnter={() => updateAnswer(index, answerIndex, {text: currAnswerText})} />
+                <label className="text-lg font-medium mb-2">
+                  <input type="radio" name={`question${index}-answer${answerIndex}-correct`} value="True" onChange={() => updateAnswer(index, answerIndex, {correct: true})}/>
                 Correct
-              </label>
-              <label className="text-lg font-medium mb-2">
-                <input type="radio" name={`question${index}-answer${answerIndex}-incorrect`} value="False" onChange={() => updateAnswer(index, answerIndex, {correct: false})}/>
+                </label>
+                <label className="text-lg font-medium mb-2">
+                  <input type="radio" name={`question${index}-answer${answerIndex}-incorrect`} value="False" onChange={() => updateAnswer(index, answerIndex, {correct: false})}/>
                 Incorrect
-              </label>
-            </div>
-          )
-        })}
-        <TextInput labelName="Duration" id={`question${index}-duration`} type="text" defaultValue={question.duration.toString()} set={setDuration} onEnter={() => updatedQuestion(index, {duration: duration})} />
-        <TextInput labelName="Points" id={`question${index}-points`} type="text" defaultValue={question.points.toString()} set={setPoints} onEnter={() => updatedQuestion(index, {points: points})} />
-        {question.answers.length < 6 && (
-          <Button text="Add Answers" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => addAnswer(index)}/>
-        )}
-                  <Button text="Delete Question" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={() => deleteQuestion(question.id)}/>
-      </article>)
-    })}
+                </label>
+              </div>
+            )
+          })}
+          <TextInput labelName="Duration" id={`question${index}-duration`} type="text" defaultValue={question.duration.toString()} set={setDuration} onEnter={() => updatedQuestion(index, {duration: duration})} />
+          <TextInput labelName="Points" id={`question${index}-points`} type="text" defaultValue={question.points.toString()} set={setPoints} onEnter={() => updatedQuestion(index, {points: points})} />
+          {question.answers.length < 6 && (
+            <Button text="Add Answers" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => addAnswer(index)}/>
+          )}
+          <Button text="Delete Question" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={() => deleteQuestion(question.id)}/>
+        </article>)
+      })}
     </section>
     <Button text="Add Questions" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={addQuestions}/>
   </div>);

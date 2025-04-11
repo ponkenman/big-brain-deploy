@@ -91,6 +91,7 @@ export function DashboardScreen () {
           <p>You currently have no games!</p>
         ) : (
           games.map((game, index) => {
+            console.log(game);
             return (
               <div key={game.id}>
                 <GameCard title={game.name} 

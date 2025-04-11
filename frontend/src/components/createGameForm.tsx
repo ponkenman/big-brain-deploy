@@ -35,7 +35,8 @@ type Game = {
 export default function CreateGameForm(props: { closeForm: () => void, refreshGames: () => void, createAlert: (message: string) => void }) {
   const [name, setName] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [thumbnail, setThumbnail] = useState<File>();
+  const [thumbnailFile, setThumbnailFile] = useState<File|null>(null);
+  const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [confirmNoQuestions, setConfirmNoQuestions] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
   
@@ -57,6 +58,13 @@ export default function CreateGameForm(props: { closeForm: () => void, refreshGa
       setGames(response.games);
     }
   };
+
+  useEffect(() => {
+    if (thumbnailFile) {
+      const data = fileToDataUrl(thumbnailFile);
+      data.then(url => setThumbnailUrl(url));
+    }
+  }, [thumbnailFile]);
 
   async function createGame() {
     if (name === "") {
@@ -82,7 +90,7 @@ export default function CreateGameForm(props: { closeForm: () => void, refreshGa
     const newGame = {
       id: games.length + 1,
       name: name,
-      thumbnail: thumbnail ? fileToDataUrl(thumbnail) : "",
+      thumbnail: thumbnailUrl,
       owner: email,
       active: 0,
       createdAt: new Date().toISOString(),
@@ -117,7 +125,7 @@ export default function CreateGameForm(props: { closeForm: () => void, refreshGa
     {modal && (
       <Modal>
         <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} set={setName} onEnter={createGame} />
-        <FileSelect labelName="Game Thumbnail" id="game-thumnail" set={setThumbnail} />
+        <FileSelect labelName="Game Thumbnail" id="game-thumnail" set={setThumbnailFile} />
         <Questions labelName="Questions" id="game-questions" questions={questions} set={setQuestions} onEnter={createGame} />
         { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
         <div className="flex flex-row gap-2">
