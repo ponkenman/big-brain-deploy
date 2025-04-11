@@ -6,58 +6,16 @@ import Modal from "../modal";
 import Button from "../buttons/button";
 import Questions from "../questions";
 import FileSelect from "../forms/fileInput";
+import { Game, Question } from "../../types";
 
-type AnswersOptions = {
-  text: string,
-  correct: boolean
-}
-
-type Question = {
-  id: number,
-  type: string,
-  media: string,
-  question: string,
-  answers: AnswersOptions[],
-  duration: number
-  points: number
-}
-
-type Game = {
-  id: number,
-  name: string,
-  thumbnail: string,
-  owner: string,
-  active: number,
-  createdAt: string,
-  questions: Question[]
-}
-
-export default function CreateGameForm(props: { closeForm: () => void, refreshGames: () => void, createAlert: (message: string) => void }) {
+export default function CreateGameForm(props: { closeForm: () => void, games: Game[], setGames: React.Dispatch<React.SetStateAction<Game[]>>, createAlert: (message: string) => void }) {
   const [name, setName] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [thumbnailFile, setThumbnailFile] = useState<File|null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [confirmNoQuestions, setConfirmNoQuestions] = useState(false);
-  const [games, setGames] = useState<Game[]>([]);
   
   const [modal] = useState(true);
-
-  useEffect(() => {
-    getGames();
-  }, []);
-
-  async function getGames() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      return;
-    }
-    const response = await fetchBackend("GET", "/admin/games", undefined, token);
-    if (response.error) {
-      console.log(response.error);
-    } else {
-      setGames(response.games);
-    }
-  };
 
   useEffect(() => {
     if (thumbnailFile) {
@@ -88,7 +46,7 @@ export default function CreateGameForm(props: { closeForm: () => void, refreshGa
     }
 
     const newGame = {
-      id: games.length + 1,
+      id: props.games.length + 1,
       name: name,
       thumbnail: thumbnailUrl,
       owner: email,
@@ -97,8 +55,7 @@ export default function CreateGameForm(props: { closeForm: () => void, refreshGa
       questions: questions
     }
 
-    const updateGames = [...games, newGame];
-    setGames(updateGames);
+    const updateGames = [...props.games, newGame];
 
     const body = {
       games: updateGames
@@ -109,7 +66,7 @@ export default function CreateGameForm(props: { closeForm: () => void, refreshGa
       props.createAlert(response.error);
     } else {
       props.createAlert("Created a game!");
-      props.refreshGames();
+      props.setGames([]);
     }
 
     props.closeForm();

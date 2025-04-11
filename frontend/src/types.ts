@@ -19,6 +19,11 @@ export type Game = {
   thumbnail: string,
   owner: string,
   active: number,
-  createdAt: Date,
+
+  createdAt: ReturnType<typeof Date.toString>,
   questions: Question[]
+}
+
+export type APIError = {
+  error: string
 }
