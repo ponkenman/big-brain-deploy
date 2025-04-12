@@ -12,7 +12,7 @@ export default function JudgementForm(props: {question: Question, index: number,
     
   function updateAnswer (questionIndex: number, answerIndex: number, update: Partial<AnswersOptions>) {
     const updatedQuestions = [...props.questions];
-    let updatedAnswers = [...updatedQuestions[questionIndex].answers];
+    const updatedAnswers = [...updatedQuestions[questionIndex].answers];
 
     for (const currAnswer of updatedAnswers) {
       currAnswer.correct = false;
@@ -44,7 +44,7 @@ export default function JudgementForm(props: {question: Question, index: number,
     })}
 
     {props.questions[props.index].answers.length < 2 && (
-        <Button text="Add Answers" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => addAnswer(props.index)}/>
+      <Button text="Add Answers" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => addAnswer(props.index)}/>
     )}
   </>);
 }

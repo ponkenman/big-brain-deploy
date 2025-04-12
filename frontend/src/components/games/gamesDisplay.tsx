@@ -41,7 +41,8 @@ export function AdminGamesList(props: { createAlert: AlertFunc }) {
         <p>You currently have no games!</p>
       ) : (
 
-        games.map((game, index) => {;
+        games.map((game, index) => {
+          console.log(games);
           return (
             <GameCard createAlert={props.createAlert} games={games} setGamesLength={setGamesLength} gameId={game.id} key={index}/>
           )

@@ -12,7 +12,7 @@ export default function SingleChoiceForm(props: {question: Question, index: numb
     
   function updateAnswer (questionIndex: number, answerIndex: number, update: Partial<AnswersOptions>) {
     const updatedQuestions = [...props.questions];
-    let updatedAnswers = [...updatedQuestions[questionIndex].answers];
+    const updatedAnswers = [...updatedQuestions[questionIndex].answers];
 
     for (const currAnswer of updatedAnswers) {
       currAnswer.correct = false;

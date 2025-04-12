@@ -4,7 +4,7 @@ import TextInput from "../forms/textInput";
 import { fetchBackend, fileToDataUrl } from "../../helpers";
 import Modal from "../modal";
 import Button from "../buttons/button";
-import Questions from "../questions";
+import Questions from "../questions/questions";
 import FileSelect from "../forms/fileInput";
 import { AlertFunc, Game, Question, StateSetter } from "../../types";
 
@@ -66,7 +66,7 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
       props.createAlert(response.error);
     } else {
       props.createAlert("Created a game!");
-      console.log("Damn");
+      console.log(newGame);
       props.setGamesLength(-1);
     }
 
@@ -82,14 +82,16 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
   return (<>
     {modal && (
       <Modal>
-        <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} set={setName} onEnter={createGame} />
-        <FileSelect labelName="Game Thumbnail (optional)" id="game-thumnail" set={setThumbnailFile} />
-        <Questions labelName="Questions" id="game-questions" questions={questions} set={setQuestions} onEnter={createGame} />
-        { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
-        <div className="flex flex-row gap-2">
-          <Button text="Submit" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={createGame}/>
-          <Button text="Cancel" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={props.closeForm}/>
-        </div>
+        <form>
+          <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} set={setName} onEnter={createGame} />
+          <FileSelect labelName="Game Thumbnail (optional)" id="game-thumnail" set={setThumbnailFile} />
+          <Questions labelName="Questions" id="game-questions" questions={questions} set={setQuestions} onEnter={createGame} />
+          { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
+          <div className="flex flex-row gap-2">
+            <Button text="Submit" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={createGame}/>
+            <Button text="Cancel" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={props.closeForm}/>
+          </div>
+        </form>
       </Modal>
     )}
   </>);

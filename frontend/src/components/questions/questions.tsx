@@ -1,11 +1,11 @@
 import { useState } from "react";
-import TextInput from "./forms/textInput";
-import Button from "./buttons/button";
-import SelectMenu from "./forms/selectInput";
-import { StateSetter, Question, QuestionType } from "../types";
-import SingleChoiceForm from "./forms/singleChoiceForm";
-import MultipleChoiceForm from "./forms/multipleChoiceForm";
-import JudgementForm from "./forms/judgementForm";
+import TextInput from "../forms/textInput";
+import Button from "../buttons/button";
+import SelectMenu from "../forms/selectInput";
+import { StateSetter, Question, QuestionType } from "../../types";
+import SingleChoiceForm from "../forms/singleChoiceForm";
+import MultipleChoiceForm from "../forms/multipleChoiceForm";
+import JudgementForm from "../forms/judgementForm";
 
 export default function Questions(props: {labelName: string, id: string, questions: Question[], onEnter?: () => void; set: StateSetter<Question[]> }) {
   const [media, setMedia] = useState("");
@@ -16,14 +16,11 @@ export default function Questions(props: {labelName: string, id: string, questio
 
   function addQuestions() {
     const newQuestion: Question = {
-      id: props.questions.length + 1,
-      type: "",
-      media: "",
-      question: "",
-      answers: [
-        {text: "", correct: true},
-        {text: "", correct: false}
-      ],
+      id: Math.floor(Math.random() * 1000000),
+      type: questionType,
+      media: media,
+      question: currQuestion,
+      answers: [{text: "", correct: false}, {text: "", correct: false}],
       duration: 10,
       points: 1
     }
@@ -55,7 +52,7 @@ export default function Questions(props: {labelName: string, id: string, questio
           {questionType === QuestionType.SINGLE_CHOICE ? (
             <SingleChoiceForm question={question} index={index} questions={props.questions} set={props.set} onEnter={props.onEnter}/>
           ) : questionType === QuestionType.MULTIPLE_CHOICE ? (
-            <MultipleChoiceForm question={question} index={index} questions={props.questions} set={props.set} onEnter={props.onEnter}/>
+            <MultipleChoiceForm questionIndex={index} questions={props.questions} setQuestions={props.set} />
           ) : (
             <JudgementForm question={question} index={index} questions={props.questions} set={props.set} onEnter={props.onEnter}/>
           )}

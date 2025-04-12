@@ -5,7 +5,7 @@ import { AlertData, AlertMenu } from "../alert";
 import Modal from "../../components/modal";
 import Button from "./../buttons/button";
 import TextInput from "../forms/textInput";
-import Questions from "../../components/questions"
+import Questions from "../questions/questions"
 
 type AnswersOptions = {
   text: string,

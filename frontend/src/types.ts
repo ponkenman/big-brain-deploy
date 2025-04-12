@@ -1,6 +1,6 @@
 import React from "react"
 
-export type AnswersOptions = {
+export type Answer = {
   text: string,
   correct: boolean
 }
@@ -10,7 +10,7 @@ export type Question = {
   type: string,
   media: string,
   question: string,
-  answers: AnswersOptions[],
+  answers: Answer[],
   duration: number
   points: number
 }
