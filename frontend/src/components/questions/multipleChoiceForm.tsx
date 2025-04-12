@@ -3,9 +3,8 @@ import Button from "../buttons/button";
 import TextInput from "../forms/textInput";
 import { useEffect, useState } from "react";
 
-export default function MultipleChoiceForm(props: {questions: Question[], questionIndex: number, onEnter?: () => void; setQuestions: StateSetter<Question[]> }) {
-  const [currAnswerText, setCurrAnswerText] = useState("");
-  const [answers, setAnswers] = useState<Answer[]>([]);
+export default function MultipleChoiceForm(props: {questions: Question[], questionIndex: number, setQuestions: StateSetter<Question[]> }) {
+  const [answers, setAnswers] = useState<Answer[]>(props.questions[props.questionIndex].answers);
 
   useEffect(() => {
     const newQuestions = [...props.questions];
@@ -26,24 +25,32 @@ export default function MultipleChoiceForm(props: {questions: Question[], questi
 
   function addAnswer() {
     const newAnswers = [...answers];
-    newAnswers.push({ text : "", correct: false });
+    newAnswers.push({ text : "", correct: false, id: Math.floor(Math.random() * 1000000) });
     setAnswers(newAnswers);
+    console.log(newAnswers);
+  }
+
+  function deleteAnswer(answerIndex: number) {
+    const newAnswers = answers.toSpliced(answerIndex, 1);
+    setAnswers(newAnswers);
+    console.log(newAnswers);
   }
   
-  return (<>
+  return (<section className="flex flex-col gap-3 py-3">
     {answers.map((answer, answerIndex) => {
       return (
-        <div key={answerIndex}>Answer {answerIndex + 1}: 
-          <TextInput labelName="Answer" id={`question${props.questionIndex}-answer${answerIndex}`} type="text" defaultValue={answer.text} set={setCurrAnswerText} onEnter={() => updateAnswer(props.index, answerIndex, {text: currAnswerText})} />
+        <article key={answerIndex} className="bg-blue-400 rounded-lg p-3">#{answerIndex + 1} 
+          <TextInput labelName="Answer" id={`question${props.questionIndex}-answer${answerIndex}`} type="text" defaultValue={answer.text} set={setCurrText}/>
           <label className="text-lg font-medium mb-2">
             <input type="checkbox" name={`question${props.questionIndex}-answer${answerIndex}-correct`} checked={answer.correct} onChange={() => updateAnswer(props.index, answerIndex, {correct: !answer.correct})}/>
           Correct
           </label>
-        </div>
+          { answers.length > 2 && <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={() => deleteAnswer(answerIndex)}/>}
+        </article>
       )
     })}
     {answers.length < 6 && (
       <Button text="Add Answers" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={addAnswer}/>
     )}
-  </>);
+  </section>);
 }

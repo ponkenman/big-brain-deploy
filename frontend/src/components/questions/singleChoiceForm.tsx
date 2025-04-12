@@ -26,7 +26,7 @@ export default function SingleChoiceForm(props: {question: Question, index: numb
 
   function addAnswer(questionIndex: number) {
     const updatedQuestions = [...props.questions];
-    updatedQuestions[questionIndex].answers.push({text: "", correct: false});
+    updatedQuestions[questionIndex].answers.push({text: "", correct: false, id: Math.floor(Math.random() * 1000000)});
     props.set(updatedQuestions);
   }
   

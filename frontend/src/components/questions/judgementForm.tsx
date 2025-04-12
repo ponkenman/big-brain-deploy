@@ -1,6 +1,6 @@
-import { StateSetter, Question, AnswersOptions,  } from "../../types";
+import { StateSetter, Question, Answer } from "../../types";
 import Button from "../buttons/button";
-import TextInput from "./textInput";
+import TextInput from "../forms/textInput";
 import { useEffect, useState } from "react";
 
 export default function JudgementForm(props: {question: Question, index: number, questions: Question[], onEnter?: () => void; set: StateSetter<Question[]> }) {
@@ -10,7 +10,7 @@ export default function JudgementForm(props: {question: Question, index: number,
     updateAnswer(props.index, 0, {correct: false})
   }, []);
     
-  function updateAnswer (questionIndex: number, answerIndex: number, update: Partial<AnswersOptions>) {
+  function updateAnswer (questionIndex: number, answerIndex: number, update: Partial<Answer>) {
     const updatedQuestions = [...props.questions];
     const updatedAnswers = [...updatedQuestions[questionIndex].answers];
 
@@ -34,7 +34,7 @@ export default function JudgementForm(props: {question: Question, index: number,
     {props.question.answers.slice(0,2).map((answer, answerIndex) => {
       return (
         <div key={answerIndex}>Answer {answerIndex + 1}: 
-          <TextInput labelName="Answer" id={`question${props.index}-answer${answerIndex}`} type="text" defaultValue={answer.text} set={setCurrAnswerText} onEnter={() => updateAnswer(props.index, answerIndex, {text: currAnswerText})} />
+          <TextInput labelName="Answer" id={`question${props.index}-answer${answerIndex}`} type="text" defaultValue={answer.text} onChange={e => setCurrAnswerText(e.target.value)} onEnter={() => updateAnswer(props.index, answerIndex, {text: currAnswerText})} />
           <label className="text-lg font-medium mb-2">
             <input type="checkbox" name={`question${props.index}-answer${answerIndex}-correct`} checked={answer.correct} onChange={() => updateAnswer(props.index, answerIndex, {correct: !answer.correct})}/>
           Correct

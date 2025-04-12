@@ -118,8 +118,8 @@ export default function EditGameForm(props: {title: string, questions: Question[
   return (<>
     {modal && (
       <Modal>
-        <TextInput labelName="Name" id="game-name" type="text" set={setName} onEnter={editGame} />
-        <TextInput labelName="Thumbnail" id="game-thumnail" type="text" set={setThumbnail} onEnter={editGame} />
+        <TextInput labelName="Name" id="game-name" type="text" set={e => setName(e.target.value)} onEnter={editGame} />
+        <TextInput labelName="Thumbnail" id="game-thumnail" type="text" set={e => setThumbnail(e.target.value)} onEnter={editGame} />
         <Questions 
           labelName="Questions" 
           id="game-questions" 
