@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function TextInput<T>(props: { labelName: string, id: string, type: string, defaultValue?: string, onEnter?: () => void; onChange: React.ChangeEventHandler<HTMLInputElement>}) {
+export default function TextInput(props: { labelName: string, id: string, type: string, defaultValue?: string, onEnter?: () => void; onChange: React.ChangeEventHandler<HTMLInputElement>}) {
   function ifEnter(event: React.KeyboardEvent) {
     if (props.onEnter && event.key === "Enter") {
       props.onEnter();

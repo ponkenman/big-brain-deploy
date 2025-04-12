@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function CheckboxInput(props: { labelName: string, id: string, checked?: boolean, onChange: React.ChangeEventHandler<HTMLInputElement>}) {
   
   return (<div className="py-2">
