@@ -1,5 +1,6 @@
 import { StateSetter, Question, Answer,  } from "../../types";
 import Button from "../buttons/button";
+import CheckboxInput from "../forms/checkboxInput";
 import TextInput from "../forms/textInput";
 import { useEffect, useState } from "react";
 
@@ -14,10 +15,10 @@ export default function MultipleChoiceForm(props: {questions: Question[], questi
     
   function updateAnswer (answerIndex: number, update: Partial<Answer>) {
     const updatedAnswers = [...answers];
-    if (update.correct) {
+    if (update.correct != undefined) {
       updatedAnswers[answerIndex].correct = update.correct;
     }
-    if (update.text) {
+    if (update.text != undefined) {
       updatedAnswers[answerIndex].text = update.text;
     }
     setAnswers(updatedAnswers);
@@ -42,10 +43,7 @@ export default function MultipleChoiceForm(props: {questions: Question[], questi
       return (
         <article key={answer.id} className="bg-blue-400 rounded-lg p-3">#{answerIndex + 1} 
           <TextInput labelName="Answer" id={`question${props.questionIndex}-answer${answerIndex}`} type="text" defaultValue={answer.text} onChange={e => updateAnswer(answerIndex, {text: e.target.value})}/>
-          <label className="text-lg font-medium mb-2">
-            <input type="checkbox" name={`question${props.questionIndex}-answer${answerIndex}-correct`} checked={answer.correct} onChange={() => updateAnswer(props.index, answerIndex, {correct: !answer.correct})}/>
-          Correct
-          </label>
+          <CheckboxInput labelName="Correct" id={`question${props.questionIndex}-answer${answerIndex}-correct`} checked={answer.correct} onChange={e => {console.log(e.target.checked); updateAnswer(answerIndex, {correct: e.target.checked})}} />
           { answers.length > 2 && <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={() => deleteAnswer(answerIndex)}/>}
         </article>
       )
