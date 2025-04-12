@@ -3,7 +3,7 @@ import { useState } from "react";
 import Navbar from "../components/navbar";
 import { AlertData, AlertMenu } from "../components/alert";
 import LogoutButton from "../components/buttons/logoutButton";
-import { AdminGamesList } from "../components/games/gamesDisplay";
+import { AdminGamesList } from "../components/games/adminGamesList";
 
 export function DashboardScreen () {
   const [alertId, setAlertId] = useState(0);

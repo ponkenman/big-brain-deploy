@@ -39,6 +39,8 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
   const [questions, setQuestions] = useState<Question[]>([]);
   const [newQuestion, setNewQuestion] = useState<Question>(defaultQuestion);
   const [modalIsVisible, setModalIsVisible] = useState(false);
+  const [deleteModalIsVisible, setDeleteModalIsVisible] = useState(false);
+  const [modalIdToDelete, setModalIdToDelete] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     setQuestions(props.game.questions)
@@ -56,11 +58,17 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
     setNewQuestion(defaultQuestion);
   }
 
-  function deleteQuestion(questionId: number) {
+  function deleteQuestion() {
+    if (modalIdToDelete === undefined) {
+      return;
+    }
+    const questionId = modalIdToDelete;
     const newGame = {...props.game};
     const newQuestions = [...newGame.questions].filter(q => q.id !== questionId);
     newGame.questions = newQuestions;
     props.updateGame(newGame);
+    setModalIdToDelete(undefined);
+    setDeleteModalIsVisible(false);
   }
 
   return (<section>
@@ -72,7 +80,10 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
       <p>Correct answers: {q.correctAnswers.length}</p>
       <div className="flex flex-row items-center py-2 gap-2">
         <Button text="Edit" color="bg-gray-100" hoverColor="hover:bg-gray-200" className="border overflow-hidden border-gray-400 text-sm" />
-        <Button text="Delete" color="bg-red-100" hoverColor="hover:bg-red-200" className="border overflow-hidden border-red-400 text-sm" onClick={() => deleteQuestion(q.id)}/>
+        <Button text="Delete" color="bg-red-100" hoverColor="hover:bg-red-200" className="border overflow-hidden border-red-400 text-sm" onClick={() => {
+          setModalIdToDelete(q.id);
+          setDeleteModalIsVisible(true);
+        }}/>
       </div>
       </article>)}
       <Button text="Add Questions" color="bg-indigo-200" hoverColor="hover:bg-indigo-300" onClick={() => setModalIsVisible(true)}/>
@@ -87,6 +98,12 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
             </form>
         </Modal>
       }
+      {deleteModalIsVisible && <Modal>
+          <h4>Delete this question</h4>
+          <p>Are you sure you want to delete this question?</p>
+          <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteQuestion}/>
+          <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => setDeleteModalIsVisible(false)}/>
+        </Modal>}
     </div>
   </section>)
 }
