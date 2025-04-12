@@ -35,7 +35,7 @@ function NewQuestionForm(props: { newQuestion: Question, setNewQuestion: StateSe
   return (<QuestionManager labelName="Add new question" questions={newQuestions} set={setNewQuestions} createSingleQuestion={true} />)
 }
 
-function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|undefined>, createAlert: AlertFunc}) {
+function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|undefined>, updateGame: (newGame: Game) => void, createAlert: AlertFunc}) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [newQuestion, setNewQuestion] = useState<Question>(defaultQuestion);
   const [modalIsVisible, setModalIsVisible] = useState(false);
@@ -45,37 +45,22 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
   }, [props.game]);
 
   function addQuestion() {
-    const token = localStorage.getItem("token") as string;
-    const response = fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>;
-    response.then(data => {
-      console.log(data);
-      const newGame = {...props.game, lastUpdatedAt: new Date().toISOString() } as Game;
-      newGame.questions = [...questions, newQuestion];
-      const games = data.games;
-      const gameIndex = games.findIndex(g => g.id === props.game.id);
-      games[gameIndex] = newGame;
-
-      const body = {
-        games: games
-      }
-
-      const editResponse = fetchBackend("PUT", "/admin/games", body, token);
-      editResponse.then(r => {
-        console.log(r);
-        if (r.error) {
-          props.createAlert(r.error);
-        } else {
-          props.createAlert("Successfully updated!");
-          setModalIsVisible(false);
-          props.setGame(newGame);
-        }
-      });
-    });
+    const newGame = {...props.game, lastUpdatedAt: new Date().toISOString() } as Game;
+    newGame.questions = [...questions, newQuestion];
+    props.updateGame(newGame);
+    setModalIsVisible(false);
   }
 
   function cancelAddQuestion() {
     setModalIsVisible(false);
     setNewQuestion(defaultQuestion);
+  }
+
+  function deleteQuestion(questionId: number) {
+    const newGame = {...props.game};
+    const newQuestions = [...newGame.questions].filter(q => q.id !== questionId);
+    newGame.questions = newQuestions;
+    props.updateGame(newGame);
   }
 
   return (<section>
@@ -87,7 +72,7 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
       <p>Correct answers: {q.correctAnswers.length}</p>
       <div className="flex flex-row items-center py-2 gap-2">
         <Button text="Edit" color="bg-gray-100" hoverColor="hover:bg-gray-200" className="border overflow-hidden border-gray-400 text-sm" />
-        <Button text="Delete" color="bg-red-100" hoverColor="hover:bg-red-200" className="border overflow-hidden border-red-400 text-sm" />
+        <Button text="Delete" color="bg-red-100" hoverColor="hover:bg-red-200" className="border overflow-hidden border-red-400 text-sm" onClick={() => deleteQuestion(q.id)}/>
       </div>
       </article>)}
       <Button text="Add Questions" color="bg-indigo-200" hoverColor="hover:bg-indigo-300" onClick={() => setModalIsVisible(true)}/>
@@ -128,38 +113,41 @@ function GameManager(props: {gameId: string, createAlert: AlertFunc}) {
       setGame(game);
       setName(game.name);
       setThumbnailUrl(game.thumbnail);
+      console.log(game);
     });
   }, []);
 
-  function updateGames() {
+  function updateGame(newGame: Game) {
     const token = localStorage.getItem("token") as string;
     const response = fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>;
     response.then(data => {
-      console.log(data);
-      const newGame = {...game, name: name, thumbnail: thumbnailUrl, lastUpdatedAt: new Date().toISOString() } as Game;
-      setGame(newGame);
+      for (const q of newGame.questions) {
+        q.correctAnswers = q.answers.filter(a => a.correct).map(a => a.text);
+      }
       const games = data.games;
-      const gameIndex = games.findIndex(g => g.id.toString() === props.gameId);
+      const gameIndex = games.findIndex(g => g.id === newGame.id);
       games[gameIndex] = newGame;
-
       const body = {
         games: games
       }
-
       const editResponse = fetchBackend("PUT", "/admin/games", body, token);
       editResponse.then(r => {
-        console.log(r);
         if (r.error) {
           props.createAlert(r.error);
         } else {
           props.createAlert("Successfully updated!");
-          setModalIsVisible(false);
+          setGame(newGame);
         }
       });
-
     });
   }
 
+  function updateGameMetadata() {
+    const newGame = {...game, name: name, thumbnail: thumbnailUrl, lastUpdatedAt: new Date().toISOString() } as Game;
+    updateGame(newGame);
+    setModalIsVisible(false);
+  }
+  
   return (game != undefined && <div className="rounded-md bg-indigo-100 p-4 my-7">
     <p>Game id: {props.gameId}</p>
     <p>Created at: {game.createdAt}</p>
@@ -177,13 +165,13 @@ function GameManager(props: {gameId: string, createAlert: AlertFunc}) {
           <TextInput labelName="Edit name" id="game-name" type="text" defaultValue={name} onChange={e => setName(e.target.value)} />
           <FileSelect labelName="Upload new thumbnail (optional)" id="game-thumnail" set={setThumbnailFile} />
           <div className="flex flex-row gap-2 pt-3">
-            <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={updateGames}/>
+            <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={updateGameMetadata}/>
             <Button text="Cancel" color="bg-red-300" hoverColor="hover:bg-red-400" onClick={() => setModalIsVisible(false)}/>
           </div>
         </form>
       </Modal> }
     </section>
-    <SimpleQuestionManager game={game} setGame={setGame} createAlert={props.createAlert}/>
+    <SimpleQuestionManager game={game} setGame={setGame} updateGame={updateGame} createAlert={props.createAlert}/>
   </div>);
 }
 

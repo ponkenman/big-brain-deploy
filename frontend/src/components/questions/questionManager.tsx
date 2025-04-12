@@ -29,7 +29,6 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
       updatedQuestions[index].answers = update.type === QuestionType.JUDGEMENT ?[createSampleAnswer()] : [createSampleAnswer(), createSampleAnswer()];
     }
     updatedQuestions[index] = {...updatedQuestions[index], ...update}
-    console.log(updatedQuestions);
     props.set(updatedQuestions);
   }
 
