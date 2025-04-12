@@ -14,15 +14,23 @@ export default function QuestionManager(props: {labelName: string, id: string, q
   const [questionType, setQuestionType] = useState<QuestionType>(QuestionType.SINGLE_CHOICE);
   const [points, setPoints] = useState(1);
 
+  function createSampleAnswer() {
+    return {
+      text: "", 
+      correct: false, 
+      id: Math.floor(Math.random() * 1000000)
+    };
+  }
+
   function addQuestions() {
     const newQuestion: Question = {
       id: Math.floor(Math.random() * 1000000),
       type: questionType,
       media: media,
       question: currQuestion,
-      answers: [{text: "", correct: false, id: Math.floor(Math.random() * 1000000)}, {text: "", correct: false, id: Math.floor(Math.random() * 1000000)}],
-      duration: 10,
-      points: 1
+      answers: questionType === QuestionType.JUDGEMENT ?[createSampleAnswer()] : [createSampleAnswer(), createSampleAnswer()],
+      duration: duration,
+      points: points
     }
 
     props.set([...props.questions, newQuestion]);
@@ -50,7 +58,7 @@ export default function QuestionManager(props: {labelName: string, id: string, q
           <TextInput labelName={`Media`} id={`question${index}-media`} type="text" defaultValue={question.media} onChange ={e => setMedia(e.target.value)} onEnter={() => updatedQuestion(index, {media: media})} />
           <SelectMenu labelName="Question Type" options={Object.values(QuestionType)} set={setQuestionType}></SelectMenu>
           {questionType === QuestionType.SINGLE_CHOICE ? (
-            <SingleChoiceForm question={question} index={index} questions={props.questions} set={props.set} onEnter={props.onEnter}/>
+            <SingleChoiceForm questionIndex={index} questions={props.questions} setQuestions={props.set} />
           ) : questionType === QuestionType.MULTIPLE_CHOICE ? (
             <MultipleChoiceForm questionIndex={index} questions={props.questions} setQuestions={props.set} />
           ) : (

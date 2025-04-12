@@ -43,7 +43,7 @@ export default function MultipleChoiceForm(props: {questions: Question[], questi
       return (
         <article key={answer.id} className="bg-blue-400 rounded-lg p-3">#{answerIndex + 1} 
           <TextInput labelName="Answer" id={`question${props.questionIndex}-answer${answerIndex}`} type="text" defaultValue={answer.text} onChange={e => updateAnswer(answerIndex, {text: e.target.value})}/>
-          <CheckboxInput labelName="Correct" id={`question${props.questionIndex}-answer${answerIndex}-correct`} checked={answer.correct} onChange={e => {console.log(e.target.checked); updateAnswer(answerIndex, {correct: e.target.checked})}} />
+          <CheckboxInput labelName="Correct" id={`question${props.questionIndex}-answer${answerIndex}-correct`} checked={answer.correct} onChange={e => {updateAnswer(answerIndex, {correct: e.target.checked})}} />
           { answers.length > 2 && <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={() => deleteAnswer(answerIndex)}/>}
         </article>
       )
