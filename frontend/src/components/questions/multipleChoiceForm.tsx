@@ -21,6 +21,7 @@ export default function MultipleChoiceForm(props: {questions: Question[], questi
       updatedAnswers[answerIndex].text = update.text;
     }
     setAnswers(updatedAnswers);
+    console.log(updatedAnswers);
   }
 
   function addAnswer() {
@@ -39,8 +40,8 @@ export default function MultipleChoiceForm(props: {questions: Question[], questi
   return (<section className="flex flex-col gap-3 py-3">
     {answers.map((answer, answerIndex) => {
       return (
-        <article key={answerIndex} className="bg-blue-400 rounded-lg p-3">#{answerIndex + 1} 
-          <TextInput labelName="Answer" id={`question${props.questionIndex}-answer${answerIndex}`} type="text" defaultValue={answer.text} set={setCurrText}/>
+        <article key={answer.id} className="bg-blue-400 rounded-lg p-3">#{answerIndex + 1} 
+          <TextInput labelName="Answer" id={`question${props.questionIndex}-answer${answerIndex}`} type="text" defaultValue={answer.text} onChange={e => updateAnswer(answerIndex, {text: e.target.value})}/>
           <label className="text-lg font-medium mb-2">
             <input type="checkbox" name={`question${props.questionIndex}-answer${answerIndex}-correct`} checked={answer.correct} onChange={() => updateAnswer(props.index, answerIndex, {correct: !answer.correct})}/>
           Correct
