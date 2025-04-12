@@ -45,13 +45,16 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
       return;
     }
 
+    const now = new Date().toISOString();
+
     const newGame: Game = {
       id: Math.floor(Math.random() * 1000000),
       name: name,
       thumbnail: thumbnailUrl,
       owner: email,
       active: 0,
-      createdAt: new Date().toISOString(),
+      createdAt: now,
+      lastUpdatedAt: now,
       questions: questions
     }
 

@@ -30,6 +30,7 @@ export type Game = {
   owner: string,
   active: number,
   createdAt: ReturnType<typeof Date.toString>,
+  lastUpdatedAt: ReturnType<typeof Date.toString>,
   questions: Question[]
 }
 
