@@ -76,35 +76,35 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
     <h3 className="text-xl font-semibold py-3">Game questions</h3>
     <div className="flex flex-col gap-4 mb-1">
       {questions.length === 0 ? <p> You currently have no questions! </p> : questions.map((q, index) => <article className="p-4 rounded-lg bg-indigo-200" key={q.id}>
-      <p>{index + 1}{`)`} {q.question}</p>
-      <p>Answers: {q.answers.length}</p>
-      <p>Correct answers: {q.correctAnswers.length}</p>
-      <div className="flex flex-row items-center py-2 gap-2">
-        <Button text="Edit" color="bg-gray-100" hoverColor="hover:bg-gray-200" className="border overflow-hidden border-gray-400 text-sm" onClick={() => navigate(`/game/${props.game.id}/question/${q.id}`)}/>
-        <Button text="Delete" color="bg-red-100" hoverColor="hover:bg-red-200" className="border overflow-hidden border-red-400 text-sm" onClick={() => {
-          setModalIdToDelete(q.id);
-          setDeleteModalIsVisible(true);
-        }}/>
-      </div>
+        <p>{index + 1}{`)`} {q.question}</p>
+        <p>Answers: {q.answers.length}</p>
+        <p>Correct answers: {q.correctAnswers.length}</p>
+        <div className="flex flex-row items-center py-2 gap-2">
+          <Button text="Edit" color="bg-gray-100" hoverColor="hover:bg-gray-200" className="border overflow-hidden border-gray-400 text-sm" onClick={() => navigate(`/game/${props.game.id}/question/${q.id}`)}/>
+          <Button text="Delete" color="bg-red-100" hoverColor="hover:bg-red-200" className="border overflow-hidden border-red-400 text-sm" onClick={() => {
+            setModalIdToDelete(q.id);
+            setDeleteModalIsVisible(true);
+          }}/>
+        </div>
       </article>)}
       <Button text="Add Questions" color="bg-indigo-200" hoverColor="hover:bg-indigo-300" onClick={() => setModalIsVisible(true)}/>
       {modalIsVisible && 
         <Modal>
           <form>
             <NewQuestionForm newQuestion={newQuestion} setNewQuestion={setNewQuestion}/>
-              <div className="flex flex-row gap-2 pt-3">
-                <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={addQuestion}/>
-                <Button text="Cancel" color="bg-red-300" hoverColor="hover:bg-red-400" onClick={cancelAddQuestion}/>
-              </div>
-            </form>
+            <div className="flex flex-row gap-2 pt-3">
+              <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={addQuestion}/>
+              <Button text="Cancel" color="bg-red-300" hoverColor="hover:bg-red-400" onClick={cancelAddQuestion}/>
+            </div>
+          </form>
         </Modal>
       }
       {deleteModalIsVisible && <Modal>
-          <h4>Delete this question</h4>
-          <p>Are you sure you want to delete this question?</p>
-          <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteQuestion}/>
-          <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => setDeleteModalIsVisible(false)}/>
-        </Modal>}
+        <h4>Delete this question</h4>
+        <p>Are you sure you want to delete this question?</p>
+        <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteQuestion}/>
+        <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => setDeleteModalIsVisible(false)}/>
+      </Modal>}
     </div>
   </section>)
 }
@@ -171,7 +171,7 @@ function GameManager(props: {gameId: string, createAlert: AlertFunc}) {
     <p>Created at: {game.createdAt}</p>
     <p>Last updated at: {game.lastUpdatedAt}</p>
     <section>
-        <h2 className="text-xl font-semibold py-3">Game metadata</h2>
+      <h2 className="text-xl font-semibold py-3">Game metadata</h2>
       <p>Game name: {game.name} </p>
       <p>Game thumbnail</p>
       <div className="flex flex-row justify-center border rounded-xl overflow-hidden border-indigo-400 bg-indigo-200 w-64 my-4">
