@@ -7,8 +7,7 @@ import MultipleChoiceForm from "./multipleChoiceForm";
 import JudgementForm from "./judgementForm";
 import { createSampleAnswer } from "../../helpers";
 
-export default function QuestionManager(props: {labelName: string, id: string, questions: Question[], onEnter?: () => void; set: StateSetter<Question[]> }) {
-
+export default function QuestionManager(props: {labelName: string, id: string, questions: Question[], set: StateSetter<Question[]> }) {
   function addQuestions() {
     const newQuestion: Question = {
       id: Math.floor(Math.random() * 1000000),

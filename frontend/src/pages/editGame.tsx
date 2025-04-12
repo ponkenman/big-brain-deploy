@@ -11,6 +11,8 @@ export function EditGameScreen() {
     <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Edit game</h1>
       <p>Game id: {gameId}</p>
+      <h2>Game metadata</h2>
+      <h3>Game questions</h3>
     </main>
   </>);
 }

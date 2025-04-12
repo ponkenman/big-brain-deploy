@@ -85,7 +85,7 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
         <form>
           <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} onChange={e => setName(e.target.value)} onEnter={createGame} />
           <FileSelect labelName="Game Thumbnail (optional)" id="game-thumnail" set={setThumbnailFile} />
-          <QuestionManager labelName="Questions" id="game-questions" questions={questions} set={setQuestions} onEnter={createGame} />
+          <QuestionManager labelName="Questions" id="game-questions" questions={questions} set={setQuestions} />
           { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
           <div className="flex flex-row gap-2">
             <Button text="Submit" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={createGame}/>
