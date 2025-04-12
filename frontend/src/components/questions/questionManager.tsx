@@ -1,4 +1,3 @@
-import { useState } from "react";
 import TextInput from "../forms/textInput";
 import Button from "../buttons/button";
 import SelectMenu from "../forms/selectInput";
@@ -6,16 +5,9 @@ import { StateSetter, Question, QuestionType } from "../../types";
 import SingleChoiceForm from "./singleChoiceForm";
 import MultipleChoiceForm from "./multipleChoiceForm";
 import JudgementForm from "./judgementForm";
+import { createSampleAnswer } from "../../helpers";
 
 export default function QuestionManager(props: {labelName: string, id: string, questions: Question[], onEnter?: () => void; set: StateSetter<Question[]> }) {
-
-  function createSampleAnswer() {
-    return {
-      text: "", 
-      correct: false, 
-      id: Math.floor(Math.random() * 1000000)
-    };
-  }
 
   function addQuestions() {
     const newQuestion: Question = {
@@ -61,7 +53,7 @@ export default function QuestionManager(props: {labelName: string, id: string, q
           ) : question.type === QuestionType.MULTIPLE_CHOICE ? (
             <MultipleChoiceForm questionIndex={index} questions={props.questions} setQuestions={props.set} />
           ) : (
-            <JudgementForm question={question} index={index} questions={props.questions} set={props.set} onEnter={props.onEnter}/>
+            <JudgementForm questionIndex={index} questions={props.questions} setQuestions={props.set}/>
           )}
           <TextInput labelName="Duration" id={`question${index}-duration`} type="text" defaultValue={question.duration.toString()} onChange={e => updateQuestion(index, {duration: parseInt(e.target.value)})} />
           <TextInput labelName="Points" id={`question${index}-points`} type="text" defaultValue={question.points.toString()} onChange={e => updateQuestion(index, {points: parseInt(e.target.value)})} />

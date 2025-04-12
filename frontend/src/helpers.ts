@@ -1,5 +1,5 @@
 import { AlertData } from "./components/alert";
-import { StateSetter } from "./types";
+import { Answer, StateSetter } from "./types";
 
 interface FetchOptions {
   method: "GET"|"POST"|"PUT"|"DELETE",
@@ -68,4 +68,12 @@ export function fileToDataUrl(file: File) {
   });
   reader.readAsDataURL(file);
   return dataUrlPromise;
+}
+
+export function createSampleAnswer(): Answer {
+  return {
+    text: "", 
+    correct: false, 
+    id: Math.floor(Math.random() * 1000000)
+  };
 }
