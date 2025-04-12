@@ -17,5 +17,5 @@ export default function LogoutButton() {
       navigate("/login");
     }
   };
-  return       <Button text="Logout" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={logout}/>;
+  return <Button text="Logout" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={logout}/>;
 }

@@ -15,6 +15,7 @@ export default function QuestionManager(props: {labelName: string, id: string, q
       media: "",
       question: "",
       answers: [createSampleAnswer(), createSampleAnswer()],
+      correctAnswers: [],
       duration: 10,
       points: 5
     }
@@ -46,7 +47,7 @@ export default function QuestionManager(props: {labelName: string, id: string, q
         return (<article key={question.id} className="p-4 rounded-lg bg-indigo-300">
           <TextInput labelName={`Question ${index + 1}`} id={`question${index}-text`} type="text" defaultValue={question.question} onChange={e => updateQuestion(index, {question: e.target.value})} />
           <TextInput labelName={`Media`} id={`question${index}-media`} type="text" defaultValue={question.media} onChange={e => updateQuestion(index, {media: e.target.value})} />
-          <SelectMenu labelName="Question Type" options={Object.values(QuestionType)} onChange={e => updateQuestion(index, {type: e.target.value})}></SelectMenu>
+          <SelectMenu labelName="Question Type" options={Object.values(QuestionType)} onChange={e => updateQuestion(index, {type: e.target.value})} />
           {question.type === QuestionType.SINGLE_CHOICE ? (
             <SingleChoiceForm questionIndex={index} questions={props.questions} setQuestions={props.set} />
           ) : question.type === QuestionType.MULTIPLE_CHOICE ? (

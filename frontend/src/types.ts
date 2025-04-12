@@ -12,6 +12,7 @@ export type Question = {
   media: string,
   question: string,
   answers: Answer[],
+  correctAnswers: string[],
   duration: number
   points: number
 }
@@ -28,7 +29,6 @@ export type Game = {
   thumbnail: string,
   owner: string,
   active: number,
-
   createdAt: ReturnType<typeof Date.toString>,
   questions: Question[]
 }

@@ -45,7 +45,7 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
       return;
     }
 
-    const newGame = {
+    const newGame: Game = {
       id: Math.floor(Math.random() * 1000000),
       name: name,
       thumbnail: thumbnailUrl,
@@ -54,6 +54,8 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
       createdAt: new Date().toISOString(),
       questions: questions
     }
+
+    newGame.questions.forEach(q => q.correctAnswers = q.answers.filter(a => a.correct).map(a => a.text));
 
     const updateGames = [...props.games, newGame];
 
