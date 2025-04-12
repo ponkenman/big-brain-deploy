@@ -1,6 +1,6 @@
 import { StateSetter, Question, AnswersOptions,  } from "../../types";
 import Button from "../buttons/button";
-import TextInput from "./textInput";
+import TextInput from "../forms/textInput";
 import { useEffect, useState } from "react";
 
 export default function SingleChoiceForm(props: {question: Question, index: number, questions: Question[], onEnter?: () => void; set: StateSetter<Question[]> }) {

@@ -3,11 +3,11 @@ import TextInput from "../forms/textInput";
 import Button from "../buttons/button";
 import SelectMenu from "../forms/selectInput";
 import { StateSetter, Question, QuestionType } from "../../types";
-import SingleChoiceForm from "../forms/singleChoiceForm";
-import MultipleChoiceForm from "../forms/multipleChoiceForm";
+import SingleChoiceForm from "./singleChoiceForm";
+import MultipleChoiceForm from "./multipleChoiceForm";
 import JudgementForm from "../forms/judgementForm";
 
-export default function Questions(props: {labelName: string, id: string, questions: Question[], onEnter?: () => void; set: StateSetter<Question[]> }) {
+export default function QuestionManager(props: {labelName: string, id: string, questions: Question[], onEnter?: () => void; set: StateSetter<Question[]> }) {
   const [media, setMedia] = useState("");
   const [currQuestion, setCurrQuestion] = useState("");
   const [duration, setDuration] = useState(10);
