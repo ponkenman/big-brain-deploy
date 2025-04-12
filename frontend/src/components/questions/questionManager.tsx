@@ -7,7 +7,7 @@ import MultipleChoiceForm from "./multipleChoiceForm";
 import JudgementForm from "./judgementForm";
 import { createSampleAnswer } from "../../helpers";
 
-export default function QuestionManager(props: {labelName: string, id: string, questions: Question[], set: StateSetter<Question[]> }) {
+export default function QuestionManager(props: {labelName: string, questions: Question[], set: StateSetter<Question[]>, createSingleQuestion?: boolean }) {
   function addQuestions() {
     const newQuestion: Question = {
       id: Math.floor(Math.random() * 1000000),
@@ -40,12 +40,12 @@ export default function QuestionManager(props: {labelName: string, id: string, q
 
   return (<div className="py-2">
     <div className="mb-3">
-      <label htmlFor={props.id} className="text-lg font-medium">{props.labelName}</label>
+      <label className="text-lg font-medium">{props.labelName}</label>
     </div>
     <section className="flex flex-col gap-4 mb-2">
       {props.questions.map((question, index) => {
         return (<article key={question.id} className="p-4 rounded-lg bg-indigo-300">
-          <TextInput labelName={`Question ${index + 1}`} id={`question${index}-text`} type="text" defaultValue={question.question} onChange={e => updateQuestion(index, {question: e.target.value})} />
+          <TextInput labelName={`Question ${ props.createSingleQuestion ? `` : index + 1}`} id={`question${index}-text`} type="text" defaultValue={question.question} onChange={e => updateQuestion(index, {question: e.target.value})} />
           <TextInput labelName={`Media`} id={`question${index}-media`} type="text" defaultValue={question.media} onChange={e => updateQuestion(index, {media: e.target.value})} />
           <SelectMenu labelName="Question Type" options={Object.values(QuestionType)} onChange={e => updateQuestion(index, {type: e.target.value})} />
           {question.type === QuestionType.SINGLE_CHOICE ? (
@@ -57,10 +57,10 @@ export default function QuestionManager(props: {labelName: string, id: string, q
           )}
           <TextInput labelName="Duration" id={`question${index}-duration`} type="text" defaultValue={question.duration.toString()} onChange={e => updateQuestion(index, {duration: parseInt(e.target.value)})} />
           <TextInput labelName="Points" id={`question${index}-points`} type="text" defaultValue={question.points.toString()} onChange={e => updateQuestion(index, {points: parseInt(e.target.value)})} />
-          <Button text="Delete Question" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={() => deleteQuestion(question.id)}/>
+          { !props.createSingleQuestion && <Button text="Delete Question" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={() => deleteQuestion(question.id)}/> }
         </article>)
       })}
     </section>
-    <Button text="Add Questions" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={addQuestions}/>
+    { !props.createSingleQuestion && <Button text="Add Questions" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={addQuestions}/>}
   </div>);
 }
