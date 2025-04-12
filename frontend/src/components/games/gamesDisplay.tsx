@@ -25,9 +25,6 @@ export function AdminGamesList(props: { createAlert: AlertFunc }) {
   };
 
   useEffect(() => {
-    console.log("Hook run since games updated!");
-    console.log(games.length);
-    console.log(gamesLength);
     if (games.length !== gamesLength) {
       getGames();
     }
@@ -40,11 +37,10 @@ export function AdminGamesList(props: { createAlert: AlertFunc }) {
       {games.length === 0 ? (
         <p>You currently have no games!</p>
       ) : (
-
         games.map((game, index) => {
           console.log(games);
           return (
-            <GameCard createAlert={props.createAlert} games={games} setGamesLength={setGamesLength} gameId={game.id} key={index}/>
+            <GameCard createAlert={props.createAlert} games={games} setGamesLength={setGamesLength} gameId={game.id} key={game.id}/>
           )
         })
       )}

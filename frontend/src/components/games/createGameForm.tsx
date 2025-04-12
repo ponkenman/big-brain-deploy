@@ -4,7 +4,7 @@ import TextInput from "../forms/textInput";
 import { fetchBackend, fileToDataUrl } from "../../helpers";
 import Modal from "../modal";
 import Button from "../buttons/button";
-import QuestionManager from "../questions/questions";
+import QuestionManager from "../questions/questionManager";
 import FileSelect from "../forms/fileInput";
 import { AlertFunc, Game, Question, StateSetter } from "../../types";
 
