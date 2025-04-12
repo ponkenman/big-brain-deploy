@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import LogoutButton from "../components/buttons/logoutButton";
 import Navbar from "../components/navbar";
 import { AlertFunc, Game, Question, QuestionType, StateSetter } from "../types";
@@ -41,6 +41,7 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
   const [modalIsVisible, setModalIsVisible] = useState(false);
   const [deleteModalIsVisible, setDeleteModalIsVisible] = useState(false);
   const [modalIdToDelete, setModalIdToDelete] = useState<number | undefined>(undefined);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setQuestions(props.game.questions)
@@ -79,7 +80,7 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
       <p>Answers: {q.answers.length}</p>
       <p>Correct answers: {q.correctAnswers.length}</p>
       <div className="flex flex-row items-center py-2 gap-2">
-        <Button text="Edit" color="bg-gray-100" hoverColor="hover:bg-gray-200" className="border overflow-hidden border-gray-400 text-sm" />
+        <Button text="Edit" color="bg-gray-100" hoverColor="hover:bg-gray-200" className="border overflow-hidden border-gray-400 text-sm" onClick={() => navigate(`/game/${props.game.id}/question/${q.id}`)}/>
         <Button text="Delete" color="bg-red-100" hoverColor="hover:bg-red-200" className="border overflow-hidden border-red-400 text-sm" onClick={() => {
           setModalIdToDelete(q.id);
           setDeleteModalIsVisible(true);
