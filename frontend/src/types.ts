@@ -28,7 +28,7 @@ export type Game = {
   name: string,
   thumbnail: string,
   owner: string,
-  active: number,
+  active: number | null,
   createdAt: ReturnType<typeof Date.toString>,
   lastUpdatedAt: ReturnType<typeof Date.toString>,
   questions: Question[]

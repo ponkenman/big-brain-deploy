@@ -5,6 +5,7 @@ import { RegisterScreen } from "./pages/register.tsx";
 import { LoginRedirect } from "./pages/loginRedirect.tsx";
 import { EditGameScreen } from "./pages/editGame.tsx";
 import { EditQuestionScreen } from "./pages/editQuestion.tsx";
+import { JoinGameScreen } from "./pages/joinGame.tsx";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route index path="login" element={<LoginScreen />}/>
         <Route path="register" element={<RegisterScreen />}/>
+        <Route path="join" element={<JoinGameScreen />}/>
         <Route path="dashboard" element={<DashboardScreen />}/>
         <Route path="game/:gameId/question/:questionId" element={<EditQuestionScreen />}/>
         <Route path="game/:gameId" element={<EditGameScreen />}/>

@@ -1,8 +1,8 @@
 import Modal from "../modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../buttons/button";
 import { fetchBackend } from "../../helpers";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AlertFunc, Game, Question, StateSetter } from "../../types";
 
 export default function GameCard(props: { createAlert: AlertFunc, games: Game[], setGamesLength: StateSetter<number>, gameId: number }) {
@@ -10,8 +10,10 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
   const openModal = () => setModal(true);
   const closeModal = () => setModal(false);
   const navigate = useNavigate();
-
   const game = props.games.find(game => game.id === props.gameId) as Game;
+  const [currSession, setCurrSession] = useState<number|null>(game.active);
+  const [playGameModal, setPlayGameModal] = useState(false);
+
 
   async function deleteGame() {
     openModal();
@@ -42,6 +44,29 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
     return questions.reduce((prev, curr) => prev + curr.duration, 0);
   }
 
+  async function startGame() {
+    const token = localStorage.getItem("token") as string;
+    const body = {
+      mutationType: "START"
+    }
+    const response = await fetchBackend("POST", `/admin/game/${props.gameId}/mutate`, body, token);
+    if (response.error) {
+      console.log(response.error);
+      props.createAlert(response.error);
+    } else {
+      // By setting gamesLength to -1, triggers useEffect hook in adminGamesList which auto updates game list
+      props.setGamesLength(-1);
+      console.log("Done!");
+      props.createAlert("Successfully started game!");
+      setPlayGameModal(true);
+    }
+  }
+
+  useEffect(() => {
+    const game = props.games.find(game => game.id === props.gameId) as Game;
+    setCurrSession(game.active);
+  }, [props.games]);
+
   return (<article className="p-5 rounded-lg bg-indigo-200 h-85">
     <p className="font-semibold">{game.name}</p>
     <p>{game.questions ? game.questions.length : "0"} Questions</p>
@@ -50,7 +75,9 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
       <img src={game.thumbnail == "" ? "src/assets/default-game-icon.png" : game.thumbnail} alt={`Thumbnail for ${game.name}`} className="object-cover object-center h-40 w-auto" />
     </div>
     <div className="flex flex-row gap-2">
-      <Button text="Play" color="bg-emerald-200" hoverColor="hover:bg-emerald-400" />
+      {currSession === null  
+        ? <Button text="Start game" color="bg-emerald-200" hoverColor="hover:bg-emerald-400" onClick={startGame}/>
+        : <Button text="Manage session" color="bg-indigo-300" hoverColor="hover:bg-indigo-400"/>}
       <Button text="Edit" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => navigate(`/game/${props.gameId}`)}/>
       <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
     </div>
@@ -60,6 +87,14 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
         <h2>Are you sure you want to delete this game?</h2>
         <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteGame}/>
         <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={closeModal}/>
+      </Modal>
+    )}
+      {playGameModal && (
+      <Modal>
+        <h1>Game session link</h1>
+        <h2>Copy the link below and share it to invite users to join the game!</h2>
+        <p>{`${window.origin}/join?sessionId=${currSession}`}</p>
+        <Button text="Dismiss" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => setPlayGameModal(false)}/>
       </Modal>
     )}
   </article>);
