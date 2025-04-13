@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { AlertData, AlertMenu } from "../components/alert";
-import { initialiseAlerts } from "../helpers";
+import { fetchBackend, initialiseAlerts } from "../helpers";
 import Navbar from "../components/navbar";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import TextInput from "../components/forms/textInput";
 import Button from "../components/buttons/button";
 
@@ -13,6 +13,7 @@ export function JoinGameScreen () {
   const [playerName, setPlayerName] = useState("");
   const [sessionId, setSessionId] = useState<string>(params.get("sessionId") ?? "");
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (sessionId !== "") {
@@ -20,6 +21,22 @@ export function JoinGameScreen () {
     }
   }, []);
 
+  async function enterSession() {
+    const body = {
+      name: playerName
+    }
+    if (sessionId === "") {
+      createAlert("Please fill in a session code!");
+      return;
+    }
+    const response = await fetchBackend("POST", `/play/join/${sessionId}`, body);
+    if (response.error) {
+      createAlert(response.error);
+    } else {
+      localStorage.setItem("playerId", response.playerId);
+      navigate(`/play`);
+    }
+  }
 
   return (<>
     <Navbar />
@@ -28,7 +45,7 @@ export function JoinGameScreen () {
       <form className="rounded-md bg-indigo-100 p-4">
         <TextInput labelName="Enter session code" id="session-code-input" type="text" defaultValue={sessionId} onChange={e => setSessionId(e.target.value)}/>
         <TextInput labelName="Enter display name" id="display-name-input" type="text" onChange={e => setPlayerName(e.target.value)}/>
-        <Button text="Enter game" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
+        <Button text="Enter game" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" onClick={enterSession}/>
       </form>
     </main>
     <AlertMenu alerts={alerts} setAlerts={setAlerts} />
