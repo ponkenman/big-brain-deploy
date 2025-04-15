@@ -7,6 +7,7 @@ import { EditGameScreen } from "./pages/editGame.tsx";
 import { EditQuestionScreen } from "./pages/editQuestion.tsx";
 import { JoinGameScreen } from "./pages/joinGame.tsx";
 import { PlayGameScreen } from "./pages/playGame.tsx";
+import { ManageSessionScreen } from "./pages/manageSession.tsx";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="dashboard" element={<DashboardScreen />}/>
         <Route path="game/:gameId/question/:questionId" element={<EditQuestionScreen />}/>
         <Route path="game/:gameId" element={<EditGameScreen />}/>
+        <Route path="session/:sessionId" element={<ManageSessionScreen/>}/>
         <Route path="/" element={<LoginRedirect />} />
         <Route path="" element={<LoginRedirect />} />
       </Routes>
