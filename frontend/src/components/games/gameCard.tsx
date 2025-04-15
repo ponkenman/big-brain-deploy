@@ -98,7 +98,7 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
         : (<>
         <Button text="Manage session" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate(`/session/${currSession}`)}/>
         <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={stopGame}/>
-        </>)}
+      </>)}
       <Button text="Edit" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => navigate(`/game/${props.gameId}`)}/>
       <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
     </div>
@@ -106,8 +106,10 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
       <Modal>
         <h1>Delete this game</h1>
         <h2>Are you sure you want to delete this game?</h2>
-        <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteGame}/>
-        <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={closeModal}/>
+        <div className="flex flex-row gap-2">
+          <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteGame}/>
+          <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={closeModal}/>
+        </div>
       </Modal>
     )}
     {playGameModal && (
@@ -121,8 +123,10 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
     {stopGameModal && (
       <Modal>
         <h2>Would you like to view the results?</h2>
-        <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setStopGameModal(false)}/>
-        <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setStopGameModal(false)}/>
+        <div className="flex flex-row gap-2">
+          <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setStopGameModal(false)}/>
+          <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setStopGameModal(false)}/>
+        </div>
       </Modal>
     )}
   </article>);

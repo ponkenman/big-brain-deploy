@@ -11,23 +11,45 @@ import Modal from "../components/modal";
 export function ManageSession(props: { gameId: string, sessionId: string, createAlert: AlertFunc }) {
   const navigate = useNavigate();
   const [stopGameModal, setStopGameModal] = useState(false);
-
-  // const [playGameModal, setPlayGameModal] = useState(false);
+  const [advanceGameModal, setAdvanceGameModal] = useState(false);
+  const [position, setPosition] = useState(-1);
+  const [numQuestions, setNumQuestions] = useState(0);
 
   async function advanceGame() {
-    // const token = localStorage.getItem("token") as string;
-    // const body = {
-    //   mutationType: "ADVANCE"
-    // }
-    // const response = await fetchBackend("POST", `/admin/game/${props.gameId}/mutate`, body, token);
-    // if (response.error) {
-    //   console.log(response.error);
-    //   props.createAlert(response.error);
-    // } else {
-    //   console.log("Done!");
-    //   props.createAlert("Successfully advanced game!");
-    //   setStopGameModal(true);
-    // }
+    const token = localStorage.getItem("token") as string;
+    const body = {
+      mutationType: "ADVANCE"
+    }
+
+    const response = fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>;
+    response.then(data => {
+      if (position === numQuestions) {
+        props.createAlert("You've reached the end of the game!");
+        setStopGameModal(true);
+        return;
+      } 
+    
+      const currentGame = data.games.filter(currGame => currGame.active === parseInt(props.sessionId));
+      setNumQuestions(currentGame[0].questions.length);
+
+      const mutateResponse = fetchBackend("POST", `/admin/game/${currentGame[0].id}/mutate`, body, token);
+      mutateResponse.then(r => {
+        setPosition(r.data.position);
+
+        console.log("positiona nd numQuestions");
+        console.log(position);
+        console.log(numQuestions);
+        if (r.error) {
+          console.log(r.error);
+          props.createAlert(r.error);
+        } else {
+          console.log("Done!");
+          props.createAlert("Successfully advanced game!");
+          setAdvanceGameModal(true);
+        }
+      })
+    });
+
   }
 
   async function stopGame() {    
@@ -35,10 +57,11 @@ export function ManageSession(props: { gameId: string, sessionId: string, create
     const body = {
       mutationType: "END"
     }
+
     const response = fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>;
     response.then(data => {
       const currentGame = data.games.filter(currGame => currGame.active === parseInt(props.sessionId));
-      console.log(currentGame);
+      setNumQuestions(currentGame[0].questions.length);
 
       const mutateResponse = fetchBackend("POST", `/admin/game/${currentGame[0].id}/mutate`, body, token);
       mutateResponse.then(r => {
@@ -56,15 +79,30 @@ export function ManageSession(props: { gameId: string, sessionId: string, create
 
   return (
   <form className="py-2">
-    <h1 className="text-4xl font-semibold pb-7">Game {props.gameId} | Session {props.sessionId} </h1>
+    <h1 className="text-4xl font-semibold pb-7">Session {props.sessionId} </h1>
+    <h1 className="text-4xl font-semibold pb-7">Current position {position} </h1>
+    {position === -1 ? (
+      <h1 className="text-4xl font-semibold pb-7">The game has not started yet</h1>
+    ) : position !== numQuestions ? (
+      <h1 className="text-4xl font-semibold pb-7">Current Question: {position} </h1>
+    ) : (
+      <h1 className="text-4xl font-semibold pb-7">End Quiz</h1>
+    )}
+
     <div className="flex flex-row gap-2 pt-3">
       <Button text="Advance game" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={advanceGame}/>
-      <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => stopGame()}/>
+      <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={stopGame}/>
       {stopGameModal && (
         <Modal>
           <h2>Would you like to view the results?</h2>
           <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate("/dashboard")}/>
           <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate("/dashboard")}/>
+        </Modal>
+      )}
+      {advanceGameModal && (
+        <Modal>
+          <h2>You have succesffuly advanced the game!</h2>
+          <Button text="Dismiss" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setAdvanceGameModal(false)}/>
         </Modal>
       )}
     </div>
