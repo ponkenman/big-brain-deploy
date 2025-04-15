@@ -21,6 +21,7 @@ function App() {
         <Route path="game/:gameId/question/:questionId" element={<EditQuestionScreen />}/>
         <Route path="game/:gameId" element={<EditGameScreen />}/>
         <Route path="session/:sessionId" element={<ManageSessionScreen/>}/>
+        <Route path="session/:sessionId/results" element={<ManageSessionScreen/>}/>
         <Route path="/" element={<LoginRedirect />} />
         <Route path="" element={<LoginRedirect />} />
       </Routes>

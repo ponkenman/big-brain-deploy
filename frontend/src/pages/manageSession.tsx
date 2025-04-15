@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AlertData, AlertMenu } from "../components/alert";
 import { fetchBackend, initialiseAlerts } from "../helpers";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
-import { AlertFunc, Game, Question } from "../types";
+import { AlertFunc, Game } from "../types";
 import Modal from "../components/modal";
 
 export function ManageSession(props: { gameId: string, sessionId: string, createAlert: AlertFunc }) {
@@ -78,35 +78,35 @@ export function ManageSession(props: { gameId: string, sessionId: string, create
   }
 
   return (
-  <form className="py-2">
-    <h1 className="text-4xl font-semibold pb-7">Session {props.sessionId} </h1>
-    <h1 className="text-4xl font-semibold pb-7">Current position {position} </h1>
-    {position === -1 ? (
-      <h1 className="text-4xl font-semibold pb-7">The game has not started yet</h1>
-    ) : position !== numQuestions ? (
-      <h1 className="text-4xl font-semibold pb-7">Current Question: {position} </h1>
-    ) : (
-      <h1 className="text-4xl font-semibold pb-7">End Quiz</h1>
-    )}
+    <form className="py-2">
+      <h1 className="text-4xl font-semibold pb-7">Session {props.sessionId} </h1>
+      <h1 className="text-4xl font-semibold pb-7">Current position {position} </h1>
+      {position === -1 ? (
+        <h1 className="text-4xl font-semibold pb-7">The game has not started yet</h1>
+      ) : position !== numQuestions ? (
+        <h1 className="text-4xl font-semibold pb-7">Current Question: {position} </h1>
+      ) : (
+        <h1 className="text-4xl font-semibold pb-7">End Quiz</h1>
+      )}
 
-    <div className="flex flex-row gap-2 pt-3">
-      <Button text="Advance game" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={advanceGame}/>
-      <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={stopGame}/>
-      {stopGameModal && (
-        <Modal>
-          <h2>Would you like to view the results?</h2>
-          <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate("/dashboard")}/>
-          <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate("/dashboard")}/>
-        </Modal>
-      )}
-      {advanceGameModal && (
-        <Modal>
-          <h2>You have succesffuly advanced the game!</h2>
-          <Button text="Dismiss" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setAdvanceGameModal(false)}/>
-        </Modal>
-      )}
-    </div>
-  </form>
+      <div className="flex flex-row gap-2 pt-3">
+        <Button text="Advance game" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={advanceGame}/>
+        <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={stopGame}/>
+        {stopGameModal && (
+          <Modal>
+            <h2>Would you like to view the results?</h2>
+            <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate("/dashboard")}/>
+            <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate("/dashboard")}/>
+          </Modal>
+        )}
+        {advanceGameModal && (
+          <Modal>
+            <h2>You have succesffuly advanced the game!</h2>
+            <Button text="Dismiss" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setAdvanceGameModal(false)}/>
+          </Modal>
+        )}
+      </div>
+    </form>
   )
 }
 
@@ -118,17 +118,17 @@ export function ManageSessionScreen() {
   const { sessionId } = useParams() as { sessionId: string };
 
   return (<>
-      <Navbar>
-        <LogoutButton />
-      </Navbar>
-      <h1>gameId {gameId}</h1>
-      <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
-        <h1 className="text-4xl font-semibold pb-7">Manage game session</h1>
-        <Link to="/dashboard">
-          <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
-        </Link>
-        <ManageSession gameId={gameId} sessionId={sessionId} createAlert={createAlert} />
-      </main>
-      <AlertMenu alerts={alerts} setAlerts={setAlerts} />
+    <Navbar>
+      <LogoutButton />
+    </Navbar>
+    <h1>gameId {gameId}</h1>
+    <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
+      <h1 className="text-4xl font-semibold pb-7">Manage game session</h1>
+      <Link to="/dashboard">
+        <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
+      </Link>
+      <ManageSession gameId={gameId} sessionId={sessionId} createAlert={createAlert} />
+    </main>
+    <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>)
 }
