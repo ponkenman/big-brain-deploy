@@ -1,0 +1,1 @@
+- add extra validations to ensure form inputs on login and register not empty if unexpected
