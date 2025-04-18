@@ -8,10 +8,9 @@ import Button from "../components/buttons/button";
 import { AlertFunc, Game } from "../types";
 import Modal from "../components/modal";
 
-export function ManageSession(props: { gameId: string, sessionId: string, createAlert: AlertFunc }) {
+function ManageSession(props: {sessionId: string, createAlert: AlertFunc }) {
   const navigate = useNavigate();
   const [stopGameModal, setStopGameModal] = useState(false);
-  const [advanceGameModal, setAdvanceGameModal] = useState(false);
   const [position, setPosition] = useState(-1);
   const [numQuestions, setNumQuestions] = useState(0);
 
@@ -45,7 +44,6 @@ export function ManageSession(props: { gameId: string, sessionId: string, create
         } else {
           console.log("Done!");
           props.createAlert("Successfully advanced game!");
-          setAdvanceGameModal(true);
         }
       })
     });
@@ -95,14 +93,8 @@ export function ManageSession(props: { gameId: string, sessionId: string, create
         {stopGameModal && (
           <Modal>
             <h2>Would you like to view the results?</h2>
-            <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate("/dashboard")}/>
+            <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate(`/session/${props.sessionId}}/results`)}/>
             <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate("/dashboard")}/>
-          </Modal>
-        )}
-        {advanceGameModal && (
-          <Modal>
-            <h2>You have succesffuly advanced the game!</h2>
-            <Button text="Dismiss" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setAdvanceGameModal(false)}/>
           </Modal>
         )}
       </div>
@@ -114,20 +106,18 @@ export function ManageSessionScreen() {
   const [alertId, setAlertId] = useState(0);
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
-  const { gameId } = useParams() as { gameId: string };
   const { sessionId } = useParams() as { sessionId: string };
 
   return (<>
     <Navbar>
       <LogoutButton />
     </Navbar>
-    <h1>gameId {gameId}</h1>
     <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Manage game session</h1>
       <Link to="/dashboard">
         <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
       </Link>
-      <ManageSession gameId={gameId} sessionId={sessionId} createAlert={createAlert} />
+      <ManageSession sessionId={sessionId} createAlert={createAlert} />
     </main>
     <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>)
