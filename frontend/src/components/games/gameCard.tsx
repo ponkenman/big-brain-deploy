@@ -2,7 +2,7 @@ import Modal from "../modal";
 import { useEffect, useState } from "react";
 import Button from "../buttons/button";
 import { fetchBackend } from "../../helpers";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AlertFunc, Game, Question, StateSetter } from "../../types";
 
 export default function GameCard(props: { createAlert: AlertFunc, games: Game[], setGamesLength: StateSetter<number>, gameId: number }) {
@@ -13,7 +13,7 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
   const game = props.games.find(game => game.id === props.gameId) as Game;
   const [currSession, setCurrSession] = useState<number|null>(game.active);
   const [playGameModal, setPlayGameModal] = useState(false);
-
+  const [stopGameModal, setStopGameModal] = useState(false);
 
   async function deleteGame() {
     openModal();
@@ -62,6 +62,24 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
     }
   }
 
+  async function stopGame() {
+    const token = localStorage.getItem("token") as string;
+    const body = {
+      mutationType: "END"
+    }
+    const response = await fetchBackend("POST", `/admin/game/${props.gameId}/mutate`, body, token);
+    if (response.error) {
+      console.log(response.error);
+      props.createAlert(response.error);
+    } else {
+      // By setting gamesLength to +1, triggers useEffect hook in adminGamesList which auto updates game list
+      props.setGamesLength(+1);
+      console.log("Done!");
+      props.createAlert("Successfully stoped game!");
+      setStopGameModal(true);
+    }
+  }
+
   useEffect(() => {
     const game = props.games.find(game => game.id === props.gameId) as Game;
     setCurrSession(game.active);
@@ -77,7 +95,10 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
     <div className="flex flex-row gap-2">
       {currSession === null  
         ? <Button text="Start game" color="bg-emerald-200" hoverColor="hover:bg-emerald-400" onClick={startGame}/>
-        : <Button text="Manage session" color="bg-indigo-300" hoverColor="hover:bg-indigo-400"/>}
+        : (<>
+          <Button text="Manage session" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate(`/session/${currSession}`)}/>
+          <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={stopGame}/>
+        </>)}
       <Button text="Edit" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => navigate(`/game/${props.gameId}`)}/>
       <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
     </div>
@@ -85,16 +106,27 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
       <Modal>
         <h1>Delete this game</h1>
         <h2>Are you sure you want to delete this game?</h2>
-        <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteGame}/>
-        <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={closeModal}/>
+        <div className="flex flex-row gap-2">
+          <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteGame}/>
+          <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={closeModal}/>
+        </div>
       </Modal>
     )}
-      {playGameModal && (
+    {playGameModal && (
       <Modal>
         <h1>Game session link</h1>
         <h2>Copy the link below and share it to invite users to join the game!</h2>
         <p>{`${window.origin}/join?sessionId=${currSession}`}</p>
-        <Button text="Dismiss" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => setPlayGameModal(false)}/>
+        <Button text="Dismiss" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setPlayGameModal(false)}/>
+      </Modal>
+    )}
+    {stopGameModal && (
+      <Modal>
+        <h2>Would you like to view the results?</h2>
+        <div className="flex flex-row gap-2">
+          <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setStopGameModal(false)}/>
+          <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setStopGameModal(false)}/>
+        </div>
       </Modal>
     )}
   </article>);
