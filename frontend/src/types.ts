@@ -9,23 +9,24 @@ export type Answer = {
 export type Question = {
   id: number,
   type: string,
-  media: string,
+  media: string | File | null,
   question: string,
   answers: Answer[],
   correctAnswers: string[],
   duration: number
   points: number
-  index: number
-}
-
-export interface QuestionPlayerData extends Omit<Question, "correctAnswers"> {
-  isoTimeLastQuestionStarted: ReturnType<typeof Date.toString>
 }
 
 export enum QuestionType {
   SINGLE_CHOICE = "Single Choice",
   MULTIPLE_CHOICE = "Multiple Choice",
   JUDGEMENT = "Judgement"
+}
+
+export enum MediaType {
+  IMAGE_MEDIA = "Image",
+  VIDEO_MEDIA = "Video",
+  TEXT_MEDIA = "Text Stimulus"
 }
 
 export type Game = {

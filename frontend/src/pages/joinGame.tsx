@@ -22,10 +22,6 @@ export function JoinGameScreen () {
   }, []);
 
   async function enterSession() {
-    if (playerName === "") {
-      createAlert("Please fill in your name!");
-      return;
-    }
     const body = {
       name: playerName
     }
@@ -38,7 +34,6 @@ export function JoinGameScreen () {
       createAlert(response.error);
     } else {
       localStorage.setItem("playerId", response.playerId);
-      localStorage.setItem("playerName", playerName);
       navigate(`/play`);
     }
   }
