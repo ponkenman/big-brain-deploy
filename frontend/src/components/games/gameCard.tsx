@@ -97,7 +97,7 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
         ? <Button text="Start game" color="bg-emerald-200" hoverColor="hover:bg-emerald-400" onClick={startGame}/>
         : (<>
           <Button text="Manage session" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate(`/session/${currSession}`)}/>
-          <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={stopGame}/>
+          <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={(stopGame)}/>
         </>)}
       <Button text="Edit" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => navigate(`/game/${props.gameId}`)}/>
       <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
@@ -124,7 +124,7 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
       <Modal>
         <h2>Would you like to view the results?</h2>
         <div className="flex flex-row gap-2">
-          <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setStopGameModal(false)}/>
+          <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate(`/session/${currSession}}/results`)}/>
           <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setStopGameModal(false)}/>
         </div>
       </Modal>
