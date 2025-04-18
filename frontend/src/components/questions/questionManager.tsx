@@ -17,7 +17,8 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
       answers: [createSampleAnswer(), createSampleAnswer()],
       correctAnswers: [],
       duration: 10,
-      points: 5
+      points: 5,
+      index: -1,
     }
 
     props.set([...props.questions, newQuestion]);

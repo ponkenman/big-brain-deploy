@@ -15,6 +15,11 @@ export type Question = {
   correctAnswers: string[],
   duration: number
   points: number
+  index: number
+}
+
+export interface QuestionPlayerData extends Omit<Question, "correctAnswers"> {
+  isoTimeLastQuestionStarted: ReturnType<typeof Date.toString>
 }
 
 export enum QuestionType {

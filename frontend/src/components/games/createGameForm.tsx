@@ -58,7 +58,10 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
       questions: questions
     }
 
-    newGame.questions.forEach(q => q.correctAnswers = q.answers.filter(a => a.correct).map(a => a.text));
+    newGame.questions.forEach((q, i) => {
+      q.correctAnswers = q.answers.filter(a => a.correct).map(a => a.text);
+      q.index = i + 1;
+    });
 
     const updateGames = [...props.games, newGame];
 
