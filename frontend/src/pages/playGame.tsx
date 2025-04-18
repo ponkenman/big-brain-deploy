@@ -73,7 +73,7 @@ function QuestionScreen(props: { createAlert: AlertFunc }) {
         if (data.error) {
           return;
         }
-        setCorrectAnswers(data.answerIds);
+        setCorrectAnswers(data.answers);
       });
     }, 1000);
   }, [secondsRemaining]);
