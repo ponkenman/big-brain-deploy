@@ -7,6 +7,8 @@ import Button from "../buttons/button";
 import QuestionManager from "../questions/questionManager";
 import FileSelect from "../forms/fileInput";
 import { AlertFunc, Game, Question, StateSetter } from "../../types";
+import SelectMenu from "../forms/selectInput";
+import { UpdateModeEnum } from "chart.js";
 
 export default function CreateGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number>, createAlert: AlertFunc }) {
   const [name, setName] = useState("");
@@ -14,7 +16,6 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
   const [thumbnailFile, setThumbnailFile] = useState<File|null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [confirmNoQuestions, setConfirmNoQuestions] = useState(false);
-  
   const [modal] = useState(true);
 
   useEffect(() => {
@@ -89,7 +90,7 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
       <Modal>
         <form>
           <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} onChange={e => setName(e.target.value)} onEnter={createGame} />
-          <FileSelect labelName="Game Thumbnail (optional)" id="game-thumnail" set={setThumbnailFile} />
+          <FileSelect labelName="Game Thumbnail (optional)" id="game-thumnail" onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)}/>
           <QuestionManager labelName="Questions" questions={questions} set={setQuestions} />
           { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
           <div className="flex flex-row gap-2">
