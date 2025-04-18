@@ -4,7 +4,7 @@ import SelectMenu from "../forms/selectInput";
 import { StateSetter, Question, QuestionType } from "../../types";
 import SingleChoiceForm from "./singleChoiceForm";
 import MultipleChoiceForm from "./multipleChoiceForm";
-import JudgementForm from "./judgementForm";
+import JudgementForm, { sampleJudgementAnswers } from "./judgementForm";
 import { createSampleAnswer } from "../../helpers";
 
 export default function QuestionManager(props: {labelName: string, questions: Question[], set: StateSetter<Question[]>, createSingleQuestion?: boolean }) {
@@ -27,7 +27,7 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
   function updateQuestion (index: number, update: Partial<Question>) {
     const updatedQuestions = [...props.questions];
     if ("type" in update) {
-      updatedQuestions[index].answers = update.type === QuestionType.JUDGEMENT ?[createSampleAnswer()] : [createSampleAnswer(), createSampleAnswer()];
+      updatedQuestions[index].answers = update.type === QuestionType.JUDGEMENT ? sampleJudgementAnswers : [createSampleAnswer(), createSampleAnswer()];
     }
     updatedQuestions[index] = {...updatedQuestions[index], ...update}
     props.set(updatedQuestions);

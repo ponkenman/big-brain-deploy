@@ -1,7 +1,7 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import LogoutButton from "../components/buttons/logoutButton";
 import Navbar from "../components/navbar";
-import { AlertFunc, Game, Question, QuestionType, StateSetter } from "../types";
+import { AlertFunc, Answer, Game, Question, QuestionType, StateSetter } from "../types";
 import { useEffect, useState } from "react";
 import { createSampleAnswer, fetchBackend, fileToDataUrl, initialiseAlerts } from "../helpers";
 import Button from "../components/buttons/button";
@@ -79,7 +79,12 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
       {questions.length === 0 ? <p> You currently have no questions! </p> : questions.map(q => <article className="p-4 rounded-lg bg-indigo-200" key={q.id}>
         <p>{q.index}{`)`} {q.question}</p>
         <p>Answers: {q.answers.length}</p>
-        <p>Correct answers: {q.correctAnswers.length}</p>
+        <p>Correct answers: {q.type === QuestionType.JUDGEMENT ? (
+          (() => {
+            console.log(q);
+            return (q.answers.find(a => a.correct) as Answer).text
+          })()
+        ) : q.correctAnswers.length}</p>
         <p>Duration: {q.duration} {q.duration === 1 ? `second` : `seconds`}</p>
         <div className="flex flex-row items-center py-2 gap-2">
           <Button text="Edit" color="bg-gray-100" hoverColor="hover:bg-gray-200" className="border overflow-hidden border-gray-400 text-sm" onClick={() => navigate(`/game/${props.game.id}/question/${q.id}`)}/>
