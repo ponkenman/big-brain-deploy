@@ -47,6 +47,32 @@ export type Game = {
   questions: Question[]
 }
 
+export type AnswerResult = {
+  answeredAt: ReturnType<typeof Date.toString>,
+  answers: string[],
+  correct: boolean, 
+  questionStartedAt: ReturnType<typeof Date.toString>
+}
+
+export type PersonResult = {
+  answers: AnswerResult[],
+  name: string
+}
+
+export type GameResults = {
+  results: PersonResult[]
+}
+
+export type TopFiveScore = {
+  name: string,
+  score: number
+}
+
+export type QuestionStats = {
+  amountCorrect: number,
+  totalAttempts: number
+}
+
 export type APIError = {
   error: string
 }

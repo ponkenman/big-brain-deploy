@@ -80,6 +80,10 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
     }
   }
 
+  function copyToClipBoard() {
+    navigator.clipboard.writeText(`${window.origin}/join?sessionId=${currSession}`); 
+  }
+
   useEffect(() => {
     const game = props.games.find(game => game.id === props.gameId) as Game;
     setCurrSession(game.active);
@@ -117,7 +121,10 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
         <h1>Game session link</h1>
         <h2>Copy the link below and share it to invite users to join the game!</h2>
         <p>{`${window.origin}/join?sessionId=${currSession}`}</p>
-        <Button text="Dismiss" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setPlayGameModal(false)}/>
+        <div className="flex flex-row gap-2">
+          <Button text="Copy to clipboard" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => copyToClipBoard()}/>
+          <Button text="Dismiss" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setPlayGameModal(false)}/>
+        </div>
       </Modal>
     )}
     {stopGameModal && (
