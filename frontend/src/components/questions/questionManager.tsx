@@ -5,7 +5,7 @@ import { StateSetter, Question, QuestionType, MediaType } from "../../types";
 import SingleChoiceForm from "./singleChoiceForm";
 import MultipleChoiceForm from "./multipleChoiceForm";
 import JudgementForm from "./judgementForm";
-import { createSampleAnswer, fileToDataUrl } from "../../helpers";
+import { createSampleAnswer, fileToDataUrl, sampleJudgementAnswers } from "../../helpers";
 import { useState } from "react";
 import FileSelect from "../forms/fileInput";
 
@@ -23,7 +23,8 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
       answers: [createSampleAnswer(), createSampleAnswer()],
       correctAnswers: [],
       duration: 10,
-      points: 5
+      points: 5,
+      index: -1,
     }
 
     props.set([...props.questions, newQuestion]);
@@ -32,7 +33,7 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
   function updateQuestion (index: number, update: Partial<Question>) {
     const updatedQuestions = [...props.questions];
     if ("type" in update) {
-      updatedQuestions[index].answers = update.type === QuestionType.JUDGEMENT ?[createSampleAnswer()] : [createSampleAnswer(), createSampleAnswer()];
+      updatedQuestions[index].answers = update.type === QuestionType.JUDGEMENT ? sampleJudgementAnswers : [createSampleAnswer(), createSampleAnswer()];
     }
     updatedQuestions[index] = {...updatedQuestions[index], ...update}
     props.set(updatedQuestions);
@@ -75,7 +76,7 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
           ) : currMediaType === MediaType.VIDEO ? (
             <TextInput labelName={`Enter Video URL`} id={`question${index}-media-video`} type="text" defaultValue={question.media} onChange={e => updateQuestion(index, {media: e.target.value, mediaType: MediaType.VIDEO})} />
           ) : <></>
-        }
+          }
           <SelectMenu labelName="Question Type" id="question-type-select" options={Object.values(QuestionType)} onChange={e => updateQuestion(index, {type: e.target.value})} defaultValue={question.type}/>
           {question.type === QuestionType.SINGLE_CHOICE ? (
             <SingleChoiceForm questionIndex={index} questions={props.questions} setQuestions={props.set} />

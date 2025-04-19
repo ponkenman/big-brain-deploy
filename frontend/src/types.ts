@@ -28,7 +28,12 @@ export type Question = {
   answers: Answer[],
   correctAnswers: string[],
   duration: number
-  points: number
+  points: number,
+  index: number
+}
+
+export interface QuestionPlayerData extends Omit<Question, "correctAnswers"> {
+  isoTimeLastQuestionStarted: ReturnType<typeof Date.toString>
 }
 
 export type Game = {

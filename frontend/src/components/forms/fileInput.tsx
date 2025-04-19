@@ -1,3 +1,4 @@
+import React from "react";
 
 export default function FileSelect(props: { labelName: string, id: string, onChange: React.ChangeEventHandler<HTMLInputElement>}) {
 

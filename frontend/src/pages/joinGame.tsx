@@ -7,7 +7,7 @@ import TextInput from "../components/forms/textInput";
 import Button from "../components/buttons/button";
 
 export function JoinGameScreen () {
-  const [params, setParams] = useSearchParams();
+  const [params,] = useSearchParams();
   const [alertId, setAlertId] = useState(0);
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const [playerName, setPlayerName] = useState("");
@@ -22,6 +22,10 @@ export function JoinGameScreen () {
   }, []);
 
   async function enterSession() {
+    if (playerName === "") {
+      createAlert("Please fill in your name!");
+      return;
+    }
     const body = {
       name: playerName
     }
@@ -34,6 +38,7 @@ export function JoinGameScreen () {
       createAlert(response.error);
     } else {
       localStorage.setItem("playerId", response.playerId);
+      localStorage.setItem("playerName", playerName);
       navigate(`/play`);
     }
   }

@@ -77,3 +77,13 @@ export function createSampleAnswer(): Answer {
     id: Math.floor(Math.random() * 1000000)
   };
 }
+
+export const sampleJudgementAnswers = [{
+  id: Math.floor(Math.random() * 1000000),
+  text: "True",
+  correct: false,
+}, {
+  id: Math.floor(Math.random() * 1000000),
+  text: "False",
+  correct: true,
+}];
