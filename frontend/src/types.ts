@@ -6,17 +6,6 @@ export type Answer = {
   correct: boolean
 }
 
-export type Question = {
-  id: number,
-  type: string,
-  media: string | File | null,
-  question: string,
-  answers: Answer[],
-  correctAnswers: string[],
-  duration: number
-  points: number
-}
-
 export enum QuestionType {
   SINGLE_CHOICE = "Single Choice",
   MULTIPLE_CHOICE = "Multiple Choice",
@@ -24,9 +13,22 @@ export enum QuestionType {
 }
 
 export enum MediaType {
-  IMAGE_MEDIA = "Image",
-  VIDEO_MEDIA = "Video",
-  TEXT_MEDIA = "Text Stimulus"
+  NONE = "None",
+  IMAGE = "Image",
+  VIDEO = "Video",
+  TEXT = "Text Stimulus"
+}
+
+export type Question = {
+  id: number,
+  type: string,
+  media: string,
+  mediaType: string
+  question: string,
+  answers: Answer[],
+  correctAnswers: string[],
+  duration: number
+  points: number
 }
 
 export type Game = {

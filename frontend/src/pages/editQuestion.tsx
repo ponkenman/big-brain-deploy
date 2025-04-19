@@ -5,7 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
-import { AlertFunc, Game, Question } from "../types";
+import { AlertFunc, Game, MediaType, Question } from "../types";
 import QuestionManager from "../components/questions/questionManager";
 
 function EditQuestionManager(props: { gameId: string, questionId: string, createAlert: AlertFunc }) {
@@ -44,8 +44,8 @@ function EditQuestionManager(props: { gameId: string, questionId: string, create
     });
   }
 
-  return (<form className="py-2">
-    <QuestionManager labelName={`Question id: ${props.questionId}`} questions={questions} set={setQuestions} createSingleQuestion={true}/>
+  return (questions.length === 0 ? <></> : <form className="py-2">
+    <QuestionManager labelName={`Question id: ${props.questionId}`} questions={questions} set={setQuestions} createSingleQuestion={true} mediaType={questions[0].mediaType as MediaType}/>
     <div className="flex flex-row gap-2 pt-3">
       <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={updateQuestion}/>
       <Link to={`/game/${props.gameId}`}>

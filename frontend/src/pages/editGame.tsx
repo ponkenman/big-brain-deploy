@@ -1,7 +1,7 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import LogoutButton from "../components/buttons/logoutButton";
 import Navbar from "../components/navbar";
-import { AlertFunc, Game, Question, QuestionType, StateSetter } from "../types";
+import { AlertFunc, Game, MediaType, Question, QuestionType, StateSetter } from "../types";
 import { useEffect, useState } from "react";
 import { createSampleAnswer, fetchBackend, fileToDataUrl, initialiseAlerts } from "../helpers";
 import Button from "../components/buttons/button";
@@ -15,6 +15,7 @@ const defaultQuestion = {
   id: Math.floor(Math.random() * 1000000),
   type: QuestionType.SINGLE_CHOICE,
   media: "",
+  mediaType: MediaType.NONE,
   question: "",
   answers: [createSampleAnswer(), createSampleAnswer()],
   correctAnswers: [],
