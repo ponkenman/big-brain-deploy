@@ -74,7 +74,7 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
           ) : currMediaType === MediaType.TEXT ? (
             <TextInput labelName={`Enter Text Stimulus`} id={`question${index}-media-text`} type="text" defaultValue={question.media} onChange={e => {updateQuestion(index, {media: e.target.value, mediaType: MediaType.TEXT})}} />
           ) : currMediaType === MediaType.VIDEO ? (
-            <TextInput labelName={`Enter Video URL`} id={`question${index}-media-video`} type="text" defaultValue={question.media} onChange={e => updateQuestion(index, {media: e.target.value, mediaType: MediaType.VIDEO})} />
+            <TextInput labelName={`Enter Video Embed URL`} id={`question${index}-media-video`} type="text" defaultValue={question.media} onChange={e => updateQuestion(index, {media: e.target.value, mediaType: MediaType.VIDEO})} />
           ) : <></>
           }
           <SelectMenu labelName="Question Type" id="question-type-select" options={Object.values(QuestionType)} onChange={e => updateQuestion(index, {type: e.target.value})} defaultValue={question.type}/>

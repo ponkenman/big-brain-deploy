@@ -3,7 +3,37 @@ import { AlertData, AlertMenu } from "../components/alert";
 import { fetchBackend, initialiseAlerts } from "../helpers";
 import Navbar from "../components/navbar";
 import { useNavigate } from "react-router-dom";
-import { AlertFunc, Answer, QuestionPlayerData, QuestionType } from "../types";
+import { AlertFunc, Answer, MediaType, QuestionPlayerData, QuestionType } from "../types";
+
+function QuestionMediaDisplay(props: {question: QuestionPlayerData}) {
+  let component;
+  switch (props.question.mediaType) {
+    case MediaType.TEXT:
+      component = <div className="py-2 w-full flex flex-row justify-center">
+      <div className="border rounded-xl overflow-hidden border-indigo-400 bg-indigo-200 max-w-100 my-4 p-3 min-w-60 min-h-40">
+        <p className="text-xl text-center">{props.question.media}</p>
+      </div>
+    </div>;
+      break;
+    case MediaType.VIDEO:
+      component = <div className="py-2 w-full flex flex-row justify-center">
+      <div className="my-4">
+        <iframe className="w-150 h-75" src={props.question.media}/>
+      </div>
+    </div>;
+      break;
+    case MediaType.IMAGE:
+      component = <div className="py-2 w-full flex flex-row justify-center">
+        <div className="border rounded-xl overflow-hidden border-indigo-400 bg-indigo-200 max-w-100 my-4">
+          <img src={props.question.media} alt={`Image for your question`} className="object-cover object-center" />
+        </div>
+      </div>;
+      break;
+    default:
+      component = <></>;
+  }
+  return (component);
+}
 
 // in seconds
 function questionTimeRemaining(question: QuestionPlayerData) {
@@ -128,7 +158,7 @@ function QuestionScreen(props: { createAlert: AlertFunc }) {
       <section>
         <h1 className="text-4xl font-semibold pb-7">{`${question.index}) ${question.question}`}</h1>
         <div className="p-4 rounded-lg bg-indigo-100">
-          <h2>Media</h2>
+          <QuestionMediaDisplay question={question} />
           <p>{secondsRemaining === 0 ? `Time's up!` : `${secondsRemaining} second${secondsRemaining !== 0 ? `s`: ``} remaining`}</p>
           <p>Question type: {question.type}</p>
           { correctAnswers !== undefined && <p>Correct answers were: {correctAnswers.toString()}</p>}
