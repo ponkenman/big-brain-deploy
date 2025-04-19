@@ -3,7 +3,7 @@ import LogoutButton from "../components/buttons/logoutButton";
 import Navbar from "../components/navbar";
 import { AlertFunc, Answer, Game, MediaType, Question, QuestionType, StateSetter } from "../types";
 import { useEffect, useState } from "react";
-import { createSampleAnswer, fetchBackend, fileToDataUrl, initialiseAlerts } from "../helpers";
+import { createDefaultQuestion, createSampleAnswer, fetchBackend, fileToDataUrl, initialiseAlerts } from "../helpers";
 import Button from "../components/buttons/button";
 import Modal from "../components/modal";
 import TextInput from "../components/forms/textInput";
@@ -11,35 +11,20 @@ import FileSelect from "../components/forms/fileInput";
 import { AlertData, AlertMenu } from "../components/alert";
 import QuestionManager from "../components/questions/questionManager";
 
-const defaultQuestion = {
-  id: Math.floor(Math.random() * 1000000),
-  type: QuestionType.SINGLE_CHOICE,
-  media: "",
-  mediaType: MediaType.NONE,
-  question: "",
-  answers: [createSampleAnswer(), createSampleAnswer()],
-  correctAnswers: [],
-  duration: 10,
-  points: 5,
-  index: -1
-}
-
 function NewQuestionForm(props: { newQuestion: Question, setNewQuestion: StateSetter<Question> }) {
-  const [newQuestions, setNewQuestions] = useState<Question[]>([defaultQuestion]);
+
+  const [newQuestions, setNewQuestions] = useState<Question[]>([createDefaultQuestion()]);
 
   useEffect(() => {
     props.setNewQuestion(newQuestions[0]);
   }, [newQuestions]);
 
-  useEffect(() => {
-    setNewQuestions([defaultQuestion]);
-  }, []);
   return (<QuestionManager labelName="Add new question" questions={newQuestions} set={setNewQuestions} createSingleQuestion={true} />)
 }
 
 function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|undefined>, updateGame: (newGame: Game) => void, createAlert: AlertFunc}) {
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [newQuestion, setNewQuestion] = useState<Question>(defaultQuestion);
+  const [newQuestion, setNewQuestion] = useState<Question>(createDefaultQuestion());
   const [modalIsVisible, setModalIsVisible] = useState(false);
   const [deleteModalIsVisible, setDeleteModalIsVisible] = useState(false);
   const [modalIdToDelete, setModalIdToDelete] = useState<number | undefined>(undefined);
@@ -58,7 +43,7 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
 
   function cancelAddQuestion() {
     setModalIsVisible(false);
-    setNewQuestion(defaultQuestion);
+    setNewQuestion(createDefaultQuestion());
   }
 
   function deleteQuestion() {

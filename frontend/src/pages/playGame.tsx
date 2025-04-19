@@ -147,6 +147,7 @@ function QuestionScreen(props: { createAlert: AlertFunc }) {
 
 function GameStateScreen(props: { createAlert: AlertFunc }) {
   const [started, setStarted] = useState(false);
+  const navigate = useNavigate();
   let timerExists = false;
   useEffect(() => {
     // Requests session data every second and updates corresponding values only if data changed
@@ -158,7 +159,13 @@ function GameStateScreen(props: { createAlert: AlertFunc }) {
         fetchBackend("GET", `/play/${playerId}/status`).then(data => {
           console.log(data);
           if (data.error) {
-            props.createAlert(data.error);
+            if (data.error === "Session ID is not an active session") {
+              // Session has stopped early
+              // localStorage.clear(); // comment only if testing in same browser
+              navigate(`/join`);
+            } else {
+              props.createAlert(data.error);
+            }
             return;
           }
           if (started != data.started) {

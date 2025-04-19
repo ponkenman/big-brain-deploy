@@ -10,7 +10,6 @@ export function DashboardScreen () {
   const [alerts, setAlerts] = useState<AlertData[]>([]);
 
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
-
   return (<>
     <Navbar>
       <LogoutButton />
