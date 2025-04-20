@@ -7,8 +7,6 @@ import Button from "../buttons/button";
 import QuestionManager from "../questions/questionManager";
 import FileSelect from "../forms/fileInput";
 import { AlertFunc, Game, Question, StateSetter } from "../../types";
-import SelectMenu from "../forms/selectInput";
-import { UpdateModeEnum } from "chart.js";
 
 export default function CreateGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number>, createAlert: AlertFunc }) {
   const [name, setName] = useState("");

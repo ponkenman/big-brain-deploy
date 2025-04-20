@@ -8,29 +8,29 @@ import { AlertFunc, Answer, MediaType, QuestionPlayerData, QuestionType } from "
 function QuestionMediaDisplay(props: {question: QuestionPlayerData}) {
   let component;
   switch (props.question.mediaType) {
-    case MediaType.TEXT:
-      component = <div className="py-2 w-full flex flex-row justify-center">
+  case MediaType.TEXT:
+    component = <div className="py-2 w-full flex flex-row justify-center">
       <div className="border rounded-xl overflow-hidden border-indigo-400 bg-indigo-200 max-w-100 my-4 p-3 min-w-60 min-h-40">
         <p className="text-xl text-center">{props.question.media}</p>
       </div>
     </div>;
-      break;
-    case MediaType.VIDEO:
-      component = <div className="py-2 w-full flex flex-row justify-center">
+    break;
+  case MediaType.VIDEO:
+    component = <div className="py-2 w-full flex flex-row justify-center">
       <div className="my-4">
         <iframe className="w-150 h-75" src={props.question.media}/>
       </div>
     </div>;
-      break;
-    case MediaType.IMAGE:
-      component = <div className="py-2 w-full flex flex-row justify-center">
-        <div className="border rounded-xl overflow-hidden border-indigo-400 bg-indigo-200 max-w-100 my-4">
-          <img src={props.question.media} alt={`Image for your question`} className="object-cover object-center" />
-        </div>
-      </div>;
-      break;
-    default:
-      component = <></>;
+    break;
+  case MediaType.IMAGE:
+    component = <div className="py-2 w-full flex flex-row justify-center">
+      <div className="border rounded-xl overflow-hidden border-indigo-400 bg-indigo-200 max-w-100 my-4">
+        <img src={props.question.media} alt={`Image for your question`} className="object-cover object-center" />
+      </div>
+    </div>;
+    break;
+  default:
+    component = <></>;
   }
   return (component);
 }

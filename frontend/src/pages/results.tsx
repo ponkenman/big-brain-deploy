@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AlertData, AlertMenu } from "../components/alert";
+import { AlertData } from "../components/alert";
 import { initialiseAlerts } from "../helpers";
 import { Link, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
@@ -18,7 +18,6 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -27,13 +26,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-// import Modal from "../components/modal";
-
-// A table of up to top 5 users and their score
-// A bar/line chart showing a breakdown of what percentage of people (Y axis) got certain questions (X axis) correct
-// A chart showing the average response/answer time for each question
-// Any other interesting information you see fit (Bonus mark can be granted for this based on your implementation)
 
 function calculateSecondsTaken(Date1: ReturnType<typeof Date.toString>, Date2: ReturnType<typeof Date.toString>) {
   const start = new Date(Date1);
@@ -115,7 +107,7 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
       <tbody >
         {topFiveScore.map((person, index) => {
           return(
-            <tr className="border-collapse border border-gray-400 ...">
+            <tr key={index} className="border-collapse border border-gray-400 ...">
               <td className="border-collapse border border-gray-400 ...">{index + 1}</td>
               <td className="border-collapse border border-gray-400 ...">{person.name}</td>
               <td className="border-collapse border border-gray-400 ...">{person.score}</td>

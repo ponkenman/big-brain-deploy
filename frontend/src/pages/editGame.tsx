@@ -1,9 +1,9 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import LogoutButton from "../components/buttons/logoutButton";
 import Navbar from "../components/navbar";
-import { AlertFunc, Answer, Game, MediaType, Question, QuestionType, StateSetter } from "../types";
+import { AlertFunc, Answer, Game, Question, QuestionType, StateSetter } from "../types";
 import { useEffect, useState } from "react";
-import { createDefaultQuestion, createSampleAnswer, fetchBackend, fileToDataUrl, initialiseAlerts } from "../helpers";
+import { createDefaultQuestion, fetchBackend, fileToDataUrl, initialiseAlerts } from "../helpers";
 import Button from "../components/buttons/button";
 import Modal from "../components/modal";
 import TextInput from "../components/forms/textInput";
