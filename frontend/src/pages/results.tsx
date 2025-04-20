@@ -6,7 +6,28 @@ import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
 import { fetchBackend } from "../helpers";
-import { AlertFunc, QuestionStats, PersonResult, TopFiveScore } from "../types";
+import { AlertFunc, QuestionStats, PersonResult, TopFiveScore, Question } from "../types";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 // import Modal from "../components/modal";
 
 // A table of up to top 5 users and their score
@@ -14,18 +35,35 @@ import { AlertFunc, QuestionStats, PersonResult, TopFiveScore } from "../types";
 // A chart showing the average response/answer time for each question
 // Any other interesting information you see fit (Bonus mark can be granted for this based on your implementation)
 
+function calculateSecondsTaken(Date1: ReturnType<typeof Date.toString>, Date2: ReturnType<typeof Date.toString>) {
+  const start = new Date(Date1);
+  const end = new Date(Date2);
+
+  return Math.floor(end.getTime() - start.getTime());
+}
+
+
 function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
   const token = localStorage.getItem("token") as string;
   const [results, setResults] = useState<PersonResult[]>([]);
+  const [gameData, setGameData] = useState<Question[]>([]);
   const topFiveScore: TopFiveScore[] = [];
   const questionStats: QuestionStats[] = [];
-  // const responseTime = [];
+  const responseTimeData: number[] = [];
+  const responseTime: number[] = [];
+
 
   useEffect(() => {
     const response = fetchBackend("GET", `/admin/session/${parseInt(props.sessionId)}/results`, undefined, token);
     response.then((data) => {
       setResults(data.results);
-      console.log(results);
+      console.log(data.results);
+    });
+
+    const response2 = fetchBackend("GET", `/admin/session/${parseInt(props.sessionId)}/status`, undefined, token);
+    response2.then((data) => {
+      setGameData(data.results.questions);
+      console.log(data.results.questions);
     });
 
     // Only run once per session
@@ -34,17 +72,23 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
   results.map((person, index) => {
     let totalScore = 0;
     person.answers.map((currAnswer) => {
+      // Does not account for multiple choice
       if (currAnswer.correct) {
-        totalScore += 1;
+        // console.log("inside adding points");
+        // console.log(gameData[index + 1]);
+        totalScore += gameData[index].points;
       }
 
       if (questionStats.length < index + 1) {
-        questionStats.push({amountCorrect: currAnswer.correct ? 1 : 0, totalAttempts: 1});
+        questionStats.push({questionNumber: `Question ${index + 1}`, amountCorrect: currAnswer.correct ? 1 : 0, totalAttempts: 1});
+        responseTimeData.push(calculateSecondsTaken(currAnswer.questionStartedAt, currAnswer.answeredAt));
       } else {
         if (currAnswer.correct) {
           questionStats[index].amountCorrect += 1;
         } 
+
         questionStats[index].totalAttempts += 1;
+        responseTimeData[index] += calculateSecondsTaken(currAnswer.questionStartedAt, currAnswer.answeredAt);
       }
     })
 
@@ -55,28 +99,54 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
 
   // sort top five by score then delete everyone that is not top 5
   topFiveScore.sort((a,b) => b.score - a.score).splice(5, topFiveScore.length);
+  responseTimeData.map((totalTime) => {
+    responseTime.push(totalTime / results.length);
+  });
 
   return (<section>
     <p>something reulsts?</p>
     <h1>Top 5 Users!</h1>
-    <table>
-      <thead>
-        <th>Rank</th>
-        <th>Name</th>
-        <th>Score</th>
+    <table className="border-collapse border border-gray-400 ...">
+      <thead className="border-collapse border border-gray-400 ...">
+        <th className="border-collapse border border-gray-400 ...">Rank</th>
+        <th className="border-collapse border border-gray-400 ...">Name</th>
+        <th className="border-collapse border border-gray-400 ...">Score</th>
       </thead>
-      <tbody>
+      <tbody >
         {topFiveScore.map((person, index) => {
           return(
-            <tr>
-              <td>{index + 1}</td>
-              <td>{person.name}</td>
-              <td>{person.score}</td>
+            <tr className="border-collapse border border-gray-400 ...">
+              <td className="border-collapse border border-gray-400 ...">{index + 1}</td>
+              <td className="border-collapse border border-gray-400 ...">{person.name}</td>
+              <td className="border-collapse border border-gray-400 ...">{person.score}</td>
             </tr>
           )
         })}
       </tbody>
     </table>
+    <h1>Average Answer Time!</h1>
+    <Bar 
+      data={{
+        labels: questionStats.map((data) => data.questionNumber),
+        datasets: [
+          {
+            label: "Percentage Correct",
+            data: questionStats.map((data) => (data.amountCorrect / data.totalAttempts))
+          }
+        ]
+      }}
+    />
+    <Bar 
+      data={{
+        labels: questionStats.map((data) => data.questionNumber),
+        datasets: [
+          {
+            label: "Average Answer Time",
+            data: responseTime
+          }
+        ]
+      }}
+    />
   </section>)
 }
 

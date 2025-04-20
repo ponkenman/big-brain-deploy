@@ -69,6 +69,7 @@ export type TopFiveScore = {
 }
 
 export type QuestionStats = {
+  questionNumber: string,
   amountCorrect: number,
   totalAttempts: number
 }
