@@ -48,6 +48,7 @@ function QuestionScreen(props: { createAlert: AlertFunc }) {
   const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState<string[] | undefined>();
   const playerId = localStorage.getItem("playerId");
+  const navigate = useNavigate();
 
   let timerExists = false;
   let currQuestionId: number;
@@ -56,6 +57,7 @@ function QuestionScreen(props: { createAlert: AlertFunc }) {
     function requestBackend() {
       (fetchBackend("GET",`/play/${playerId}/question`) as Promise<{ question: QuestionPlayerData } | { error: string }>).then(data =>{
         if ("error" in data) {
+          navigate(`/play/${playerId}}/results`)
           return;
         } 
         if (data.question.id != currQuestionId) {

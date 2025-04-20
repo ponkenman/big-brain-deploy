@@ -16,7 +16,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
@@ -31,7 +31,7 @@ function calculateSecondsTaken(Date1: ReturnType<typeof Date.toString>, Date2: R
   const start = new Date(Date1);
   const end = new Date(Date2);
 
-  return Math.floor(end.getTime() - start.getTime());
+  return Math.floor((end.getTime() - start.getTime()) / 1000);
 }
 
 
@@ -65,11 +65,10 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
     let totalScore = 0;
     person.answers.map((currAnswer) => {
       // Does not account for multiple choice
-      if (currAnswer.correct) {
-        // console.log("inside adding points");
-        // console.log(gameData[index + 1]);
+      if (currAnswer.correct && gameData[index] && gameData[index].points !== undefined) {
         totalScore += gameData[index].points;
       }
+      
 
       if (questionStats.length < index + 1) {
         questionStats.push({questionNumber: `Question ${index + 1}`, amountCorrect: currAnswer.correct ? 1 : 0, totalAttempts: 1});
@@ -96,7 +95,6 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
   });
 
   return (<section>
-    <p>something reulsts?</p>
     <h1>Top 5 Users!</h1>
     <table className="border-collapse border border-gray-400 ...">
       <thead className="border-collapse border border-gray-400 ...">
@@ -128,12 +126,13 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
         ]
       }}
     />
+    <h1>Average Response Time</h1>
     <Bar 
       data={{
         labels: questionStats.map((data) => data.questionNumber),
         datasets: [
           {
-            label: "Average Answer Time",
+            label: "Average Response Time",
             data: responseTime
           }
         ]
@@ -156,7 +155,7 @@ export function ResultsScreen() {
     <h1>gameId {gameId}</h1>
     <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Results</h1>
-      <h1 className="text-4xl font-semibold pb-7">Session: {sessionId} </h1>
+      <h1 className="text-4xl font-semibold pb-7">Session: {sessionId.toString()} </h1>
       <Link to="/dashboard">
         <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
       </Link>

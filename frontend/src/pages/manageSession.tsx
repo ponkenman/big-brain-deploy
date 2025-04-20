@@ -107,6 +107,7 @@ export function ManageSessionScreen() {
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
   const { sessionId } = useParams() as { sessionId: string };
+  localStorage.setItem("sessionId", sessionId);
 
   return (<>
     <Navbar>
