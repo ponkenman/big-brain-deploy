@@ -9,7 +9,7 @@ import { JoinGameScreen } from "./pages/joinGame.tsx";
 import { PlayGameScreen } from "./pages/playGame.tsx";
 import { ManageSessionScreen } from "./pages/manageSession.tsx";
 import { ResultsScreen } from "./pages/results.tsx";
-import { PlayerResultsScreen } from "./pages/personResults.tsx";
+import { PlayerResultsScreen } from "./pages/playerResult.tsx";
 
 function App() {
   return (

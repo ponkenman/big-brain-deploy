@@ -16,7 +16,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Bar, Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
@@ -121,7 +121,9 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
         datasets: [
           {
             label: "Percentage Correct",
-            data: questionStats.map((data) => (data.amountCorrect / data.totalAttempts))
+            data: questionStats.map((data) => (data.amountCorrect / data.totalAttempts)),
+            borderColor: '#9FA8DA',
+            backgroundColor: '#9FA8DA'
           }
         ]
       }}
@@ -133,7 +135,9 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
         datasets: [
           {
             label: "Average Response Time",
-            data: responseTime
+            data: responseTime,
+            borderColor: '#9FA8DA',
+            backgroundColor: '#9FA8DA'
           }
         ]
       }}
