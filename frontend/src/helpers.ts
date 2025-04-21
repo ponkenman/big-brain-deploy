@@ -80,16 +80,16 @@ export function createSampleAnswer(): Answer {
 
 export function createDefaultQuestion(): Question {
   return {
-    id: Math.floor(Math.random() * 1000000),
-    type: QuestionType.SINGLE_CHOICE,
-    media: "",
-    mediaType: MediaType.NONE,
-    question: "",
-    answers: [createSampleAnswer(), createSampleAnswer()],
-    correctAnswers: [],
-    duration: 10,
-    points: 5,
-    index: -1
+      id: Math.floor(Math.random() * 1000000),
+      type: QuestionType.SINGLE_CHOICE,
+      media: "",
+      mediaType: MediaType.NONE,
+      question: "",
+      answers: [createSampleAnswer(), createSampleAnswer()],
+      correctAnswers: [],
+      duration: 10,
+      points: 5,
+      index: -1
   }
 }
 
