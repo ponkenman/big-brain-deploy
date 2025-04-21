@@ -103,14 +103,17 @@ export const sampleJudgementAnswers = [{
   correct: true,
 }];
 
-export function isAnswer(ans: Answer | any): ans is Answer {
-  return typeof (ans as Answer).id === "number" && 
-  typeof (ans as Answer).text === "string" &&
-  typeof (ans as Answer).correct === "boolean";
+export function isAnswer(data: unknown) {
+  const ans = data as Answer;
+
+  return typeof ans.id === "number" && 
+  typeof ans.text === "string" &&
+  typeof ans.correct === "boolean";
 }
 
 export function isQuestion(data: unknown) {
-  let q = data as Question;
+  const q = data as Question;
+
   return typeof q.id === "number" &&
   typeof q.type === "string" &&
   typeof q.media === "string" &&
@@ -127,13 +130,13 @@ export function isQuestion(data: unknown) {
 }
 
 export function isDate(data: unknown) {
-  let date = data as Date;
+  const date = data as Date;
 
   return  date instanceof Date && !isNaN(date.getTime());
 }
 
 export function isAnswerResult(data: unknown) {
-  let aR = data as AnswerResult;
+  const aR = data as AnswerResult;
 
   return isDate(aR.answeredAt) &&
   aR.answers &&
@@ -144,7 +147,7 @@ export function isAnswerResult(data: unknown) {
 }
 
 export function isPersonResult(data: unknown) {
-  let pR = data as PersonResult;
+  const pR = data as PersonResult;
 
   return pR.answers &&
   Array.isArray(pR.answers) &&
@@ -153,14 +156,15 @@ export function isPersonResult(data: unknown) {
 }
 
 export function isPastSessions(data: unknown) {
-  let pS = data as PastSessions;
+  const pS = data as PastSessions;
 
   return typeof pS.pastSessionId === "number" &&
   isPersonResult(pS.result);
 }
 
 export function isGame(data: unknown) {
-  let g = data as Game;
+  const g = data as Game;
+  
   return typeof g.id === "number" &&
   typeof g.name === "string" &&
   typeof g.thumbnail === "string" &&
