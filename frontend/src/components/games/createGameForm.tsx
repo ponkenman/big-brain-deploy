@@ -17,7 +17,6 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
   const [modal] = useState(true);
   const [uploadJson, setUploadJson] = useState(false);
   const [jsonFilePath, setJsonFilePath] = useState<File | null>(null);
-  const [gameData, setGameData] = useState<Game>();
   const token = localStorage.getItem("token") as string;
 
   useEffect(() => {
@@ -97,55 +96,56 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
       props.createAlert("Invalid upload");
       return;
     }
-    // questions is valid
 
     const reader = new FileReader();
     reader.onload = (evt) => {
       const fileContent = evt.target.result as string;
       const data = JSON.parse(fileContent);
-      setGameData(data);
-      if (!isGame(gameData)) {
+      console.log(data);
+      
+      console.log("before error");
+      if (!isGame(data)) {
+        console.log("error setting");
         props.createAlert("Invlid JSON format");
         return;
       }
-    };
-    reader.readAsText(fileInput);
-
-    if (!gameData) {
-      return;
-    }
-
-    const newGame: Game = {
-      pastSessions: gameData.pastSessions,
-      id: gameData.id,
-      name: gameData.name,
-      thumbnail: gameData.thumbnail,
-      owner: gameData.owner,
-      active: gameData.active,
-      createdAt: gameData.createdAt,
-      lastUpdatedAt: gameData.lastUpdatedAt,
-      questions: gameData.questions
-    }
-
-    console.log(props.games);
-
-    const updateGames = [...props.games, newGame];
-
-    const body = {
-      games: updateGames
-    }
-
-    const response = await fetchBackend("PUT", "/admin/games", body, token);
-    if (response.error) {
-      props.createAlert(response.error);
-    } else {
+      
+      const newGame: Game = {
+        pastSessions: data.pastSessions,
+        id: data.id,
+        name: data.name,
+        thumbnail: data.thumbnail,
+        owner: data.owner,
+        active: data.active,
+        createdAt: data.createdAt,
+        lastUpdatedAt: data.lastUpdatedAt,
+        questions: data.questions
+      }
+      
       console.log(props.games);
-      props.createAlert("Successfully uploaded a game!");
-      console.log(newGame);
-      props.setGamesLength(+1);
-    }
-
-    props.closeForm();
+      
+      const updateGames = [...props.games, newGame];
+      
+      const body = {
+        games: updateGames
+      }
+      
+      const response = fetchBackend("PUT", "/admin/games", body, token);
+      response.then((data) => {
+        if ("error" in data) {
+          props.createAlert(data.error);
+        } else {
+          console.log(props.games);
+          props.createAlert("Successfully uploaded a game!");
+          console.log(newGame);
+          props.setGamesLength(+1);
+        }
+      });
+  
+      props.closeForm();
+    };
+    
+    reader.readAsText(fileInput);
   }
 
   return (<>
