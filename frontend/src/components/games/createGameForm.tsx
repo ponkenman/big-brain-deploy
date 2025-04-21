@@ -108,21 +108,6 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
         props.createAlert("Invlid JSON format");
         return;
       }
-      console.log("you passed the test!");
-
-      console.log(gameData);
-      // Passes
-      // console.log(isActive(data.active));
-      // console.log(isDate(data.createdAt));
-      // console.log(isActive(data.id));
-      // console.log(isDate(data.lastUpdatedAt));
-      // console.log(isString(data.name));
-      // console.log(isString(data.owner));
-      // console.log(isQuestion(data.questions[0]));
-      // console.log(isQuestion(data.questions[1]));
-      // console.log(isString(data.thumbnail));
-
-      console.log(isGame(data));
     };
     reader.readAsText(fileInput);
 
