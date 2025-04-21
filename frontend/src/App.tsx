@@ -10,6 +10,7 @@ import { PlayGameScreen } from "./pages/playGame.tsx";
 import { ManageSessionScreen } from "./pages/manageSession.tsx";
 import { ResultsScreen } from "./pages/results.tsx";
 import { PlayerResultsScreen } from "./pages/playerResult.tsx";
+import { PastResultsScreen } from "./pages/pastResults.tsx";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="session/:sessionId" element={<ManageSessionScreen/>}/>
         <Route path="session/:sessionId/results" element={<ResultsScreen/>}/>
         <Route path="play/:playerId/results" element={<PlayerResultsScreen/>}/>
+        <Route path="/pastResults/:gameId" element={<PastResultsScreen/>}/>
         <Route path="/" element={<LoginRedirect />} />
         <Route path="" element={<LoginRedirect />} />
       </Routes>

@@ -95,8 +95,20 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
       sortedGames = response.games.toSorted((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
     }
 
+    if (currSession == null) {
+      console.log("Invalid session");
+      props.createAlert("Invalid session");
+      setStopGameModal(false);
+      return;
+    }
+
     const response2 = await fetchBackend("GET", `/admin/session/${currSession}/results`, undefined, token);
-    console.log(response2);
+    if ("error" in response2) {
+      console.log(response2.error);
+      props.createAlert(response2.error);
+      setStopGameModal(false);
+      return;
+    }
 
     
     const pastSession: PastSessions = {
@@ -150,6 +162,7 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
           <Button text="Manage session" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate(`/session/${currSession}`)}/>
           <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={(stopGame)}/>
         </>)}
+      <Button text="View Past Game Sessions" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => navigate(`/pastResults/${props.gameId}`)}/>
       <Button text="Edit" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => navigate(`/game/${props.gameId}`)}/>
       <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
     </div>

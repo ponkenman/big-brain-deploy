@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AlertData, AlertMenu } from "../components/alert";
 import { fetchBackend, initialiseAlerts } from "../helpers";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
-import { AlertFunc, APIError, Game, PastSessions } from "../types";
+import { AlertFunc, Game, PastSessions } from "../types";
 import Modal from "../components/modal";
 
 function ManageSession(props: {sessionId: string, createAlert: AlertFunc }) {
@@ -56,8 +56,7 @@ function ManageSession(props: {sessionId: string, createAlert: AlertFunc }) {
 
   }
 
-  async function stopGame() {    
-    storeGame();
+  async function stopGame() {
     const token = localStorage.getItem("token") as string;
     const body = {
       mutationType: "END"

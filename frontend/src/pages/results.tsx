@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AlertData } from "../components/alert";
 import { initialiseAlerts } from "../helpers";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
@@ -43,17 +43,31 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
   const questionStats: QuestionStats[] = [];
   const responseTimeData: number[] = [];
   const responseTime: number[] = [];
+  const navigate = useNavigate();
 
 
   useEffect(() => {
     const response = fetchBackend("GET", `/admin/session/${parseInt(props.sessionId)}/results`, undefined, token);
     response.then((data) => {
+      if ("error" in data) {
+        console.log(data.error);
+        props.createAlert(data.error);
+        navigate("/dashboard")
+        return;
+      }
+
       setResults(data.results);
       console.log(data.results);
     });
 
     const response2 = fetchBackend("GET", `/admin/session/${parseInt(props.sessionId)}/status`, undefined, token);
     response2.then((data) => {
+      if ("error" in data) {
+        console.log(data.error);
+        props.createAlert(data.error);
+        navigate("/dashboard")
+        return;
+      }
       setGameData(data.results.questions);
       console.log(data.results.questions);
     });
