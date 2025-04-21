@@ -69,7 +69,7 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
                   <img src={question.media} alt={`Image for your question`} className="object-cover object-center" />
                 </div>
               </div>}
-              <FileSelect labelName={`Upload Image`} id={`question${index}-media-file`} onChange={e => updateFileInput(index, (e.target.files ? e.target.files[0] : null))} /> 
+              <FileSelect labelName={`Upload Image`} id={`question${index}-media-file`} accept=".png, .jpeg, jpg" onChange={e => updateFileInput(index, (e.target.files ? e.target.files[0] : null))} /> 
             </>
           ) : currMediaType === MediaType.TEXT ? (
             <TextInput labelName={`Enter Text Stimulus`} id={`question${index}-media-text`} type="text" defaultValue={question.media} onChange={e => {updateQuestion(index, {media: e.target.value, mediaType: MediaType.TEXT})}} />

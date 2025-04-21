@@ -84,6 +84,12 @@ export type APIError = {
   error: string
 }
 
+export enum FileMedia {
+  PNG = ".png",
+  JPG = ".jpg",
+  JPEG = ".jpeg"
+}
+
 export type StateSetter<T> = React.Dispatch<React.SetStateAction<T>>;
 
 export type AlertFunc = (message: string) => void;

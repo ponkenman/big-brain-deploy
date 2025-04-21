@@ -144,7 +144,7 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
   
       props.closeForm();
     };
-    
+
     reader.readAsText(fileInput);
   }
 
@@ -159,7 +159,7 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
         { !uploadJson ? (
           <form>
             <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} onChange={e => setName(e.target.value)} onEnter={createGame} />
-            <FileSelect labelName="Game Thumbnail (optional)" id="game-thumnail" onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)}/>
+            <FileSelect labelName="Game Thumbnail (optional)" id="game-thumnail" accept={".png, .jpeg, jpg"} onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)}/>
             <QuestionManager labelName="Questions" questions={questions} set={setQuestions} />
             { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
             <div className="flex flex-row gap-2">
@@ -169,7 +169,7 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
           </form>
         ) : (
           <form>
-            <FileSelect labelName="Upload JSON File (optional)" id="game-upload" onChange={e => setJsonFilePath(e.target.files ? e.target.files[0] : null)}/>
+            <FileSelect labelName="Upload JSON File (optional)" id="game-upload" accept=".json" onChange={e => setJsonFilePath(e.target.files ? e.target.files[0] : null)}/>
             <div className="flex flex-row gap-2">
               <Button text="Submit" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => gameUpload(jsonFilePath)}/>
               <Button text="Cancel" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={props.closeForm}/>
