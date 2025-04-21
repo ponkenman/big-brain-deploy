@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Button from "../buttons/button";
 import { fetchBackend } from "../../helpers";
 import { useNavigate } from "react-router-dom";
-import { AlertFunc, Game, Question, StateSetter } from "../../types";
+import { AlertFunc, Game, PastSessions, Question, StateSetter } from "../../types";
 
 export default function GameCard(props: { createAlert: AlertFunc, games: Game[], setGamesLength: StateSetter<number>, gameId: number }) {
   const [modal, setModal] = useState(false);
@@ -84,6 +84,53 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
     navigator.clipboard.writeText(`${window.origin}/join?sessionId=${currSession}`); 
   }
 
+  async function storeGame(seeResults: boolean) {
+    const token = localStorage.getItem("token") as string;
+    const response = await fetchBackend("GET", "/admin/games", undefined, token) as { games: Game[] };
+    let sortedGames = response.games;
+    console.log(response);
+    if ("error" in response) {
+      console.log(response.error);
+    } else {
+      sortedGames = response.games.toSorted((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
+    }
+
+    const response2 = await fetchBackend("GET", `/admin/session/${currSession}/results`, undefined, token);
+    console.log(response2);
+
+    
+    const pastSession: PastSessions = {
+      pastSessionId: currSession,
+      result: response2.results
+    }
+    
+    const gameIndex = sortedGames.findIndex(g => g.id === props.gameId);
+    sortedGames[gameIndex].pastSessions.push(pastSession);
+    console.log(sortedGames);
+
+    const body = {
+      games: sortedGames
+    }
+    
+    const response3 = await fetchBackend("PUT", "/admin/games", body, token);
+    console.log("entered response.then")
+    
+    console.log(response3);
+    if (response3.error) {
+      console.log(response3.error);
+      props.createAlert(response3.error);
+    } else {
+      props.createAlert("Stored an old game!");
+      console.log(sortedGames);
+    }
+    
+    if (seeResults) {
+      navigate(`/session/${currSession}}/results`);
+    } else {
+      navigate("/dashboard")
+    }
+  }
+
   useEffect(() => {
     const game = props.games.find(game => game.id === props.gameId) as Game;
     setCurrSession(game.active);
@@ -131,8 +178,8 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
       <Modal>
         <h2>Would you like to view the results?</h2>
         <div className="flex flex-row gap-2">
-          <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate(`/session/${currSession}}/results`)}/>
-          <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setStopGameModal(false)}/>
+          <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => storeGame(true)}/>
+          <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => storeGame(false)}/>
         </div>
       </Modal>
     )}

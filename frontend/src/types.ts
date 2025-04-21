@@ -37,6 +37,7 @@ export interface QuestionPlayerData extends Omit<Question, "correctAnswers"> {
 }
 
 export type Game = {
+  pastSessions: PastSessions[],
   id: number,
   name: string,
   thumbnail: string,
@@ -61,6 +62,11 @@ export type PersonResult = {
 
 export type GameResults = {
   results: PersonResult[]
+}
+
+export type PastSessions = {
+  pastSessionId: number | null,
+  result: GameResults
 }
 
 export type TopFiveScore = {
