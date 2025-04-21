@@ -66,7 +66,7 @@ export type GameResults = {
 
 export type PastSessions = {
   pastSessionId: number | null,
-  result: GameResults
+  result: PersonResult[]
 }
 
 export type TopFiveScore = {

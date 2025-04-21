@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useEffect} from "react";
 import TextInput from "../forms/textInput";
-import { fetchBackend, fileToDataUrl } from "../../helpers";
+import { fetchBackend, fileToDataUrl, isGame } from "../../helpers";
 import Modal from "../modal";
 import Button from "../buttons/button";
 import QuestionManager from "../questions/questionManager";
@@ -15,6 +15,10 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [confirmNoQuestions, setConfirmNoQuestions] = useState(false);
   const [modal] = useState(true);
+  const [uploadJson, setUploadJson] = useState(false);
+  const [jsonFilePath, setJsonFilePath] = useState<File | null>(null);
+  const [gameData, setGameData] = useState<Game>();
+  const token = localStorage.getItem("token") as string;
 
   useEffect(() => {
     if (thumbnailFile) {
@@ -88,19 +92,105 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
     }
   }, [questions]);
 
+  async function gameUpload(fileInput: File | null ) {
+    if (!fileInput) {
+      props.createAlert("Invalid upload");
+      return;
+    }
+    // questions is valid
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const fileContent = evt.target.result as string;
+      const data = JSON.parse(fileContent);
+      setGameData(data);
+      if (!isGame(gameData)) {
+        props.createAlert("Invlid JSON format");
+        return;
+      }
+      console.log("you passed the test!");
+
+      console.log(gameData);
+      // Passes
+      // console.log(isActive(data.active));
+      // console.log(isDate(data.createdAt));
+      // console.log(isActive(data.id));
+      // console.log(isDate(data.lastUpdatedAt));
+      // console.log(isString(data.name));
+      // console.log(isString(data.owner));
+      // console.log(isQuestion(data.questions[0]));
+      // console.log(isQuestion(data.questions[1]));
+      // console.log(isString(data.thumbnail));
+
+      console.log(isGame(data));
+    };
+    reader.readAsText(fileInput);
+
+    if (!gameData) {
+      return;
+    }
+
+    const newGame: Game = {
+      pastSessions: gameData.pastSessions,
+      id: gameData.id,
+      name: gameData.name,
+      thumbnail: gameData.thumbnail,
+      owner: gameData.owner,
+      active: gameData.active,
+      createdAt: gameData.createdAt,
+      lastUpdatedAt: gameData.lastUpdatedAt,
+      questions: gameData.questions
+    }
+
+    console.log(props.games);
+
+    const updateGames = [...props.games, newGame];
+
+    const body = {
+      games: updateGames
+    }
+
+    const response = await fetchBackend("PUT", "/admin/games", body, token);
+    if (response.error) {
+      props.createAlert(response.error);
+    } else {
+      console.log(props.games);
+      props.createAlert("Successfully uploaded a game!");
+      console.log(newGame);
+      props.setGamesLength(+1);
+    }
+
+    props.closeForm();
+  }
+
   return (<>
     {modal && (
       <Modal>
-        <form>
-          <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} onChange={e => setName(e.target.value)} onEnter={createGame} />
-          <FileSelect labelName="Game Thumbnail (optional)" id="game-thumnail" onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)}/>
-          <QuestionManager labelName="Questions" questions={questions} set={setQuestions} />
-          { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
-          <div className="flex flex-row gap-2">
-            <Button text="Submit" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={createGame}/>
-            <Button text="Cancel" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={props.closeForm}/>
-          </div>
-        </form>
+        {uploadJson ? (
+          <Button text="Create form manually" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setUploadJson(false)}/>
+        ) : (
+          <Button text="Upload instead" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setUploadJson(true)}/>
+        )}
+        { !uploadJson ? (
+          <form>
+            <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} onChange={e => setName(e.target.value)} onEnter={createGame} />
+            <FileSelect labelName="Game Thumbnail (optional)" id="game-thumnail" onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)}/>
+            <QuestionManager labelName="Questions" questions={questions} set={setQuestions} />
+            { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
+            <div className="flex flex-row gap-2">
+              <Button text="Submit" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={createGame}/>
+              <Button text="Cancel" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={props.closeForm}/>
+            </div>
+          </form>
+        ) : (
+          <form>
+            <FileSelect labelName="Upload JSON File (optional)" id="game-upload" onChange={e => setJsonFilePath(e.target.files ? e.target.files[0] : null)}/>
+            <div className="flex flex-row gap-2">
+              <Button text="Submit" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => gameUpload(jsonFilePath)}/>
+              <Button text="Cancel" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={props.closeForm}/>
+            </div>
+          </form>
+        )}
       </Modal>
     )}
   </>);

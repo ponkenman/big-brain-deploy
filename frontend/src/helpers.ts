@@ -130,7 +130,7 @@ export function isQuestion(data: unknown) {
 }
 
 export function isDate(data: unknown) {
-  const date = data as Date;
+  const date = new Date (data as Date);
 
   return  date instanceof Date && !isNaN(date.getTime());
 }
@@ -159,20 +159,23 @@ export function isPastSessions(data: unknown) {
   const pS = data as PastSessions;
 
   return typeof pS.pastSessionId === "number" &&
-  isPersonResult(pS.result);
+  pS.result &&
+  Array.isArray(pS.result) &&
+  pS.result.every(result => isPersonResult(result));
 }
 
 export function isGame(data: unknown) {
   const g = data as Game;
   
-  return typeof g.id === "number" &&
+  return Array.isArray(g.pastSessions) &&
+  g.pastSessions.every(sesh => isPastSessions(sesh)) &&
+  typeof g.id === "number" &&
   typeof g.name === "string" &&
   typeof g.thumbnail === "string" &&
   typeof g.owner === "string" &&
-  typeof g.active === "number" &&
+  (typeof g.active === "number" || g.active ===  null) &&
   isDate(g.createdAt) &&
   isDate(g.lastUpdatedAt) &&
-  g.questions &&
   Array.isArray(g.questions) &&
   g.questions.every(ques => isQuestion(ques));
 }
