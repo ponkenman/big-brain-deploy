@@ -1,5 +1,5 @@
 import { AlertData } from "./components/alert";
-import { Answer, MediaType, Question, QuestionType, StateSetter } from "./types";
+import { Answer, AnswerResult, Game, MediaType, PastSessions, PersonResult, Question, QuestionType, StateSetter } from "./types";
 
 interface FetchOptions {
   method: "GET"|"POST"|"PUT"|"DELETE",
@@ -102,3 +102,74 @@ export const sampleJudgementAnswers = [{
   text: "False",
   correct: true,
 }];
+
+export function isAnswer(ans: Answer | any): ans is Answer {
+  return typeof (ans as Answer).id === "number" && 
+  typeof (ans as Answer).text === "string" &&
+  typeof (ans as Answer).correct === "boolean";
+}
+
+export function isQuestion(data: unknown) {
+  let q = data as Question;
+  return typeof q.id === "number" &&
+  typeof q.type === "string" &&
+  typeof q.media === "string" &&
+  typeof q.mediaType === "string" &&
+  q.answers &&
+  Array.isArray(q.answers) &&
+  q.answers.every(ans => isAnswer(ans)) &&
+  q.correctAnswers &&
+  Array.isArray(q.correctAnswers) &&
+  q.correctAnswers.every(correctAns => typeof correctAns === "string") &&
+  typeof q.duration === "number" &&
+  typeof q.points === "number" &&
+  typeof q.index === "number";
+}
+
+export function isDate(data: unknown) {
+  let date = data as Date;
+
+  return  date instanceof Date && !isNaN(date.getTime());
+}
+
+export function isAnswerResult(data: unknown) {
+  let aR = data as AnswerResult;
+
+  return isDate(aR.answeredAt) &&
+  aR.answers &&
+  Array.isArray(aR.answers) &&
+  aR.answers.every(ans => typeof ans === "string") &&
+  typeof aR.correct === "boolean" &&
+  isDate(aR.questionStartedAt);
+}
+
+export function isPersonResult(data: unknown) {
+  let pR = data as PersonResult;
+
+  return pR.answers &&
+  Array.isArray(pR.answers) &&
+  pR.answers.every(ans => isAnswerResult(ans)) &&
+  typeof pR.name === "string";
+}
+
+export function isPastSessions(data: unknown) {
+  let pS = data as PastSessions;
+
+  return typeof pS.pastSessionId === "number" &&
+  isPersonResult(pS.result);
+}
+
+export function isGame(data: unknown) {
+  let g = data as Game;
+  return typeof g.id === "number" &&
+  typeof g.name === "string" &&
+  typeof g.thumbnail === "string" &&
+  typeof g.owner === "string" &&
+  typeof g.active === "number" &&
+  isDate(g.createdAt) &&
+  isDate(g.lastUpdatedAt) &&
+  g.questions &&
+  Array.isArray(g.questions) &&
+  g.questions.every(ques => isQuestion(ques));
+}
+
