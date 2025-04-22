@@ -1,16 +1,16 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import LogoutButton from "../components/buttons/logoutButton";
 import Navbar from "../components/navbar";
-import { AlertFunc, Answer, Game, Question, QuestionType, StateSetter } from "../types";
-import { useEffect, useState } from "react";
-import { createDefaultQuestion, durationAgo, fetchBackend, fileToDataUrl, initialiseAlerts } from "../helpers";
+import { Answer, Game, Question, QuestionType, StateSetter } from "../types";
+import { useContext, useEffect, useState } from "react";
+import { createDefaultQuestion, durationAgo, fetchBackend, fileToDataUrl } from "../helpers";
 import Button from "../components/buttons/button";
 import Modal from "../components/modal";
 import TextInput from "../components/forms/textInput";
 import FileSelect from "../components/forms/fileInput";
-import { AlertData, AlertMenu } from "../components/alert";
 import QuestionManager from "../components/questions/questionManager";
 import IconButton from "../components/buttons/iconButton";
+import { AlertContext } from "../App";
 
 function NewQuestionForm(props: { newQuestion: Question, setNewQuestion: StateSetter<Question> }) {
   const [newQuestions, setNewQuestions] = useState<Question[]>([createDefaultQuestion()]);
@@ -37,16 +37,16 @@ function EditQuestionCard(props: {game: Game, q: Question, setModalIdToDelete: S
       <p>Points: {props.q.points}</p>
     </div>
     <div className="flex flex-col gap-2">
-        <IconButton className="w-5 h-auto hover:opacity-50" onClick={() => navigate(`/game/${props.game.id}/question/${props.q.id}`)} svg="../src/assets/pencil.svg"/>
-        <IconButton className="w-5 h-auto hover:opacity-50" onClick={() => {
-          props.setModalIdToDelete(props.q.id);
-          props.setDeleteModalIsVisible(true);
-        }} svg="../src/assets/trash.svg"/>
-      </div>
+      <IconButton className="w-5 h-auto hover:opacity-50" onClick={() => navigate(`/game/${props.game.id}/question/${props.q.id}`)} svg="../src/assets/pencil.svg"/>
+      <IconButton className="w-5 h-auto hover:opacity-50" onClick={() => {
+        props.setModalIdToDelete(props.q.id);
+        props.setDeleteModalIsVisible(true);
+      }} svg="../src/assets/trash.svg"/>
+    </div>
   </article>);
 }
 
-function EditQuestionManager(props: { game: Game, setGame: StateSetter<Game|undefined>, updateGame: (newGame: Game) => void, createAlert: AlertFunc}) {
+function EditQuestionManager(props: { game: Game, setGame: StateSetter<Game|undefined>, updateGame: (newGame: Game) => void }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [newQuestion, setNewQuestion] = useState<Question>(createDefaultQuestion());
   const [modalIsVisible, setModalIsVisible] = useState(false);
@@ -86,8 +86,8 @@ function EditQuestionManager(props: { game: Game, setGame: StateSetter<Game|unde
     <h3 className="text-xl font-semibold py-3">Game questions</h3>
     <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-4 mb-1">
       {questions.length === 0 
-      ? <p> You currently have no questions! </p> 
-      : questions.map(q => <EditQuestionCard key={q.id} game={props.game} q={q} setModalIdToDelete={setModalIdToDelete} setDeleteModalIsVisible={setDeleteModalIsVisible}/>)}
+        ? <p> You currently have no questions! </p> 
+        : questions.map(q => <EditQuestionCard key={q.id} game={props.game} q={q} setModalIdToDelete={setModalIdToDelete} setDeleteModalIsVisible={setDeleteModalIsVisible}/>)}
       <Button text="Add Questions" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white" onClick={() => setModalIsVisible(true)}/>
       <Modal visible={modalIsVisible} setVisible={setModalIsVisible}>
         <form>
@@ -116,12 +116,13 @@ function GameStats(props: {game: Game}) {
   </>);
 }
 
-function GameManager(props: {gameId: string, createAlert: AlertFunc}) {
+function GameManager(props: {gameId: string }) {
   const [game, setGame] = useState<Game>();
   const [name, setName] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState<File|null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [modalIsVisible, setModalIsVisible] = useState(false);
+  const createAlert = useContext(AlertContext);
 
   useEffect(() => {
     if (thumbnailFile) {
@@ -159,9 +160,9 @@ function GameManager(props: {gameId: string, createAlert: AlertFunc}) {
       const editResponse = fetchBackend("PUT", "/admin/games", body, token);
       editResponse.then(r => {
         if (r.error) {
-          props.createAlert(r.error);
+          createAlert(r.error);
         } else {
-          props.createAlert("Successfully updated!");
+          createAlert("Successfully updated!");
           setGame(newGame);
         }
       });
@@ -193,14 +194,11 @@ function GameManager(props: {gameId: string, createAlert: AlertFunc}) {
         </form>
       </Modal>
     </section>
-    <EditQuestionManager game={game} setGame={setGame} updateGame={updateGame} createAlert={props.createAlert}/>
+    <EditQuestionManager game={game} setGame={setGame} updateGame={updateGame} />
   </div>);
 }
 
 export function EditGameScreen() {
-  const [alertId, setAlertId] = useState(0);
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
   const { gameId } = useParams() as { gameId: string };
 
   // Scroll to top when screen first loaded
@@ -217,8 +215,7 @@ export function EditGameScreen() {
       <Link to="/dashboard">
         <Button text="Back to dashboard" color="bg-pink-300" hoverColor="hover:bg-pink-400 hover:text-white" />
       </Link>
-      <GameManager gameId={gameId} createAlert={createAlert} />
+      <GameManager gameId={gameId} />
     </main>
-    <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>);
 }

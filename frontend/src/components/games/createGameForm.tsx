@@ -1,11 +1,12 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {useEffect} from "react";
 import TextInput from "../forms/textInput";
 import { fetchBackend, fileToDataUrl, isGame } from "../../helpers";
 import Button from "../buttons/button";
 import QuestionManager from "../questions/questionManager";
 import FileSelect from "../forms/fileInput";
-import { AlertFunc, Game, Question, StateSetter } from "../../types";
+import { Game, Question, StateSetter } from "../../types";
+import { AlertContext } from "../../App";
 
 function SubmitGameButtons(props: {submit: () => void, close: () => void}) {
   return (<div className="flex flex-row gap-2">
@@ -14,12 +15,13 @@ function SubmitGameButtons(props: {submit: () => void, close: () => void}) {
   </div>);
 }
 
-function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number>, createAlert: AlertFunc }) {
+function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number> }) {
   const [name, setName] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [thumbnailFile, setThumbnailFile] = useState<File|null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [confirmNoQuestions, setConfirmNoQuestions] = useState(false);
+  const createAlert = useContext(AlertContext);
 
   useEffect(() => {
     if (thumbnailFile) {
@@ -30,7 +32,7 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
 
   async function createGame() {
     if (name === "") {
-      props.createAlert("Name is empty!");
+      createAlert("Name is empty!");
       return;
     }
     if (questions.length === 0 && !confirmNoQuestions) {
@@ -40,12 +42,12 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
     
     const token = localStorage.getItem("token");
     if (!token) {
-      props.createAlert("Invalid token!");
+      createAlert("Invalid token!");
       return;
     }
     const email = localStorage.getItem("email");
     if (!email) {
-      props.createAlert("Invalid email!");
+      createAlert("Invalid email!");
       return;
     }
 
@@ -77,9 +79,9 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
 
     const response = await fetchBackend("PUT", "/admin/games", body, token);
     if (response.error) {
-      props.createAlert(response.error);
+      createAlert(response.error);
     } else {
-      props.createAlert("Created a game!");
+      createAlert("Created a game!");
       console.log(newGame);
       props.setGamesLength(-1);
     }
@@ -102,67 +104,68 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
   </form>);
 }
 
-function ImportFileGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number>, createAlert: AlertFunc }) {
-const [jsonFilePath, setJsonFilePath] = useState<File | null>(null);
-const token = localStorage.getItem("token") as string;
+function ImportFileGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number> }) {
+  const [jsonFilePath, setJsonFilePath] = useState<File | null>(null);
+  const token = localStorage.getItem("token") as string;
+  const createAlert = useContext(AlertContext);
 
 
-async function gameUpload(fileInput: File | null ) {
-  if (!fileInput) {
-    props.createAlert("Invalid upload");
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = (evt) => {
-    const fileContent = evt.target.result as string;
-    const data = JSON.parse(fileContent);
-    console.log(data);
-    
-    console.log("before error");
-    if (!isGame(data)) {
-      console.log("error setting");
-      props.createAlert("Invlid JSON format");
+  async function gameUpload(fileInput: File | null ) {
+    if (!fileInput) {
+      createAlert("Invalid upload");
       return;
     }
-    
-    const newGame: Game = {
-      pastSessions: data.pastSessions,
-      id: data.id,
-      name: data.name,
-      thumbnail: data.thumbnail,
-      owner: data.owner,
-      active: data.active,
-      createdAt: data.createdAt,
-      lastUpdatedAt: data.lastUpdatedAt,
-      questions: data.questions
-    }
-    
-    console.log(props.games);
-    
-    const updateGames = [...props.games, newGame];
-    
-    const body = {
-      games: updateGames
-    }
-    
-    const response = fetchBackend("PUT", "/admin/games", body, token);
-    response.then((data) => {
-      if ("error" in data) {
-        props.createAlert(data.error);
-      } else {
-        console.log(props.games);
-        props.createAlert("Successfully uploaded a game!");
-        console.log(newGame);
-        props.setGamesLength(+1);
-      }
-    });
 
-    props.closeForm();
-  };
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const fileContent = evt.target.result as string;
+      const data = JSON.parse(fileContent);
+      console.log(data);
+    
+      console.log("before error");
+      if (!isGame(data)) {
+        console.log("error setting");
+        createAlert("Invlid JSON format");
+        return;
+      }
+    
+      const newGame: Game = {
+        pastSessions: data.pastSessions,
+        id: data.id,
+        name: data.name,
+        thumbnail: data.thumbnail,
+        owner: data.owner,
+        active: data.active,
+        createdAt: data.createdAt,
+        lastUpdatedAt: data.lastUpdatedAt,
+        questions: data.questions
+      }
+    
+      console.log(props.games);
+    
+      const updateGames = [...props.games, newGame];
+    
+      const body = {
+        games: updateGames
+      }
+    
+      const response = fetchBackend("PUT", "/admin/games", body, token);
+      response.then((data) => {
+        if ("error" in data) {
+          createAlert(data.error);
+        } else {
+          console.log(props.games);
+          createAlert("Successfully uploaded a game!");
+          console.log(newGame);
+          props.setGamesLength(+1);
+        }
+      });
+
+      props.closeForm();
+    };
   
-  reader.readAsText(fileInput);
-}
+    reader.readAsText(fileInput);
+  }
   return (<form>
     <div className="pb-2">
       <FileSelect labelName="Upload game data from json" id="game-upload" onChange={e => setJsonFilePath(e.target.files ? e.target.files[0] : null)}/>
@@ -171,19 +174,19 @@ async function gameUpload(fileInput: File | null ) {
   </form>);
 }
 
-export default function CreateGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number>, createAlert: AlertFunc }) {
+export default function CreateGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number> }) {
   const [uploadJson, setUploadJson] = useState(false);
 
   return (<>
-        { !uploadJson 
-        ? <>
-          <ManualGameForm {...props}/>
-          <button className="underline hover:opacity-50 cursor-pointer pt-2" onClick={() => setUploadJson(true)}>Import from json file instead</button>
-        </>
-        : <>
-          <ImportFileGameForm {...props}/>
-          <button className="underline hover:opacity-50 cursor-pointer pt-2" onClick={() => setUploadJson(false)}>Enter data manually</button>
-        </>
-        }
+    { !uploadJson 
+      ? <>
+        <ManualGameForm {...props}/>
+        <button className="underline hover:opacity-50 cursor-pointer pt-2" onClick={() => setUploadJson(true)}>Import from json file instead</button>
+      </>
+      : <>
+        <ImportFileGameForm {...props}/>
+        <button className="underline hover:opacity-50 cursor-pointer pt-2" onClick={() => setUploadJson(false)}>Enter data manually</button>
+      </>
+    }
   </>);
 }
