@@ -3,16 +3,16 @@ import LogoutButton from "../components/buttons/logoutButton";
 import Navbar from "../components/navbar";
 import { AlertFunc, Answer, Game, Question, QuestionType, StateSetter } from "../types";
 import { useEffect, useState } from "react";
-import { createDefaultQuestion, fetchBackend, fileToDataUrl, initialiseAlerts } from "../helpers";
+import { createDefaultQuestion, durationAgo, fetchBackend, fileToDataUrl, initialiseAlerts } from "../helpers";
 import Button from "../components/buttons/button";
 import Modal from "../components/modal";
 import TextInput from "../components/forms/textInput";
 import FileSelect from "../components/forms/fileInput";
 import { AlertData, AlertMenu } from "../components/alert";
 import QuestionManager from "../components/questions/questionManager";
+import IconButton from "../components/buttons/iconButton";
 
 function NewQuestionForm(props: { newQuestion: Question, setNewQuestion: StateSetter<Question> }) {
-
   const [newQuestions, setNewQuestions] = useState<Question[]>([createDefaultQuestion()]);
 
   useEffect(() => {
@@ -22,13 +22,36 @@ function NewQuestionForm(props: { newQuestion: Question, setNewQuestion: StateSe
   return (<QuestionManager labelName="Add new question" questions={newQuestions} set={setNewQuestions} createSingleQuestion={true} />)
 }
 
-function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|undefined>, updateGame: (newGame: Game) => void, createAlert: AlertFunc}) {
+function EditQuestionCard(props: {game: Game, q: Question, setModalIdToDelete: StateSetter<number | undefined>, setDeleteModalIsVisible: StateSetter<boolean>}) {
+  const navigate = useNavigate();
+  return (<article className="p-4 rounded-lg bg-pink-200 flex flex-row justify-between">
+    <div>
+      <p>{props.q.index}{`)`} <span className="font-medium">{props.q.question}</span></p>
+      <p>Possible answers: {props.q.answers.length}</p>
+      <p>Correct answers: {props.q.type === QuestionType.JUDGEMENT ? (
+        (() => {
+          return (props.q.answers.find(a => a.correct) as Answer).text
+        })()
+      ) : props.q.correctAnswers.length}</p>
+      <p>Duration: {props.q.duration} {props.q.duration === 1 ? `second` : `seconds`}</p>
+      <p>Points: {props.q.points}</p>
+    </div>
+    <div className="flex flex-col gap-2">
+        <IconButton className="w-5 h-auto hover:opacity-50" onClick={() => navigate(`/game/${props.game.id}/question/${props.q.id}`)} svg="../src/assets/pencil.svg"/>
+        <IconButton className="w-5 h-auto hover:opacity-50" onClick={() => {
+          props.setModalIdToDelete(props.q.id);
+          props.setDeleteModalIsVisible(true);
+        }} svg="../src/assets/trash.svg"/>
+      </div>
+  </article>);
+}
+
+function EditQuestionManager(props: { game: Game, setGame: StateSetter<Game|undefined>, updateGame: (newGame: Game) => void, createAlert: AlertFunc}) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [newQuestion, setNewQuestion] = useState<Question>(createDefaultQuestion());
   const [modalIsVisible, setModalIsVisible] = useState(false);
   const [deleteModalIsVisible, setDeleteModalIsVisible] = useState(false);
   const [modalIdToDelete, setModalIdToDelete] = useState<number | undefined>(undefined);
-  const navigate = useNavigate();
 
   useEffect(() => {
     setQuestions(props.game.questions)
@@ -61,45 +84,36 @@ function SimpleQuestionManager(props: { game: Game, setGame: StateSetter<Game|un
 
   return (<section>
     <h3 className="text-xl font-semibold py-3">Game questions</h3>
-    <div className="flex flex-col gap-4 mb-1">
-      {questions.length === 0 ? <p> You currently have no questions! </p> : questions.map(q => <article className="p-4 rounded-lg bg-indigo-200" key={q.id}>
-        <p>{q.index}{`)`} {q.question}</p>
-        <p>Answers: {q.answers.length}</p>
-        <p>Correct answers: {q.type === QuestionType.JUDGEMENT ? (
-          (() => {
-            console.log(q);
-            return (q.answers.find(a => a.correct) as Answer).text
-          })()
-        ) : q.correctAnswers.length}</p>
-        <p>Duration: {q.duration} {q.duration === 1 ? `second` : `seconds`}</p>
-        <div className="flex flex-row items-center py-2 gap-2">
-          <Button text="Edit" color="bg-gray-100" hoverColor="hover:bg-gray-200" className="border overflow-hidden border-gray-400 text-sm" onClick={() => navigate(`/game/${props.game.id}/question/${q.id}`)}/>
-          <Button text="Delete" color="bg-red-100" hoverColor="hover:bg-red-200" className="border overflow-hidden border-red-400 text-sm" onClick={() => {
-            setModalIdToDelete(q.id);
-            setDeleteModalIsVisible(true);
-          }}/>
-        </div>
-      </article>)}
-      <Button text="Add Questions" color="bg-indigo-200" hoverColor="hover:bg-indigo-300" onClick={() => setModalIsVisible(true)}/>
-      {modalIsVisible && 
-        <Modal>
-          <form>
-            <NewQuestionForm newQuestion={newQuestion} setNewQuestion={setNewQuestion}/>
-            <div className="flex flex-row gap-2 pt-3">
-              <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={addQuestion}/>
-              <Button text="Cancel" color="bg-red-300" hoverColor="hover:bg-red-400" onClick={cancelAddQuestion}/>
-            </div>
-          </form>
-        </Modal>
-      }
-      {deleteModalIsVisible && <Modal>
+    <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-4 mb-1">
+      {questions.length === 0 
+      ? <p> You currently have no questions! </p> 
+      : questions.map(q => <EditQuestionCard key={q.id} game={props.game} q={q} setModalIdToDelete={setModalIdToDelete} setDeleteModalIsVisible={setDeleteModalIsVisible}/>)}
+      <Button text="Add Questions" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white" onClick={() => setModalIsVisible(true)}/>
+      <Modal visible={modalIsVisible} setVisible={setModalIsVisible}>
+        <form>
+          <NewQuestionForm newQuestion={newQuestion} setNewQuestion={setNewQuestion}/>
+          <div className="flex flex-row gap-2 pt-3">
+            <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={addQuestion}/>
+            <Button text="Cancel" color="bg-red-300" hoverColor="hover:bg-red-400" onClick={cancelAddQuestion}/>
+          </div>
+        </form>
+      </Modal>
+      <Modal visible={deleteModalIsVisible} setVisible={setDeleteModalIsVisible}>
         <h4>Delete this question</h4>
         <p>Are you sure you want to delete this question?</p>
         <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteQuestion}/>
         <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => setDeleteModalIsVisible(false)}/>
-      </Modal>}
+      </Modal>
     </div>
   </section>)
+}
+
+function GameStats(props: {game: Game}) {
+  return (<>
+    <p className="text-gray-600">#{props.game.id}</p>
+    <p className="text-gray-600"><span className="font-medium">Created</span> {durationAgo(new Date(props.game.createdAt), new Date())} ago</p>
+    <p className="text-gray-600"><span className="font-medium">Last updated</span> {durationAgo(new Date(props.game.lastUpdatedAt), new Date())} ago</p>
+  </>);
 }
 
 function GameManager(props: {gameId: string, createAlert: AlertFunc}) {
@@ -160,19 +174,15 @@ function GameManager(props: {gameId: string, createAlert: AlertFunc}) {
     setModalIsVisible(false);
   }
   
-  return (game != undefined && <div className="rounded-md bg-indigo-100 p-4 my-7">
-    <p>Game id: {props.gameId}</p>
-    <p>Created at: {game.createdAt}</p>
-    <p>Last updated at: {game.lastUpdatedAt}</p>
-    <section>
-      <h2 className="text-xl font-semibold py-3">Game metadata</h2>
-      <p>Game name: {game.name} </p>
+  return (game != undefined && <div className="rounded-md bg-gray-200 p-4 my-7">
+    <GameStats game={game} />
+    <section className="rounded-md bg-gray-300 mt-4 px-4 pb-2 relative">
+      <h2 className="text-2xl font-semibold py-3">{game.name} <IconButton className="w-6 h-auto hover:opacity-50 inline-flex ml-1" onClick={() => setModalIsVisible(true)} svg="../src/assets/pencil.svg"/></h2>
       <p>Game thumbnail</p>
-      <div className="flex flex-row justify-center border rounded-xl overflow-hidden border-indigo-400 bg-indigo-200 w-64 my-4">
+      <div className="flex flex-row justify-center border rounded-xl overflow-hidden border-pink-400 bg-pink-200 sm:w-100 my-4">
         <img src={game.thumbnail == "" ? "../src/assets/default-game-icon.png" : game.thumbnail} alt={`Thumbnail for ${game.name}`} className="object-cover object-center" />
       </div>
-      <Button text="Edit" color="bg-gray-100" hoverColor="hover:bg-gray-200" className="border overflow-hidden border-gray-400 text-sm mb-4" onClick={() => setModalIsVisible(true)}/>
-      {modalIsVisible && <Modal>
+      <Modal visible={modalIsVisible} setVisible={setModalIsVisible}>
         <form>
           <TextInput labelName="Edit name" id="game-name" type="text" defaultValue={name} onChange={e => setName(e.target.value)} />
           <FileSelect labelName="Upload new thumbnail (optional)" id="game-thumnail" onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)} />
@@ -181,9 +191,9 @@ function GameManager(props: {gameId: string, createAlert: AlertFunc}) {
             <Button text="Cancel" color="bg-red-300" hoverColor="hover:bg-red-400" onClick={() => setModalIsVisible(false)}/>
           </div>
         </form>
-      </Modal> }
+      </Modal>
     </section>
-    <SimpleQuestionManager game={game} setGame={setGame} updateGame={updateGame} createAlert={props.createAlert}/>
+    <EditQuestionManager game={game} setGame={setGame} updateGame={updateGame} createAlert={props.createAlert}/>
   </div>);
 }
 
@@ -192,14 +202,20 @@ export function EditGameScreen() {
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
   const { gameId } = useParams() as { gameId: string };
+
+  // Scroll to top when screen first loaded
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (<>
     <Navbar>
       <LogoutButton />
     </Navbar>
-    <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
+    <main className={`bg-white p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Edit game</h1>
       <Link to="/dashboard">
-        <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
+        <Button text="Back to dashboard" color="bg-pink-300" hoverColor="hover:bg-pink-400 hover:text-white" />
       </Link>
       <GameManager gameId={gameId} createAlert={createAlert} />
     </main>
