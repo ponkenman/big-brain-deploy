@@ -1,21 +1,23 @@
 import { Link, useNavigate } from "react-router-dom";
-import { fetchBackend, initialiseAlerts } from "../helpers";
-import { useState } from "react";
+import { fetchBackend } from "../helpers";
+import { useContext, useEffect, useState } from "react";
 import Navbar from "../components/navbar";
 import TextInput from "../components/forms/textInput";
 import Button from "../components/buttons/button";
-import { AlertData, AlertMenu } from "../components/alert";
+import { AlertContext } from "../App";
 
 export function RegisterScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [alertId, setAlertId] = useState(0);
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
   const navigate = useNavigate();
+  const createAlert = useContext(AlertContext);
 
-  const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
+  // Scroll to top when screen first loaded
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   async function register() {
     if (name === "") {
@@ -71,6 +73,5 @@ export function RegisterScreen() {
         </div>
       </form>
     </main>
-    <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>);
 }

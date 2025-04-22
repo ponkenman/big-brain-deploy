@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
-import { AlertData, AlertMenu } from "../components/alert";
-import { fetchBackend, initialiseAlerts } from "../helpers";
+import { useContext, useEffect, useState } from "react";
+import { fetchBackend } from "../helpers";
 import { Link, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
-import { AlertFunc, Game, MediaType, Question } from "../types";
+import { Game, MediaType, Question } from "../types";
 import QuestionManager from "../components/questions/questionManager";
+import { AlertContext } from "../App";
 
-function EditQuestionManager(props: { gameId: string, questionId: string, createAlert: AlertFunc }) {
+function EditQuestionManager(props: { gameId: string, questionId: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
+  const createAlert = useContext(AlertContext);
 
   useEffect(() => {
     const token = localStorage.getItem("token") as string;
@@ -36,31 +37,28 @@ function EditQuestionManager(props: { gameId: string, questionId: string, create
       const editResponse = fetchBackend("PUT", "/admin/games", body, token);
       editResponse.then(r => {
         if (r.error) {
-          props.createAlert(r.error);
+          createAlert(r.error);
         } else {
-          props.createAlert("Successfully updated!");
+          createAlert("Successfully updated!");
         }
       });
     });
   }
 
   return (questions.length === 0 
-  ? <></> 
-  : <form className="py-2">
-    <QuestionManager labelName={``} questions={questions} set={setQuestions} createSingleQuestion={true} mediaType={questions[0].mediaType as MediaType}/>
-    <div className="flex flex-row gap-2 pt-3">
-      <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={updateQuestion}/>
-      <Link to={`/game/${props.gameId}`}>
-        <Button text="Cancel" color="bg-red-300" hoverColor="hover:bg-red-400" />
-      </Link>
-    </div>
-  </form>);
+    ? <></> 
+    : <form className="py-2">
+      <QuestionManager labelName={``} questions={questions} set={setQuestions} createSingleQuestion={true} mediaType={questions[0].mediaType as MediaType}/>
+      <div className="flex flex-row gap-2 pt-3">
+        <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={updateQuestion}/>
+        <Link to={`/game/${props.gameId}`}>
+          <Button text="Cancel" color="bg-red-300" hoverColor="hover:bg-red-400" />
+        </Link>
+      </div>
+    </form>);
 }
 
 export function EditQuestionScreen() {
-  const [alertId, setAlertId] = useState(0);
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
   const { gameId, questionId } = useParams() as { gameId: string, questionId: string };
   return (<>
     <Navbar>
@@ -71,8 +69,7 @@ export function EditQuestionScreen() {
       <Link to={`/game/${gameId}`}>
         <Button text="Back to edit game" color="bg-pink-200 "hoverColor="hover:bg-pink-400 hover:text-white" />
       </Link>
-      <EditQuestionManager gameId={gameId} questionId={questionId} createAlert={createAlert} />
+      <EditQuestionManager gameId={gameId} questionId={questionId} />
     </main>
-    <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>);
 }

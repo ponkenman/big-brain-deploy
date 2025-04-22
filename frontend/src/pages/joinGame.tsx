@@ -1,19 +1,17 @@
-import { useEffect, useState } from "react";
-import { AlertData, AlertMenu } from "../components/alert";
-import { fetchBackend, initialiseAlerts } from "../helpers";
+import { useContext, useEffect, useState } from "react";
+import { fetchBackend } from "../helpers";
 import Navbar from "../components/navbar";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import TextInput from "../components/forms/textInput";
 import Button from "../components/buttons/button";
+import { AlertContext } from "../App";
 
 export function JoinGameScreen () {
   const [params,] = useSearchParams();
-  const [alertId, setAlertId] = useState(0);
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
   const [playerName, setPlayerName] = useState("");
   const [sessionId, setSessionId] = useState<string>(params.get("sessionId") ?? "");
-  const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
   const navigate = useNavigate();
+  const createAlert = useContext(AlertContext);
 
   useEffect(() => {
     if (sessionId !== "") {
@@ -53,6 +51,5 @@ export function JoinGameScreen () {
         <Button text="Enter game" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" onClick={enterSession}/>
       </form>
     </main>
-    <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>);
 }

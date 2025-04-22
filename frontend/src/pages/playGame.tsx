@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { AlertData, AlertMenu } from "../components/alert";
-import { fetchBackend, initialiseAlerts } from "../helpers";
+import { useContext, useEffect, useState } from "react";
+import { fetchBackend } from "../helpers";
 import Navbar from "../components/navbar";
 import { useNavigate } from "react-router-dom";
-import { AlertFunc, Answer, MediaType, QuestionPlayerData, QuestionType } from "../types";
+import { Answer, MediaType, QuestionPlayerData, QuestionType } from "../types";
+import { AlertContext } from "../App";
 
 function QuestionMediaDisplay(props: {question: QuestionPlayerData}) {
   let component;
@@ -42,13 +42,14 @@ function questionTimeRemaining(question: QuestionPlayerData) {
   return Math.floor((date.getTime() - Date.now()) / 1000);
 }
 
-function QuestionScreen(props: { createAlert: AlertFunc }) {
+function QuestionScreen() {
   const [question, setQuestion] = useState<QuestionPlayerData | undefined>();
   const [secondsRemaining, setSecondsRemaining] = useState<number | undefined>();
   const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState<string[] | undefined>();
   const playerId = localStorage.getItem("playerId");
   const navigate = useNavigate();
+  const createAlert = useContext(AlertContext);
 
   let timerExists = false;
   let currQuestionId: number;
@@ -116,7 +117,7 @@ function QuestionScreen(props: { createAlert: AlertFunc }) {
     }
     const time =  questionTimeRemaining(question);
     if (time < 0) {
-      props.createAlert("You can no longer change your answers!");
+      createAlert("You can no longer change your answers!");
       return;
     }
     const index = selectedAnswers.findIndex(a => a.id === answer.id);
@@ -133,7 +134,7 @@ function QuestionScreen(props: { createAlert: AlertFunc }) {
     } else {
       // Deselecting a current answer
       if (selectedAnswers.length === 1) {
-        props.createAlert("You must have at least one answer!");
+        createAlert("You must have at least one answer!");
         return;
       }
       newAnswers = selectedAnswers.toSpliced(index, 1);
@@ -177,9 +178,10 @@ function QuestionScreen(props: { createAlert: AlertFunc }) {
     </>);
 }
 
-function GameStateScreen(props: { createAlert: AlertFunc }) {
+function GameStateScreen() {
   const [started, setStarted] = useState(false);
   const navigate = useNavigate();
+  const createAlert = useContext(AlertContext);
   let timerExists = false;
   useEffect(() => {
     // Requests session data every second and updates corresponding values only if data changed
@@ -196,7 +198,7 @@ function GameStateScreen(props: { createAlert: AlertFunc }) {
               // localStorage.clear(); // comment only if testing in same browser
               navigate(`/join`);
             } else {
-              props.createAlert(data.error);
+              createAlert(data.error);
             }
             return;
           }
@@ -223,15 +225,12 @@ function GameStateScreen(props: { createAlert: AlertFunc }) {
       <h1 className="text-4xl font-semibold pb-7">Game lobby</h1>
       <p>Please wait for game to start!</p>
     </> 
-    : <QuestionScreen createAlert={props.createAlert}/>
+    : <QuestionScreen />
   );
 }
 
 
 export function PlayGameScreen () {
-  const [alertId, setAlertId] = useState(0);
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -249,8 +248,7 @@ export function PlayGameScreen () {
       </div>
     </Navbar>
     <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
-      <GameStateScreen createAlert={createAlert}/>
+      <GameStateScreen />
     </main>
-    <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>);
 }

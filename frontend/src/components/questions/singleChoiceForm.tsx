@@ -1,8 +1,5 @@
 import { StateSetter, Question, Answer,  } from "../../types";
 import Button from "../buttons/button";
-import CloseButton from "../buttons/closeButton";
-import CheckboxInput from "../forms/checkboxInput";
-import TextInput from "../forms/textInput";
 import { useEffect, useState } from "react";
 import CreateAnswerCards from "./createAnswerCard";
 

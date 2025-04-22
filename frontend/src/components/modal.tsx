@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 import { StateSetter } from "../types";
 import CloseButton from "./buttons/closeButton";
 

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import GameCard from "./gameCard";
-import { AlertFunc, APIError, Game } from "../../types";
+import { APIError, Game } from "../../types";
 import { fetchBackend } from "../../helpers";
 import Button from "../buttons/button";
 import CreateGameForm from "./createGameForm";
 import Modal  from "../modal";
 
-export function AdminGamesList(props: { createAlert: AlertFunc }) {
+export function AdminGamesList() {
   const [games, setGames] = useState<Game[]>([]);
   const [gamesLength, setGamesLength] = useState(1);
   const [showCreateGameForm, setShowCreateGameForm] = useState(false);
@@ -41,13 +41,13 @@ export function AdminGamesList(props: { createAlert: AlertFunc }) {
     <h2 className="text-3xl font-semibold py-7">Your games</h2>
     <div className="grid gap-4 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 bg-gray-200 p-4">
       {games.length === 0 
-      ? <p>You currently have no games!</p>
-      : games.map(game => 
-        <GameCard createAlert={props.createAlert} games={games} setGamesLength={setGamesLength} gameId={game.id} key={game.id}/>)
+        ? <p>You currently have no games!</p>
+        : games.map(game => 
+          <GameCard games={games} setGamesLength={setGamesLength} gameId={game.id} key={game.id}/>)
       }
     </div>
     <Modal visible={showCreateGameForm} setVisible={setShowCreateGameForm}>
-      <CreateGameForm closeForm={() => setShowCreateGameForm(false)} games={games} setGamesLength={setGamesLength} createAlert={props.createAlert}/>
+      <CreateGameForm closeForm={() => setShowCreateGameForm(false)} games={games} setGamesLength={setGamesLength} />
     </Modal>
   </>);
 }

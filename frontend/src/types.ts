@@ -85,5 +85,3 @@ export type APIError = {
 }
 
 export type StateSetter<T> = React.Dispatch<React.SetStateAction<T>>;
-
-export type AlertFunc = (message: string) => void;

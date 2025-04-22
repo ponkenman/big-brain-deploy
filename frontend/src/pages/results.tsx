@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
-import { AlertData } from "../components/alert";
-import { initialiseAlerts } from "../helpers";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
 import { fetchBackend } from "../helpers";
-import { AlertFunc, QuestionStats, PersonResult, TopFiveScore, Question } from "../types";
+import { QuestionStats, PersonResult, TopFiveScore, Question } from "../types";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,6 +15,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { AlertContext } from "../App";
 
 ChartJS.register(
   CategoryScale,
@@ -35,7 +34,7 @@ function calculateSecondsTaken(Date1: ReturnType<typeof Date.toString>, Date2: R
 }
 
 
-function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
+function GetResults(props: {sessionId: string }) {
   const token = localStorage.getItem("token") as string;
   const [results, setResults] = useState<PersonResult[]>([]);
   const [gameData, setGameData] = useState<Question[]>([]);
@@ -44,6 +43,7 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
   const responseTimeData: number[] = [];
   const responseTime: number[] = [];
   const navigate = useNavigate();
+  const createAlert = useContext(AlertContext);
 
 
   useEffect(() => {
@@ -51,7 +51,7 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
     response.then((data) => {
       if ("error" in data) {
         console.log(data.error);
-        props.createAlert(data.error);
+        createAlert(data.error);
         navigate("/dashboard")
         return;
       }
@@ -64,7 +64,7 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
     response2.then((data) => {
       if ("error" in data) {
         console.log(data.error);
-        props.createAlert(data.error);
+        createAlert(data.error);
         navigate("/dashboard")
         return;
       }
@@ -160,9 +160,6 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
 }
 
 export function ResultsScreen() {
-  const [alertId, setAlertId] = useState(0);
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
   const { gameId } = useParams() as { gameId: string };
   const { sessionId } = useParams() as { sessionId: string };
 
@@ -177,8 +174,7 @@ export function ResultsScreen() {
       <Link to="/dashboard">
         <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
       </Link>
-      <GetResults sessionId={sessionId} createAlert={createAlert}/>
+      <GetResults sessionId={sessionId} />
     </main>
-    {/* <AlertMenu alerts={alerts} setAlerts={setAlerts} /> */}
   </>)
 }

@@ -1,5 +1,4 @@
-import { AlertData } from "./components/alert";
-import { Answer, AnswerResult, Game, MediaType, PastSessions, PersonResult, Question, QuestionType, StateSetter } from "./types";
+import { Answer, AnswerResult, Game, MediaType, PastSessions, PersonResult, Question, QuestionType } from "./types";
 
 interface FetchOptions {
   method: "GET"|"POST"|"PUT"|"DELETE",
@@ -27,13 +26,6 @@ export async function fetchBackend(
 
   const response = await fetch(urlMain + urlFragment, fetchOptions);
   return await response.json();
-}
-
-export function initialiseAlerts(alerts: AlertData[], setAlerts: StateSetter<AlertData[]>, alertId: number, setAlertId: StateSetter<number>) {
-  return function(message: string) {
-    setAlerts([...alerts, { message: message, key: alertId }]);
-    setAlertId(alertId + 1);
-  }
 }
 
 /**

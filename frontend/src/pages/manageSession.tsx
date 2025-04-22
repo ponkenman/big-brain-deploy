@@ -1,19 +1,20 @@
-import { useState } from "react";
-import { AlertData, AlertMenu } from "../components/alert";
-import { fetchBackend, initialiseAlerts } from "../helpers";
+import { useContext, useState } from "react";
+import { fetchBackend } from "../helpers";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
-import { AlertFunc, Game, PastSessions } from "../types";
+import { Game, PastSessions } from "../types";
 import Modal from "../components/modal";
+import { AlertContext } from "../App";
 
-function ManageSession(props: {sessionId: string, createAlert: AlertFunc }) {
+function ManageSession(props: {sessionId: string }) {
   const navigate = useNavigate();
   const [stopGameModal, setStopGameModal] = useState(false);
   const [position, setPosition] = useState(-1);
   const [numQuestions, setNumQuestions] = useState(0);
   const token = localStorage.getItem("token") as string;
+  const createAlert = useContext(AlertContext);
   
   async function advanceGame() {
     (fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>).then((data) => {
@@ -23,7 +24,7 @@ function ManageSession(props: {sessionId: string, createAlert: AlertFunc }) {
       }
       
       if (position === numQuestions) {
-        props.createAlert("You've reached the end of the game!");
+        createAlert("You've reached the end of the game!");
         setStopGameModal(true);
         return;
       } 
@@ -46,10 +47,10 @@ function ManageSession(props: {sessionId: string, createAlert: AlertFunc }) {
         console.log(numQuestions);
         if (r.error) {
           console.log(r.error);
-          props.createAlert(r.error);
+          createAlert(r.error);
         } else {
           console.log("Done!");
-          props.createAlert("Successfully advanced game!");
+          createAlert("Successfully advanced game!");
         }
       })
     });
@@ -72,10 +73,10 @@ function ManageSession(props: {sessionId: string, createAlert: AlertFunc }) {
       mutateResponse.then(r => {
         if (r.error) {
           console.log(r.error);
-          props.createAlert(r.error);
+          createAlert(r.error);
         } else {
           console.log("Done!");
-          props.createAlert("Successfully stoped game!");
+          createAlert("Successfully stoped game!");
           setStopGameModal(true);
         }
       });
@@ -116,9 +117,9 @@ function ManageSession(props: {sessionId: string, createAlert: AlertFunc }) {
     console.log(response3);
     if (response3.error) {
       console.log(response3.error);
-      props.createAlert(response3.error);
+      createAlert(response3.error);
     } else {
-      props.createAlert("Stored an old game!");
+      createAlert("Stored an old game!");
       console.log(sortedGames);
     }
     
@@ -161,9 +162,6 @@ function ManageSession(props: {sessionId: string, createAlert: AlertFunc }) {
 }
 
 export function ManageSessionScreen() {
-  const [alertId, setAlertId] = useState(0);
-  const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
   const { sessionId } = useParams() as { sessionId: string };
   localStorage.setItem("sessionId", sessionId);
 
@@ -176,8 +174,7 @@ export function ManageSessionScreen() {
       <Link to="/dashboard">
         <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
       </Link>
-      <ManageSession sessionId={sessionId} createAlert={createAlert} />
+      <ManageSession sessionId={sessionId} />
     </main>
-    <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>)
 }
