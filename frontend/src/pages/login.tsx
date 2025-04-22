@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { fetchBackend } from "../helpers";
+import { ALERT_SUCCESS, fetchBackend } from "../helpers";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import Button from "../components/buttons/button";
@@ -42,6 +42,7 @@ export function LoginScreen() {
     } else {
       localStorage.setItem("token", response.token);
       localStorage.setItem("email", email);
+      createAlert("Successfully logged in!", ALERT_SUCCESS);
       navigate("/dashboard");
     }
   }

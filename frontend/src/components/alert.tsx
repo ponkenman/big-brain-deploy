@@ -7,7 +7,7 @@ export interface AlertData {
   timestamp: number;
   message: string;
   key: number;
-  /** Default colour style set to "bg-red-200 text-red-950 border border-red-300 */
+  /** Default colour style set to "bg-red-200 text-red-950 border border-red-300" */
   colour?: string;
 }
 

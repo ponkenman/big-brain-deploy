@@ -199,3 +199,6 @@ export function durationAgo(from: Date, to: Date) {
   return returnString.trim();
 }
 
+/** Tailwind CSS class to use as second argument of createAlert function for success */
+export const ALERT_SUCCESS = "bg-green-200 text-green-950 border border-green-300";
+

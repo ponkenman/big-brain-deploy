@@ -1,7 +1,7 @@
 import Modal from "../modal";
 import { useContext, useEffect, useState } from "react";
 import Button from "../buttons/button";
-import { fetchBackend } from "../../helpers";
+import { ALERT_SUCCESS, fetchBackend } from "../../helpers";
 import { useNavigate } from "react-router-dom";
 import { Game, PastSessions, Question, StateSetter } from "../../types";
 import IconButton from "../buttons/iconButton";
@@ -98,6 +98,7 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
 
   function copyToClipBoard() {
     navigator.clipboard.writeText(`${window.origin}/join?sessionId=${currSession}`); 
+    createAlert("Successfully copied link!", ALERT_SUCCESS);
   }
 
   async function storeGame(seeResults: boolean) {
@@ -194,12 +195,15 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
     </Modal>
 
     <Modal visible={playGameModal} setVisible={setPlayGameModal}>
-      <h1>Game session link</h1>
-      <h2>Copy the link below and share it to invite users to join the game!</h2>
-      <p>{`${window.origin}/join?sessionId=${currSession}`}</p>
+      <p className="font-semibold">Game session link</p>
+      <p>Copy the link below and share it to invite users to join the game!</p>
+      <div className="py-2 px-1 my-2 border border-black rounded-lg flex flex-row justify-between">
+        <p className="font-semibold">{`${window.origin}/join?sessionId=${currSession}`}</p>
+        <IconButton className="w-5 h-auto hover:opacity-50" onClick={copyToClipBoard} svg="src/assets/clipboard.svg"/>
+      </div>
+  
       <div className="flex flex-row gap-2">
-        <Button text="Copy to clipboard" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => copyToClipBoard()}/>
-        <Button text="Dismiss" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => setPlayGameModal(false)}/>
+        <Button text="Dismiss" color="bg-pink-300" hoverColor="hover:bg-pink-400 hover:text-white" onClick={() => setPlayGameModal(false)}/>
       </div>
     </Modal>
     <Modal visible={stopGameModal} setVisible={setStopGameModal}>
