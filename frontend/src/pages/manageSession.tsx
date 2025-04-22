@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { fetchBackend } from "../helpers";
+import { ALERT_SUCCESS, fetchBackend } from "../helpers";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
@@ -24,7 +24,8 @@ function ManageSession(props: {sessionId: string }) {
       }
       
       if (position === numQuestions) {
-        createAlert("You've reached the end of the game!");
+        console.log(stopGameModal);
+        createAlert("You've reached the end of the game!", ALERT_SUCCESS);
         setStopGameModal(true);
         return;
       } 
@@ -50,7 +51,7 @@ function ManageSession(props: {sessionId: string }) {
           createAlert(r.error);
         } else {
           console.log("Done!");
-          createAlert("Successfully advanced game!");
+          createAlert("Successfully advanced game!", ALERT_SUCCESS);
         }
       })
     });
@@ -66,7 +67,7 @@ function ManageSession(props: {sessionId: string }) {
       }
       
       if (position === numQuestions) {
-        props.createAlert("You've reached the end of the game!");
+        createAlert("You've reached the end of the game!", ALERT_SUCCESS);
         setStopGameModal(true);
         return;
       }
@@ -90,7 +91,7 @@ function ManageSession(props: {sessionId: string }) {
           createAlert(r.error);
         } else {
           console.log("Done!");
-          createAlert("Successfully stoped game!");
+          createAlert("Successfully stoped game!", ALERT_SUCCESS);
           setStopGameModal(true);
         }
       });
@@ -133,7 +134,7 @@ function ManageSession(props: {sessionId: string }) {
       console.log(response3.error);
       createAlert(response3.error);
     } else {
-      createAlert("Stored an old game!");
+      createAlert("Stored an old game!", ALERT_SUCCESS);
       console.log(sortedGames);
     }
     
@@ -159,17 +160,17 @@ function ManageSession(props: {sessionId: string }) {
       <div className="flex flex-row gap-2 pt-3">
         <Button text="Advance game" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={advanceGame}/>
         <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={stopGame}/>
-        {stopGameModal && (
-          <Modal>
-            <h2>Would you like to view the results?</h2>
+        <Modal visible={stopGameModal} setVisible={setStopGameModal}>
+          <h2>Would you like to view the results?</h2>
+          <div className="flex flex-row gap-2 pt-3">
             <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => {
               storeGame(true);
             }}/>
             <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => {
               storeGame(false);
             }}/>
-          </Modal>
-        )}
+          </div>
+        </Modal>
       </div>
     </form>
   )

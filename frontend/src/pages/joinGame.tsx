@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { fetchBackend } from "../helpers";
+import { ALERT_SUCCESS, fetchBackend } from "../helpers";
 import Navbar from "../components/navbar";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import TextInput from "../components/forms/textInput";
@@ -15,7 +15,7 @@ export function JoinGameScreen () {
 
   useEffect(() => {
     if (sessionId !== "") {
-      createAlert("Successfully autofilled game code!");
+      createAlert("Successfully autofilled game code!", ALERT_SUCCESS);
     }
   }, []);
 

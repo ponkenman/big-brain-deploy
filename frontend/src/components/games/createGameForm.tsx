@@ -1,7 +1,7 @@
 import {useContext, useState} from "react";
 import {useEffect} from "react";
 import TextInput from "../forms/textInput";
-import { fetchBackend, fileToDataUrl, isGame } from "../../helpers";
+import { ALERT_SUCCESS, fetchBackend, fileToDataUrl, isGame } from "../../helpers";
 import Button from "../buttons/button";
 import QuestionManager from "../questions/questionManager";
 import FileSelect from "../forms/fileInput";
@@ -81,7 +81,7 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
     if (response.error) {
       createAlert(response.error);
     } else {
-      createAlert("Created a game!");
+      createAlert("Created a game!", ALERT_SUCCESS);
       console.log(newGame);
       props.setGamesLength(-1);
     }
@@ -155,7 +155,7 @@ function ImportFileGameForm(props: { closeForm: () => void, games: Game[], setGa
           createAlert(data.error);
         } else {
           console.log(props.games);
-          createAlert("Successfully uploaded a game!");
+          createAlert("Successfully uploaded a game!", ALERT_SUCCESS);
           console.log(newGame);
           props.setGamesLength(+1);
         }
