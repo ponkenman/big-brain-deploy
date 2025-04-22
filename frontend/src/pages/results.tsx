@@ -17,6 +17,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import Modal from "../components/modal";
 
 ChartJS.register(
   CategoryScale,
@@ -80,7 +81,15 @@ function GetResults(props: {sessionId: string, createAlert: AlertFunc }) {
     person.answers.map((currAnswer) => {
       // Does not account for multiple choice
       if (currAnswer.correct && gameData[index] && gameData[index].points !== undefined) {
-        totalScore += gameData[index].points;
+        const duration = calculateSecondsTaken(currAnswer.questionStartedAt, currAnswer.answeredAt);
+        const questionDuration = gameData[index].duration;
+        if (duration < 0.25 * questionDuration) {
+          console.log("points scored" + gameData[index].points);
+          totalScore += gameData[index].points;
+        } else {
+          console.log("points scored" + gameData[index].points * ((duration / questionDuration) - 0.25));
+          totalScore += gameData[index].points * ((duration / questionDuration) - 0.25);
+        }
       }
       
 
@@ -165,6 +174,7 @@ export function ResultsScreen() {
   const createAlert = initialiseAlerts(alerts, setAlerts, alertId, setAlertId);
   const { gameId } = useParams() as { gameId: string };
   const { sessionId } = useParams() as { sessionId: string };
+  const [modal, setModal] = useState(false);
 
   return (<>
     <Navbar>
@@ -174,9 +184,28 @@ export function ResultsScreen() {
     <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Results</h1>
       <h1 className="text-4xl font-semibold pb-7">Session: {sessionId.toString()} </h1>
-      <Link to="/dashboard">
-        <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
-      </Link>
+      <div className="flex flex-row gap-2">
+        <Link to="/dashboard">
+          <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
+        </Link>
+        <Button text="How do points work?" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" onClick={() => setModal(true)}/>
+      </div>
+      {modal && (
+        <Modal>
+          <p>Points are calculated by the following:</p>
+          <ul>
+            <p>If you answer correctly within the first 25% of the question duration you get full points.</p>
+            <p>If answered after the first 25% of the question duration, each subsequent % will lose that percent
+            of the full points, e.g. 10 seconds 10 point question, answering within 2.5 will give full points.</p>
+            <p>Incorrect answers gives no points.</p>
+            <br></br>
+            <li>For Example:</li>
+            <li>Answering at exactly 5 second duration will result in 7.5 points.</li>
+            <li>Answering at the exact end will result in the minimum points for a correct answer 2.5.</li>
+          </ul>
+          <Button text="Close" color="bg-indigo-300 "hoverColor="hover:bg-indigo-400" onClick={() => setModal(false)}/>
+        </Modal>
+      )}
       <GetResults sessionId={sessionId} createAlert={createAlert}/>
     </main>
     {/* <AlertMenu alerts={alerts} setAlerts={setAlerts} /> */}

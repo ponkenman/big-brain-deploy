@@ -6,6 +6,11 @@ export type Answer = {
   correct: boolean
 }
 
+export type DurationPoints = {
+  duration: number,
+  points: number
+}
+
 export enum QuestionType {
   SINGLE_CHOICE = "Single Choice",
   MULTIPLE_CHOICE = "Multiple Choice",

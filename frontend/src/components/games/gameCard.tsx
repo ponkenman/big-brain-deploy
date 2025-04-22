@@ -82,6 +82,7 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
 
   function copyToClipBoard() {
     navigator.clipboard.writeText(`${window.origin}/join?sessionId=${currSession}`); 
+    props.createAlert("Copied to clipboard!");
   }
 
   async function storeGame(seeResults: boolean) {
