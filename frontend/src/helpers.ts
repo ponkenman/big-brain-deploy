@@ -180,3 +180,30 @@ export function isGame(data: unknown) {
   g.questions.every(ques => isQuestion(ques));
 }
 
+/**
+ * Returns string representing total duration from one date to another
+ * @param from - earlier date
+ * @param to - later date
+ * @returns
+ */
+export function durationAgo(from: Date, to: Date) {
+  const totalSeconds = Math.floor((to.getTime() - from.getTime()) / 1000);
+  let returnString = '';
+  if (totalSeconds < 60) {
+    return `Less than 1 minute ago`;
+  }
+  const days = Math.floor(totalSeconds / (60 * 60 * 24));
+  if (days > 0) {
+    returnString += `${days} day${days > 1 ? `s` : ``} `;
+  }
+  const hours = Math.floor((totalSeconds / (60 * 60)) % 24);
+  if (hours > 0) {
+    returnString += `${hours} hour${hours > 1 ? `s` : ``} `;
+  }
+  const minutes = Math.floor((totalSeconds / 60) % 60);
+  if (minutes > 0) {
+    returnString += `${minutes} minute${minutes > 1 ? `s` : ``}  `;
+  }
+  return returnString.trim();
+}
+

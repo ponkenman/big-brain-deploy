@@ -4,6 +4,7 @@ import Button from "../buttons/button";
 import { fetchBackend } from "../../helpers";
 import { useNavigate } from "react-router-dom";
 import { AlertFunc, Game, PastSessions, Question, StateSetter } from "../../types";
+import IconButton from "../buttons/iconButton";
 
 export default function GameCard(props: { createAlert: AlertFunc, games: Game[], setGamesLength: StateSetter<number>, gameId: number }) {
   const [modal, setModal] = useState(false);
@@ -148,34 +149,47 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
     setCurrSession(game.active);
   }, [props.games]);
 
-  return (<article className="p-5 rounded-lg bg-indigo-200 h-85">
-    <p className="font-semibold">{game.name}</p>
-    <p>{game.questions ? game.questions.length : "0"} Questions</p>
-    <p>{game.questions ? calcTotalDuration(game.questions) : "0"} seconds</p>
-    <div className="flex flex-row justify-center border rounded-xl overflow-hidden border-indigo-400 bg-indigo-300 my-4">
-      <img src={game.thumbnail == "" ? "src/assets/default-game-icon.png" : game.thumbnail} alt={`Thumbnail for ${game.name}`} className="object-cover object-center h-40 w-auto" />
-    </div>
-    <div className="flex flex-row gap-2">
+  function GameCardButtonMenu() {
+    return (<div className="flex flex-col gap-3">
       {currSession === null  
-        ? <Button text="Start game" color="bg-emerald-200" hoverColor="hover:bg-emerald-400" onClick={startGame}/>
+        ? <Button text="Start game" color="bg-green-300" hoverColor="hover:bg-green-600 hover:text-white" onClick={startGame}/>
         : (<>
-          <Button text="Manage session" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => navigate(`/session/${currSession}`)}/>
-          <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={(stopGame)}/>
+          <Button text="Manage session" color="bg-indigo-300" hoverColor="hover:bg-indigo-600 hover:text-white" onClick={() => navigate(`/session/${currSession}`)}/>
+          <Button text="Stop game" color="bg-indigo-300" hoverColor="hover:bg-indigo-600 hover:text-white" onClick={(stopGame)}/>
         </>)}
-      <Button text="View Past Game Sessions" color="bg-indigo-200" hoverColor="hover:bg-indigo-400" onClick={() => navigate(`/pastResults/${props.gameId}`)}/>
-      <Button text="Edit" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={() => navigate(`/game/${props.gameId}`)}/>
-      <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={openModal}/>
+      <Button text="View past sessions" color="bg-gray-300" hoverColor="hover:bg-gray-600 hover:text-white" onClick={() => navigate(`/pastResults/${props.gameId}`)}/>
+    </div>);
+  }
+
+  return (<article className="rounded-lg bg-white border border-gray-400 h-auto overflow-hidden shadow-lg">
+    <div className="flex flex-row justify-center bg-pink-200 shadow-md">
+      <img src={game.thumbnail == "" ? "src/assets/default-game-icon.png" : game.thumbnail} alt={`Thumbnail for ${game.name}`} className="object-cover object-center w-auto md:h-50" />
     </div>
-    {modal && (
-      <Modal>
-        <h1>Delete this game</h1>
-        <h2>Are you sure you want to delete this game?</h2>
-        <div className="flex flex-row gap-2">
-          <Button text="Delete Game" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteGame}/>
-          <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={closeModal}/>
+    <div className="p-5">
+      <div className="mb-5">
+        <div className="flex flex-row justify-between">
+          <div>
+            <p className="font-semibold">{game.name} {currSession && <span className="ml-1 p-1 border border-green-600 text-green-600 text-center rounded-lg text-xs align-[1px]">Active</span>}</p>
+            <p>{game.questions ? game.questions.length : "0"} Questions</p>
+            <p>{game.questions ? calcTotalDuration(game.questions) : "0"} seconds</p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <IconButton className="w-5 h-auto hover:opacity-50" onClick={() => navigate(`/game/${props.gameId}`)} svg="src/assets/pencil.svg"/>
+            <IconButton className="w-5 h-auto hover:opacity-50" onClick={openModal} svg="src/assets/trash.svg"/>
+          </div>
         </div>
-      </Modal>
-    )}
+      </div>
+      <GameCardButtonMenu />
+    </div>
+    <Modal visible={modal} setVisible={setModal}>
+      <p className="font-semibold">Confirm delete</p>
+      <p>Are you sure you want to delete this game?</p>
+      <div className="flex flex-row gap-2 pt-4">
+        <Button text="Delete" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={deleteGame}/>
+        <Button text="Cancel" color="bg-gray-200" hoverColor="hover:bg-gray-400" onClick={closeModal}/>
+      </div>
+    </Modal>
+
     {playGameModal && (
       <Modal>
         <h1>Game session link</h1>

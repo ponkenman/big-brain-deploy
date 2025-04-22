@@ -14,9 +14,9 @@ export function DashboardScreen () {
     <Navbar>
       <LogoutButton />
     </Navbar>
-    <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
-      <h1 className="text-4xl font-semibold pb-7">Dashboard</h1>
-      <AdminGamesList createAlert={createAlert}/>
+    <main className="bg-white p-4 md:p-7 w-screen absolute top-15 min-h-full">
+        <h1 className="text-4xl font-semibold pb-7">Dashboard</h1>
+        <AdminGamesList createAlert={createAlert}/>
     </main>
     <AlertMenu alerts={alerts} setAlerts={setAlerts} />
   </>);

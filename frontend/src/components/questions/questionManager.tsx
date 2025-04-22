@@ -8,6 +8,7 @@ import JudgementForm from "./judgementForm";
 import { createSampleAnswer, fileToDataUrl, sampleJudgementAnswers } from "../../helpers";
 import { useState } from "react";
 import FileSelect from "../forms/fileInput";
+import CloseButton from "../buttons/closeButton";
 
 
 export default function QuestionManager(props: {labelName: string, questions: Question[], set: StateSetter<Question[]>, createSingleQuestion?: boolean, mediaType?: MediaType }) {
@@ -51,14 +52,12 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
     }
   }
 
-  return (<div className="py-2">
-    <div className="mb-3">
-      <label className="text-lg font-medium">{props.labelName}</label>
-    </div>
-    <section className="flex flex-col gap-4 mb-2">
+  return (<div className="">
+    <label className="text-lg font-medium">{props.labelName}</label>
+    <section className="flex flex-col gap-4">
       {props.questions.map((question, index) => {
-        console.log(props.questions);
-        return (<article key={question.id} className="p-4 rounded-lg bg-indigo-300">
+        return (<article key={question.id} className="p-4 rounded-lg bg-pink-200 relative">
+          { !props.createSingleQuestion && <CloseButton className="absolute top-2 right-3 hover:opacity-50" onClick={() => deleteQuestion(question.id)}/> }
           <TextInput labelName={`Question ${ props.createSingleQuestion ? `` : index + 1}`} id={`question${index}-text`} type="text" defaultValue={question.question} onChange={e => updateQuestion(index, {question: e.target.value})} />
           <SelectMenu labelName="Media Type" id={`question${index}-media`} options={Object.values(MediaType)} onChange={e => setCurrMediaType(e.target.value as MediaType)} defaultValue={currMediaType}/>
           {currMediaType === MediaType.IMAGE ? (
@@ -87,10 +86,9 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
           )}
           <TextInput labelName="Duration" id={`question${index}-duration`} type="text" defaultValue={question.duration.toString()} onChange={e => updateQuestion(index, {duration: parseInt(e.target.value)})} />
           <TextInput labelName="Points" id={`question${index}-points`} type="text" defaultValue={question.points.toString()} onChange={e => updateQuestion(index, {points: parseInt(e.target.value)})} />
-          { !props.createSingleQuestion && <Button text="Delete Question" color="bg-red-200" hoverColor="hover:bg-red-400" onClick={() => deleteQuestion(question.id)}/> }
         </article>)
       })}
     </section>
-    { !props.createSingleQuestion && <Button text="Add Questions" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={addQuestions}/>}
+    { !props.createSingleQuestion && <Button text="Add Questions" color="bg-pink-300 my-3" hoverColor="hover:bg-pink-400 hover:text-white" onClick={addQuestions}/>}
   </div>);
 }

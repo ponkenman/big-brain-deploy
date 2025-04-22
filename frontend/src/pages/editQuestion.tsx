@@ -44,8 +44,10 @@ function EditQuestionManager(props: { gameId: string, questionId: string, create
     });
   }
 
-  return (questions.length === 0 ? <></> : <form className="py-2">
-    <QuestionManager labelName={`Question id: ${props.questionId}`} questions={questions} set={setQuestions} createSingleQuestion={true} mediaType={questions[0].mediaType as MediaType}/>
+  return (questions.length === 0 
+  ? <></> 
+  : <form className="py-2">
+    <QuestionManager labelName={``} questions={questions} set={setQuestions} createSingleQuestion={true} mediaType={questions[0].mediaType as MediaType}/>
     <div className="flex flex-row gap-2 pt-3">
       <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={updateQuestion}/>
       <Link to={`/game/${props.gameId}`}>
@@ -64,10 +66,10 @@ export function EditQuestionScreen() {
     <Navbar>
       <LogoutButton />
     </Navbar>
-    <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
+    <main className={`bg-white p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Edit question</h1>
       <Link to={`/game/${gameId}`}>
-        <Button text="Back to edit game" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
+        <Button text="Back to edit game" color="bg-pink-200 "hoverColor="hover:bg-pink-400 hover:text-white" />
       </Link>
       <EditQuestionManager gameId={gameId} questionId={questionId} createAlert={createAlert} />
     </main>

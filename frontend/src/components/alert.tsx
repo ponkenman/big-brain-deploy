@@ -28,7 +28,7 @@ export function AlertPopup(props: { data: AlertData, alerts: AlertData[], setAle
     return () => clearTimeout(timer);
   }, []); 
 
-  return (<div role="alert" className={`${props.data.colour ?? `bg-red-200 text-red-950 border border-red-300`} px-3 py-2 rounded-xl flex flex-row justify-between items-center`}>
+  return (visible && <div role="alert" className={`${props.data.colour ?? `bg-red-200 text-red-950 border border-red-300`} px-3 py-2 rounded-xl flex flex-row justify-between items-center`}>
     <span className="mr-5">{props.data.message}</span>
     <CloseButton className="hover:text-black" onClick={() => {
       setVisible(false);
