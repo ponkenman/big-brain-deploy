@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { fetchBackend } from "../helpers";
+import { ALERT_SUCCESS, fetchBackend } from "../helpers";
 import { Link, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
@@ -39,7 +39,7 @@ function EditQuestionManager(props: { gameId: string, questionId: string }) {
         if (r.error) {
           createAlert(r.error);
         } else {
-          createAlert("Successfully updated!");
+          createAlert("Successfully updated!", ALERT_SUCCESS);
         }
       });
     });

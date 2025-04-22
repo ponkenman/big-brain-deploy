@@ -3,7 +3,7 @@ import LogoutButton from "../components/buttons/logoutButton";
 import Navbar from "../components/navbar";
 import { Answer, Game, Question, QuestionType, StateSetter } from "../types";
 import { useContext, useEffect, useState } from "react";
-import { createDefaultQuestion, durationAgo, fetchBackend, fileToDataUrl } from "../helpers";
+import { ALERT_SUCCESS, createDefaultQuestion, durationAgo, fetchBackend, fileToDataUrl } from "../helpers";
 import Button from "../components/buttons/button";
 import Modal from "../components/modal";
 import TextInput from "../components/forms/textInput";
@@ -162,7 +162,7 @@ function GameManager(props: {gameId: string }) {
         if (r.error) {
           createAlert(r.error);
         } else {
-          createAlert("Successfully updated!");
+          createAlert("Successfully updated!", ALERT_SUCCESS);
           setGame(newGame);
         }
       });

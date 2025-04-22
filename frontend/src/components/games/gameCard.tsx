@@ -54,7 +54,7 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
     if (response.error) {
       createAlert(response.error);
     } else {
-      createAlert("Deleted a game!");
+      createAlert("Sucessfully deleted a game!", ALERT_SUCCESS);
       props.setGamesLength(-1);
     }
     closeModal();
@@ -77,7 +77,7 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
       // By setting gamesLength to -1, triggers useEffect hook in adminGamesList which auto updates game list
       props.setGamesLength(-1);
       console.log("Done!");
-      createAlert("Successfully started game!");
+      createAlert("Successfully started game!", ALERT_SUCCESS);
       setPlayGameModal(true);
     }
   }
@@ -95,7 +95,7 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
       // By setting gamesLength to +1, triggers useEffect hook in adminGamesList which auto updates game list
       props.setGamesLength(+1);
       console.log("Done!");
-      createAlert("Successfully stoped game!");
+      createAlert("Successfully stoped game!", ALERT_SUCCESS);
       setStopGameModal(true);
     }
   }
@@ -153,7 +153,7 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
       console.log(response3.error);
       createAlert(response3.error);
     } else {
-      createAlert("Stored an old game!");
+      createAlert("Stored an old game!", ALERT_SUCCESS);
       console.log(sortedGames);
     }
     
