@@ -31,6 +31,10 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
   const [stopGameModal, setStopGameModal] = useState(false);
   const createAlert = useContext(AlertContext);
 
+  useEffect(() => {
+    console.log(props);
+  }, []);
+
   async function deleteGame() {
     openModal();
 
