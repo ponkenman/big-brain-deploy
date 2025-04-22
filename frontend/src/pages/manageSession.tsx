@@ -55,8 +55,22 @@ function ManageSession(props: {sessionId: string, createAlert: AlertFunc }) {
     });
 
   }
-
+  
   async function stopGame() {
+    const stopGameToken = localStorage.getItem("token") as string;
+    (fetchBackend("GET", "/admin/games", undefined, stopGameToken) as Promise<{ games: Game[] }>).then((data) => {
+      if ("error" in data) {
+        navigate(`/session/${props.sessionId}}/results`);
+        return;
+      }
+      
+      if (position === numQuestions) {
+        props.createAlert("You've reached the end of the game!");
+        setStopGameModal(true);
+        return;
+      }
+    })
+
     const token = localStorage.getItem("token") as string;
     const body = {
       mutationType: "END"

@@ -141,6 +141,8 @@ export default function GameCard(props: { createAlert: AlertFunc, games: Game[],
       navigate(`/session/${currSession}}/results`);
     } else {
       navigate("/dashboard")
+      setStopGameModal(false);
+      return;
     }
   }
 
