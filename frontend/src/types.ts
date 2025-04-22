@@ -6,6 +6,11 @@ export type Answer = {
   correct: boolean
 }
 
+export type DurationPoints = {
+  duration: number,
+  points: number
+}
+
 export enum QuestionType {
   SINGLE_CHOICE = "Single Choice",
   MULTIPLE_CHOICE = "Multiple Choice",
@@ -84,4 +89,11 @@ export type APIError = {
   error: string
 }
 
+export enum FileMedia {
+  PNG = ".png",
+  JPG = ".jpg",
+  JPEG = ".jpeg"
+}
+
 export type StateSetter<T> = React.Dispatch<React.SetStateAction<T>>;
+

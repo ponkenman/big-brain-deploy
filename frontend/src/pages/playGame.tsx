@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { fetchBackend } from "../helpers";
 import Navbar from "../components/navbar";
 import { useNavigate } from "react-router-dom";
-import { Answer, MediaType, QuestionPlayerData, QuestionType } from "../types";
+import { Answer, DurationPoints, MediaType, QuestionPlayerData, QuestionType } from "../types";
 import { AlertContext } from "../App";
 
 function QuestionMediaDisplay(props: {question: QuestionPlayerData}) {
@@ -47,12 +47,30 @@ function QuestionScreen() {
   const [secondsRemaining, setSecondsRemaining] = useState<number | undefined>();
   const [selectedAnswers, setSelectedAnswers] = useState<Answer[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState<string[] | undefined>();
+  const [durationPoints, setDurationPoints] = useState<DurationPoints[]>([]);
+
   const playerId = localStorage.getItem("playerId");
   const navigate = useNavigate();
   const createAlert = useContext(AlertContext);
 
   let timerExists = false;
   let currQuestionId: number;
+
+  useEffect(() => {
+    (fetchBackend("GET",`/play/${playerId}/question`)).then(data =>{
+      console.log(data.question);
+      const currDurationPoints: DurationPoints = {
+        duration: data.question.duration, 
+        points: data.question.points
+      }
+  
+      setDurationPoints(prev => [...prev, currDurationPoints]);
+
+      localStorage.setItem("durationPoints", JSON.stringify(durationPoints));
+      console.log(JSON.stringify(durationPoints));
+    });
+  }, [question]);
+
   useEffect(() => {
     let timerId: ReturnType<typeof setTimeout>;
     function requestBackend() {

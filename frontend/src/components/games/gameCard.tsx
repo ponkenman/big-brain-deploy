@@ -157,6 +157,8 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
       navigate(`/session/${currSession}}/results`);
     } else {
       navigate("/dashboard")
+      setStopGameModal(false);
+      return;
     }
   }
 
