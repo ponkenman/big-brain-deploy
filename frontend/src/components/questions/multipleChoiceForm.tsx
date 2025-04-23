@@ -40,7 +40,7 @@ export default function MultipleChoiceForm(props: {questions: Question[], questi
   return (<section className="flex flex-col gap-3 py-3">
     <CreateAnswerCards answers={answers} deleteAnswer={deleteAnswer} updateAnswer={updateAnswer}/>
     {answers.length < 6 && (
-      <Button text="Add Answers" color="bg-pink-200" hoverColor="hover:bg-indigo-400 hover:text-white" onClick={addAnswer}/>
+      <Button text="Add Answers" color="bg-pink-100" hoverColor="hover:bg-indigo-400 hover:text-white" onClick={addAnswer}/>
     )}
   </section>);
 }

@@ -97,7 +97,7 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
 
   return (<form>
     <TextInput labelName="Game Name" id="game-name" type="text" defaultValue={name} onChange={e => setName(e.target.value)} />
-    <FileSelect labelName="Game Thumbnail (optional)" id="game-thumnail" onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)}/>
+    <FileSelect labelName="Game Thumbnail (optional)" id="game-thumnail" onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)} accept=".png,.jpg,.jpeg"/>
     <QuestionManager labelName="Questions" questions={questions} set={setQuestions} />
     { confirmNoQuestions && <p className="block mb-3">Are you sure you want to create a game with no questions? Press submit to confirm!</p>}
     <SubmitGameButtons submit={createGame} close={props.closeForm}/>
