@@ -11,7 +11,7 @@ function QuestionMediaDisplay(props: {question: QuestionPlayerData}) {
   switch (props.question.mediaType) {
   case MediaType.TEXT:
     component = <div className="py-2 w-full flex flex-row justify-center">
-      <div className="border rounded-xl overflow-hidden border-indigo-400 bg-indigo-200 max-w-100 my-4 p-3 min-w-60 min-h-40">
+      <div className="border rounded-xl overflow-hidden border-pink-400 bg-pink-200 max-w-100 my-4 p-3 min-w-60 min-h-40">
         <p className="text-xl text-center">{props.question.media}</p>
       </div>
     </div>;
@@ -19,13 +19,13 @@ function QuestionMediaDisplay(props: {question: QuestionPlayerData}) {
   case MediaType.VIDEO:
     component = <div className="py-2 w-full flex flex-row justify-center">
       <div className="my-4">
-        <iframe className="w-150 h-75" src={props.question.media}/>
+        <iframe className="md:w-150 w-100 md:h-75 h-50" src={props.question.media}/>
       </div>
     </div>;
     break;
   case MediaType.IMAGE:
     component = <div className="py-2 w-full flex flex-row justify-center">
-      <div className="border rounded-xl overflow-hidden border-indigo-400 bg-indigo-200 max-w-100 my-4">
+      <div className="border rounded-xl overflow-hidden border-pink-400 bg-pink-200 max-w-100 my-4">
         <img src={props.question.media} alt={`Image for your question`} className="object-cover object-center" />
       </div>
     </div>;
@@ -179,16 +179,19 @@ function QuestionScreen() {
     ? <>
       <section>
         <h1 className="text-4xl font-semibold pb-7">{`${question.index}) ${question.question}`}</h1>
-        <div className="p-4 rounded-lg bg-indigo-100">
+        <div className="p-4 rounded-lg bg-pink-200">
           <QuestionMediaDisplay question={question} />
-          <p>{secondsRemaining === 0 ? `Time's up!` : `${secondsRemaining} second${secondsRemaining !== 0 ? `s`: ``} remaining`}</p>
-          <p>Question type: {question.type}</p>
+          <div className="flex flex-col items-center gap-2">
+            <p className="rounded-full bg-pink-400 text-white px-2 py-1 border border-gray-400">{secondsRemaining === 0 ? `Time's up!` : `Seconds`}</p>
+            <div className="text-white rounded-full w-10 h-10 font-semibold text-md bg-pink-400 border border-gray-400 text-center align-middle flex flex-col items-center justify-center"><p>{secondsRemaining}</p></div>
+          </div>
+          <p className="font-semibold">Question type: {question.type}</p>
           { correctAnswers !== undefined && <p>Correct answers were: {correctAnswers.toString()}</p>}
         </div>
       </section>
-      <section className="grid grid-cols-2 gap-4 bg-indigo-300 rounded-lg p-4 mt-7">
-        {question.answers.map(ans => <button onClick={() => changeAnswer(ans)} key={ans.id} className={`${selectedAnswers.findIndex(a => a.id === ans.id) > -1 ? `bg-green-400` : `bg-green-200`} p-2 rounded-lg min-h-30 flex justify-center items-center cursor-pointer`}>
-          <p className="text-center align-middle">{ans.text}</p>
+      <section className={`grid ${question.answers.length > 2 ? `xl:grid-cols-3` : ``} md:grid-cols-2 gap-4 bg-gray-200 rounded-lg p-5 mt-7`}>
+        {question.answers.map(ans => <button onClick={() => changeAnswer(ans)} key={ans.id} className={`${selectedAnswers.findIndex(a => a.id === ans.id) > -1 ? `bg-pink-400 text-white` : `bg-pink-200`} ${correctAnswers !== undefined ? (correctAnswers.some(text => ans.text === text) ? `border-green-500 border-2` : `border-red-500 border-2`) : `border-black border` } p-2 rounded-lg min-h-30 flex justify-center items-center cursor-pointer shadow-xl hover:opacity-50 relative`}>
+          <p className="text-center align-middle text-xl font-semibold">{ans.text}</p>
         </button>)}
       </section>
     </>

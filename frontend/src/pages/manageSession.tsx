@@ -147,14 +147,13 @@ function ManageSession(props: {sessionId: string }) {
 
   return (
     <form className="py-2">
-      <h1 className="text-4xl font-semibold pb-7">Session {props.sessionId} </h1>
       <h1 className="text-4xl font-semibold pb-7">Current position {position} </h1>
       {position === -1 ? (
-        <h1 className="text-4xl font-semibold pb-7">The game has not started yet</h1>
+        <h2 className="text-4xl font-semibold pb-7">The game has not started yet</h2>
       ) : position !== numQuestions ? (
-        <h1 className="text-4xl font-semibold pb-7">Current Question: {position} </h1>
+        <h2 className="text-4xl font-semibold pb-7">Current Question: {position} </h2>
       ) : (
-        <h1 className="text-4xl font-semibold pb-7">End Quiz</h1>
+        <h2 className="text-4xl font-semibold pb-7">End Quiz</h2>
       )}
 
       <div className="flex flex-row gap-2 pt-3">
@@ -184,10 +183,10 @@ export function ManageSessionScreen() {
     <Navbar>
       <LogoutButton />
     </Navbar>
-    <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
+    <main className={`bg-white p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Manage game session</h1>
       <Link to="/dashboard">
-        <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
+        <Button text="Back to dashboard" color="bg-pink-300" hoverColor="hover:bg-pink-400 hover:text-white" />
       </Link>
       <ManageSession sessionId={sessionId} />
     </main>

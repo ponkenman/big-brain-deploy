@@ -24,7 +24,7 @@ function NewQuestionForm(props: { newQuestion: Question, setNewQuestion: StateSe
 
 function EditQuestionCard(props: {game: Game, q: Question, setModalIdToDelete: StateSetter<number | undefined>, setDeleteModalIsVisible: StateSetter<boolean>}) {
   const navigate = useNavigate();
-  return (<article className="p-4 rounded-lg bg-pink-200 flex flex-row justify-between">
+  return (<article className="p-4 rounded-lg bg-pink-200 flex flex-row justify-between border border-pink-400 shadow-xs">
     <div>
       <p>{props.q.index}{`)`} <span className="font-medium">{props.q.question}</span></p>
       <p>Possible answers: {props.q.answers.length}</p>
