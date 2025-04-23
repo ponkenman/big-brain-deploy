@@ -31,10 +31,10 @@ export function PastResultsScreen() {
     <Navbar>
       <LogoutButton />
     </Navbar>
-    <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
+    <main className={`bg-pink-50 p-7 w-screen absolute top-15 min-h-full`}>
       <h1>Past Results Library!</h1>
       <Link to="/dashboard">
-        <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
+        <Button text="Back to dashboard" color="bg-pink-200 "hoverColor="hover:bg-pink-400" />
       </Link>
       {pastSessionData.map((session) => {
         return (
