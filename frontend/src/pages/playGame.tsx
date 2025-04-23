@@ -4,6 +4,7 @@ import Navbar from "../components/navbar";
 import { useNavigate } from "react-router-dom";
 import { Answer, DurationPoints, MediaType, QuestionPlayerData, QuestionType } from "../types";
 import { AlertContext } from "../App";
+import Button from "../components/buttons/button";
 
 function QuestionMediaDisplay(props: {question: QuestionPlayerData}) {
   let component;
@@ -196,6 +197,90 @@ function QuestionScreen() {
     </>);
 }
 
+// Screen visible to player while game has not yet started
+function LobbyScreen() {
+  const [text, setText] = useState("Play minigame");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [timestamp, setTimestamp] = useState<number>(0);
+  const [isGreen, setIsGreen] = useState(false);
+  const [leaderboard, setLeaderboard] = useState<number[]>([]);
+  const [recentScore, setRecentScore] = useState<string>("");
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval>;
+    if (!isGreen && isPlaying) {
+      // Run only after 2 seconds, then regular intervals thereafter
+      timer = setTimeout(() => {
+        timer = setInterval(() => {
+          if (!isGreen && isPlaying) {
+            const randomNum = Math.floor(Math.random() * 10);
+            if (randomNum === 7) {
+              setText("Now!");
+              setTimestamp(Date.now());
+              setIsGreen(true);
+            }
+            if (randomNum === 2) {
+              setText("Almost there...");
+            }
+          }
+        }, 300);
+      }, 2 * 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [isPlaying, isGreen]);
+
+  function onClick() {
+    const responseTime = Date.now();
+    if (!isPlaying) {
+      setIsPlaying(true);
+      setText("Wait...");
+      return;
+    }
+
+    if (!isGreen) {
+      setRecentScore(`Failed!`);
+      setText("Play minigame");
+      setTimestamp(0);
+      setIsGreen(false);
+      setIsPlaying(false);
+      return;
+    }
+    const score = responseTime - timestamp;
+    setRecentScore(`${score} ms`);
+    if (leaderboard.length < 5) {
+      setLeaderboard([...leaderboard, score].toSorted((a, b) => a - b));
+    } else {
+      const firstSmaller = leaderboard.findIndex(n => n > score);
+      if (firstSmaller !== -1) {
+        const newLeaderboard = leaderboard.toSpliced(firstSmaller, 0, score);
+        newLeaderboard.pop();
+        setLeaderboard(newLeaderboard);
+      }
+    }
+    setText("Play minigame");
+    setTimestamp(0);
+    setIsGreen(false);
+    setIsPlaying(false);
+  }
+
+  return (<>
+    <h1 className="text-4xl font-semibold pb-7">Game lobby</h1>
+    <p className="mb-4">Please wait for game to start!</p>
+    <div className="p-4 bg-gray-100 rounded-lg items-center">
+      <p className="my-5">While you're waiting, why not test your reflexes? After pressing the button below, press the button again when it turns <span className="font-semibold">green</span> and see how fast your reflexes are!
+      </p>
+      <Button text={text} color={isPlaying ? (isGreen ? "bg-green-300" : "bg-red-300") : "bg-pink-300" } hoverColor={isPlaying ? "" : "hover:bg-pink-400 hover:text-white"} onClick={onClick}/>
+      { (leaderboard.length !== 0 || recentScore !== "") && <div className="mt-3 p-3 bg-pink-200 rounded-lg">
+        { recentScore !== "" && <p className="font-semibold">Recent score: {recentScore}</p>}
+        { leaderboard.length !== 0 && <><p className="font-semibold">Leaderboard</p>
+        {leaderboard.map((score, index) => <p key={`${index}-${score}`}>{`#${index + 1} ${score} ms`}</p>)}</>}
+      </div>}
+    </div>
+
+  </>);
+}
+
 function GameStateScreen() {
   const [started, setStarted] = useState(false);
   const navigate = useNavigate();
@@ -239,10 +324,7 @@ function GameStateScreen() {
   }, []);
 
   return (started === false
-    ? <>
-      <h1 className="text-4xl font-semibold pb-7">Game lobby</h1>
-      <p>Please wait for game to start!</p>
-    </> 
+    ? <LobbyScreen />
     : <QuestionScreen />
   );
 }
@@ -261,11 +343,11 @@ export function PlayGameScreen () {
 
   return (<>
     <Navbar>
-      <div className={`bg-indigo-100 text-base p-2 rounded-lg text-center min-w-20`}>
+      <div className={`bg-pink-100 text-base p-2 rounded-lg text-center min-w-20`}>
         {localStorage.getItem("playerName") ?? `Player`}
       </div>
     </Navbar>
-    <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
+    <main className={`bg-white p-7 w-screen absolute top-15 min-h-full`}>
       <GameStateScreen />
     </main>
   </>);

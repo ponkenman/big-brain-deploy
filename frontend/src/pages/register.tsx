@@ -53,6 +53,9 @@ export function RegisterScreen() {
 
   return (<>
     <Navbar>
+      <Link to="/join">
+        <Button text="Join a game" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white" />
+      </Link>
       <Link to="/register">
         <Button text="Register" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white"/>
       </Link>
