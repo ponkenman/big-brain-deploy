@@ -23,7 +23,7 @@ export async function fetchBackend(
   if (token) {
     fetchOptions.headers["Authorization"] = token;
   }
-
+  console.log(urlMain + urlFragment);
   const response = await fetch(urlMain + urlFragment, fetchOptions);
   return await response.json();
 }
@@ -199,6 +199,6 @@ export function durationAgo(from: Date, to: Date) {
   return returnString.trim();
 }
 
-/** Tailwind CSS class to use as second argument of createAlert function for success */
+/** Tailwind CSS class to use as second argument of createAlert function for  */
 export const ALERT_SUCCESS = "bg-green-200 text-green-950 border border-green-300";
 
