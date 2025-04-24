@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ALERT_SUCCESS, fetchBackend } from "../helpers";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
@@ -20,6 +20,18 @@ function ManageSession(props: {sessionId: string }) {
   const [numQuestions, setNumQuestions] = useState(0);
   const token = localStorage.getItem("token") as string;
   const createAlert = useContext(AlertContext);
+
+  // Update current position, otherwise when switching between dashboard and manageSession, it will alway appear as -1 to start
+  useEffect(() => {
+    (fetchBackend("GET", `/admin/session/${props.sessionId}/status`, undefined, token)).then((data) => {
+      console.log(data);
+      if ("error" in data) {
+        return;
+      }
+
+      setPosition(data.results.position);
+    });
+  }, []);
   
   /**
    * This function advances the game, checking if it has reached the end
@@ -31,18 +43,28 @@ function ManageSession(props: {sessionId: string }) {
         navigate(`/session/${props.sessionId}}/results`);
         return;
       }
-      
-      // Reached the end of game, show modal to view results or return to dashboard
-      if (position === numQuestions) {
+    
+      // Find current game
+      const currentGame = data.games.filter(currGame => currGame.active === parseInt(props.sessionId));
+
+      if (currentGame.length === 0) {
+        console.log("1");
         createAlert("You've reached the end of the game!", ALERT_SUCCESS);
         setStopGameModal(true);
         return;
       } 
-    
-      // Find current game
-      const currentGame = data.games.filter(currGame => currGame.active === parseInt(props.sessionId));
+
       setNumQuestions(currentGame[0].questions.length);
       localStorage.setItem("gameId", currentGame[0].id.toString());
+
+      // Reached the end of game, show modal to view results or return to dashboard
+      if (position === currentGame[0].questions.length) {
+        console.log("1");
+        createAlert("You've reached the end of the game!", ALERT_SUCCESS);
+        setStopGameModal(true);
+        return;
+      } 
+
 
       const body = {
         mutationType: "ADVANCE"
@@ -67,22 +89,12 @@ function ManageSession(props: {sessionId: string }) {
    * This function stops a game
    */
   async function stopGame() {
-    const stopGameToken = localStorage.getItem("token") as string;
-
-    // Check if the game is already stopped, if so navigate to results
-    (fetchBackend("GET", "/admin/games", undefined, stopGameToken) as Promise<{ games: Game[] }>).then((data) => {
-      if ("error" in data) {
-        navigate(`/session/${props.sessionId}}/results`);
-        return;
-      }
-      
-      // Reached the end of game, show modal to view results or return to dashboard
-      if (position === numQuestions) {
-        createAlert("You've reached the end of the game!", ALERT_SUCCESS);
-        setStopGameModal(true);
-        return;
-      }
-    })
+    // Check if game has already ended (advanced to end and didn't proceed to results or dashboard)
+    if (position === numQuestions) {
+      createAlert("You've reached the end of the game!", ALERT_SUCCESS);
+      setStopGameModal(true);
+      return;
+    }
 
     const token = localStorage.getItem("token") as string;
     const body = {
@@ -93,9 +105,9 @@ function ManageSession(props: {sessionId: string }) {
     const response = fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>;
     response.then(data => {
       const currentGame = data.games.filter(currGame => currGame.active === parseInt(props.sessionId));
-      setNumQuestions(currentGame[0].questions.length);
       localStorage.setItem("gameId", currentGame[0].id.toString());
 
+      // Stop game and show modal to redirect to results or dashboard
       const mutateResponse = fetchBackend("POST", `/admin/game/${currentGame[0].id}/mutate`, body, token);
       mutateResponse.then(r => {
         if (r.error) {
