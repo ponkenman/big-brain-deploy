@@ -277,7 +277,7 @@ function LobbyScreen() {
       { (leaderboard.length !== 0 || recentScore !== "") && <div className="mt-3 p-3 bg-pink-200 rounded-lg">
         { recentScore !== "" && <p className="font-semibold">Recent score: {recentScore}</p>}
         { leaderboard.length !== 0 && <><p className="font-semibold">Leaderboard</p>
-        {leaderboard.map((score, index) => <p key={`${index}-${score}`}>{`#${index + 1} ${score} ms`}</p>)}</>}
+          {leaderboard.map((score, index) => <p key={`${index}-${score}`}>{`#${index + 1} ${score} ms`}</p>)}</>}
       </div>}
     </div>
 

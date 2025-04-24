@@ -6,6 +6,9 @@ import Button from "../components/buttons/button";
 import { Game, PastSessions } from "../types";
 import { useEffect, useState } from "react";
 
+/**
+ * This shows a list of all pastSessions, with hyperlinks that redirect to the overall results for that session.
+ */
 export function PastResultsScreen() {
   const [pastSessionData, setPastSessionData] = useState<PastSessions[]>([]);
   const navigate = useNavigate();
@@ -38,14 +41,14 @@ export function PastResultsScreen() {
       </Link>
       <div className="bg-gray-200 p-4 mt-7">
         {pastSessionData.length === 0
-        ? <p>You currently have no past sessions</p>
-        : <>{pastSessionData.map((session) => {
-          return (
-            <div key={session.pastSessionId}>
-              <a className="text-black hover:underline hover:text-pink-400 cursor-pointer"  onClick={() => navigate(`/session/${session.pastSessionId}/results`)}>View session {session.pastSessionId} results</a>
-            </div>
-          );
-        })}</>}
+          ? <p>You currently have no past sessions</p>
+          : <>{pastSessionData.map((session) => {
+            return (
+              <div key={session.pastSessionId}>
+                <a className="text-black hover:underline hover:text-pink-400 cursor-pointer"  onClick={() => navigate(`/session/${session.pastSessionId}/results`)}>View session {session.pastSessionId} results</a>
+              </div>
+            );
+          })}</>}
       </div>
 
     </main>

@@ -46,7 +46,7 @@ export function JoinGameScreen () {
   }
 
   return (<>
-        <Navbar>
+    <Navbar>
       <Link to="/join">
         <Button text="Join a game" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white" />
       </Link>
