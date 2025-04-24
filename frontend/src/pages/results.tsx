@@ -228,10 +228,10 @@ export function ResultsScreen() {
       <LogoutButton />
     </Navbar>
     <h1>gameId {gameId}</h1>
-    <main className={`bg-pink-50 p-7 w-screen absolute top-15 min-h-full`}>
+    <main className={`bg-white p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Results</h1>
-      <h1 className="text-4xl font-semibold pb-7">Session: {sessionId.toString()} </h1>
-      <div className="flex flex-row gap-2">
+      <h2 className="text-xl font-semibold pb-7">Session: {sessionId.toString()} </h2>
+      <div className="flex flex-row gap-2 mb-5">
         <Link to="/dashboard">
           <Button text="Back to dashboard" color="bg-pink-200 "hoverColor="hover:bg-pink-400" />
         </Link>
