@@ -28,6 +28,13 @@ ChartJS.register(
   Legend
 );
 
+/**
+ * This calculates the seconds taken to answer a questions
+ * 
+ * @param Date1 - The question start at time
+ * @param Date2 - The question end at time
+ * @returns Time taken in seconds rounded down
+ */
 function calculateSecondsTaken(Date1: ReturnType<typeof Date.toString>, Date2: ReturnType<typeof Date.toString>) {
   const start = new Date(Date1);
   const end = new Date(Date2);
@@ -35,7 +42,9 @@ function calculateSecondsTaken(Date1: ReturnType<typeof Date.toString>, Date2: R
   return Math.floor((end.getTime() - start.getTime()) / 1000);
 }
 
-
+/**
+ * This function gets the average results for amount of points and answer time, formatting it into a table and charts
+ */
 function GetResults(props: {sessionId: string }) {
   const token = localStorage.getItem("token") as string;
   const [results, setResults] = useState<PersonResult[]>([]);
@@ -47,53 +56,52 @@ function GetResults(props: {sessionId: string }) {
   const navigate = useNavigate();
   const createAlert = useContext(AlertContext);
 
-
+  // Calls get session result and get game data once
   useEffect(() => {
     const response = fetchBackend("GET", `/admin/session/${parseInt(props.sessionId)}/results`, undefined, token);
     response.then((data) => {
       if ("error" in data) {
-        console.log(data.error);
         createAlert(data.error);
         navigate("/dashboard")
         return;
       }
 
       setResults(data.results);
-      console.log(data.results);
     });
 
     const response2 = fetchBackend("GET", `/admin/session/${parseInt(props.sessionId)}/status`, undefined, token);
     response2.then((data) => {
       if ("error" in data) {
-        console.log(data.error);
         createAlert(data.error);
         navigate("/dashboard")
         return;
       }
       setGameData(data.results.questions);
-      console.log(data.results.questions);
     });
 
     // Only run once per session
   }, [props.sessionId]);
 
-  results.map((person, index) => {
+  // Iterate through all results
+  results.map((person) => {
     let totalScore = 0;
-    console.log(index)
-    console.log(person.answers);
+
+    // Iterate through each person's answer, pushing and adding to the appropriate fields
     person.answers.map((currAnswer, answerIndex) => {
+      // Add points if answer is correct and question points exists
       if (currAnswer.correct && gameData[answerIndex] && gameData[answerIndex].points !== undefined) {
         const duration = calculateSecondsTaken(currAnswer.questionStartedAt, currAnswer.answeredAt);
         const questionDuration = gameData[answerIndex].duration;
+
+        // Add appropraite amount of points according to points system
         if (duration < 0.25 * questionDuration) {
-          console.log("points scored" + gameData[answerIndex].points);
           totalScore += gameData[answerIndex].points;
         } else {
-          console.log("points scored" + gameData[answerIndex].points * ((duration / questionDuration) - 0.25));
-          totalScore += gameData[answerIndex].points * ((duration / questionDuration) - 0.25);
+          totalScore += Math.ceil(gameData[answerIndex].points * ((duration / questionDuration) - 0.25));
         }
       }
 
+      // If first time iterating through question push otherwise add to existing index
       if (questionStats.length === answerIndex) {
         questionStats.push({questionNumber: `Question ${answerIndex + 1}`, amountCorrect: currAnswer.correct ? 1 : 0, totalAttempts: 1});
         responseTimeData.push(calculateSecondsTaken(currAnswer.questionStartedAt, currAnswer.answeredAt));
@@ -115,9 +123,6 @@ function GetResults(props: {sessionId: string }) {
   responseTimeData.map((totalTime) => {
     responseTime.push(totalTime / results.length);
   });
-  console.log(responseTimeData);
-
-  console.log(questionStats);
 
   return (<section>
     <h1 className="text-2xl font-bold pb-7">Top 5 Users!</h1>
@@ -217,11 +222,13 @@ function GetResults(props: {sessionId: string }) {
   </section>)
 }
 
+/**
+ * This function displays the overall result screen, everything from the dashboard to the graphs
+ */
 export function ResultsScreen() {
   const { gameId } = useParams() as { gameId: string };
   const { sessionId } = useParams() as { sessionId: string };
   const [modal, setModal] = useState(false);
-  
 
   return (<>
     <Navbar>
@@ -242,12 +249,13 @@ export function ResultsScreen() {
         <ul>
           <p>If you answer correctly within the first 25% of the question duration you get full points.</p>
           <p>If answered after the first 25% of the question duration, each subsequent % will lose that percent
-          of the full points, e.g. 10 seconds 10 point question, answering within 2.5 will give full points.</p>
+          of the full points rounded up.</p>
           <p>Incorrect answers gives no points.</p>
           <br></br>
           <li>For Example:</li>
+          <li>For a 10 seconds 10 point question, answering within 2.5 will give full points.</li>
           <li>Answering at exactly 5 second duration will result in 7.5 points.</li>
-          <li>Answering at the exact end will result in the minimum points for a correct answer 2.5.</li>
+          <li>Answering at the exact end will result in the minimum points for a correct answer 3.</li>
         </ul>
         <Button text="Close" color="bg-pink-300 "hoverColor="hover:bg-pink-400" onClick={() => setModal(false)}/>
       </Modal>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
@@ -16,7 +16,6 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import Modal from "../components/modal";
-import LoginButton from "../components/buttons/loginButton";
 
 ChartJS.register(
   CategoryScale,
@@ -27,6 +26,13 @@ ChartJS.register(
   Legend
 );
 
+/**
+ * This calculates the seconds taken to answer a questions
+ * 
+ * @param Date1 - The question start at time
+ * @param Date2 - The question end at time
+ * @returns Time taken in seconds rounded down
+ */
 function calculateSecondsTaken(Date1: ReturnType<typeof Date.toString>, Date2: ReturnType<typeof Date.toString>) {
   const start = new Date(Date1);
   const end = new Date(Date2);
@@ -34,48 +40,46 @@ function calculateSecondsTaken(Date1: ReturnType<typeof Date.toString>, Date2: R
   return Math.floor((end.getTime() - start.getTime()) / 1000);
 }
   
-  
+/**
+ * This function gets the individual results for amount of points and answer time, formatting it into charts
+ */
 function GetIndivudalResults() {
   const playerId = localStorage.getItem("playerId");
   const durationPointsString = localStorage.getItem("durationPoints");
   const durationPoints = JSON.parse(durationPointsString);
-  
   const [results, setResults] = useState<AnswerResult[]>([]);
   const playerScore: number[] = [];
   const questionNumber: string[] = [];
 
-
+  // Calls get player result once
   useEffect(() => {
-    console.log(playerId);
-
     const response = fetchBackend("GET", `/play/${playerId}/results`, undefined);
     response.then((data) => {
-      console.log(data);
       setResults(data);
     });
 
-    // Only run once per session
+    // Playerid in the dependency makes it only run once per session
   }, [playerId]);
 
-  console.log(results);
 
+  // Iterate through all results for each question
   results.map((question, index) => {
+    // If correct, add points
     if (question.correct && durationPoints[index + 1] && 
       durationPoints[index + 1].duration !== undefined && durationPoints[index + 1].points) {
       const points = durationPoints[index+ 1].points;
       const ansDuration = calculateSecondsTaken(question.questionStartedAt, question.answeredAt);
       const questionDuration = durationPoints[index + 1].duration;
 
+      // Add appropraite amount of points according to points system
       if (ansDuration < 0.25 * questionDuration) {
-        console.log("points scored" + points);
         playerScore.push(points);
       } else {
-        console.log("index:" + index + "answDuration" + ansDuration);
-        console.log("points scored" + points * ((ansDuration / questionDuration) - 0.25));
-        playerScore.push(points * (1 - ((ansDuration / questionDuration) - 0.25)));
+        playerScore.push(Math.ceil(points * (1 - ((ansDuration / questionDuration) - 0.25))));
       }
     }
-    
+
+    // Add question number to array
     questionNumber.push(`Question ${index + 1}`);
   });
 
@@ -153,6 +157,9 @@ function GetIndivudalResults() {
   </section>)
 }
 
+/**
+ * This function displays the player result screen, everything from the dashboard to the graphs
+ */
 export function PlayerResultsScreen() {
   const { gameId } = useParams() as { gameId: string };
   const [modal, setModal] = useState(false);
@@ -187,12 +194,13 @@ export function PlayerResultsScreen() {
         <ul>
           <p>If you answer correctly within the first 25% of the question duration you get full points.</p>
           <p>If answered after the first 25% of the question duration, each subsequent % will lose that percent
-          of the full points, e.g. 10 seconds 10 point question, answering within 2.5 will give full points.</p>
+          of the full points rounded up.</p>
           <p>Incorrect answers gives no points.</p>
           <br></br>
           <li>For Example:</li>
+          <li>For a 10 seconds 10 point question, answering within 2.5 will give full points.</li>
           <li>Answering at exactly 5 second duration will result in 7.5 points.</li>
-          <li>Answering at the exact end will result in the minimum points for a correct answer 2.5.</li>
+          <li>Answering at the exact end will result in the minimum points for a correct answer 3.</li>
         </ul>
         <Button text="Close" color="bg-pink-300 "hoverColor="hover:bg-pink-400" onClick={() => setModal(false)}/>
       </Modal>
