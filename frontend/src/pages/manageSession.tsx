@@ -5,7 +5,7 @@ import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
 import { Game, PastSessions } from "../types";
-import Modal from "../components/modal";
+import Modal from "../components/modals/modal";
 import { AlertContext } from "../App";
 
 /**

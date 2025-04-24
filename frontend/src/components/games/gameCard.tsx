@@ -1,4 +1,4 @@
-import Modal from "../modal";
+import Modal from "../modals/modal";
 import { useContext, useEffect, useState } from "react";
 import Button from "../buttons/button";
 import { ALERT_SUCCESS, fetchBackend } from "../../helpers";

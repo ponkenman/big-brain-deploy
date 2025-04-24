@@ -4,7 +4,7 @@ import { APIError, Game } from "../../types";
 import { fetchBackend } from "../../helpers";
 import Button from "../buttons/button";
 import CreateGameForm from "./createGameForm";
-import Modal  from "../modal";
+import Modal  from "../modals/modal";
 
 export function AdminGamesList() {
   const [games, setGames] = useState<Game[]>([]);

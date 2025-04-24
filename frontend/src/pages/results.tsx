@@ -17,7 +17,7 @@ import {
 
 import { Bar } from 'react-chartjs-2';
 import { AlertContext } from "../App";
-import Modal from "../components/modal";
+import PointsModal from "../components/modals/pointsModal";
 
 ChartJS.register(
   CategoryScale,
@@ -229,21 +229,7 @@ export function ResultsScreen() {
         </Link>
         <Button text="How do points work?" color="bg-pink-200" hoverColor="hover:bg-pink-400" onClick={() => setModal(true)}/>
       </div>
-      <Modal visible={modal} setVisible={setModal}>
-        <p>Points are calculated by the following:</p>
-        <ul>
-          <p>If you answer correctly within the first 25% of the question duration you get full points.</p>
-          <p>If answered after the first 25% of the question duration, each subsequent % will lose that percent
-          of the full points rounded up.</p>
-          <p>Incorrect answers gives no points.</p>
-          <br></br>
-          <li>For Example:</li>
-          <li>For a 10 seconds 10 point question, answering within 2.5 will give full points.</li>
-          <li>Answering at exactly 5 second duration will result in 7.5 points.</li>
-          <li>Answering at the exact end will result in the minimum points for a correct answer 3.</li>
-        </ul>
-        <Button text="Close" color="bg-pink-300 "hoverColor="hover:bg-pink-400" onClick={() => setModal(false)}/>
-      </Modal>
+      <PointsModal visible={modal} setVisible={setModal} />
       <GetResults sessionId={sessionId} />
     </main>
   </>)
