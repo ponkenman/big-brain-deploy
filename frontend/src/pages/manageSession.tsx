@@ -139,7 +139,7 @@ function ManageSession(props: {sessionId: string }) {
     }
     
     if (seeResults) {
-      navigate(`/session/${props.sessionId}}/results`)
+      navigate(`/session/${props.sessionId}/results`)
     } else {
       navigate("/dashboard")
     }
@@ -162,10 +162,10 @@ function ManageSession(props: {sessionId: string }) {
         <Modal visible={stopGameModal} setVisible={setStopGameModal}>
           <h2>Would you like to view the results?</h2>
           <div className="flex flex-row gap-2 pt-3">
-            <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => {
+            <Button text="Yes" color="bg-pink-300" hoverColor="hover:bg-pink-400" onClick={() => {
               storeGame(true);
             }}/>
-            <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => {
+            <Button text="No" color="bg-pink-300" hoverColor="hover:bg-pink-400" onClick={() => {
               storeGame(false);
             }}/>
           </div>

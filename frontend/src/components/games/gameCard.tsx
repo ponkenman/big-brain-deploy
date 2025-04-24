@@ -130,7 +130,6 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
       setStopGameModal(false);
       return;
     }
-
     
     const pastSession: PastSessions = {
       pastSessionId: currSession,
@@ -158,12 +157,11 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
     }
     
     if (seeResults) {
-      navigate(`/session/${currSession}}/results`);
+      navigate(`/session/${currSession}/results`);
     } else {
-      navigate("/dashboard")
       setStopGameModal(false);
-      return;
     }
+    setCurrSession(null);
   }
 
   useEffect(() => {
@@ -215,8 +213,8 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
     <Modal visible={stopGameModal} setVisible={setStopGameModal}>
       <h2>Would you like to view the results?</h2>
       <div className="flex flex-row gap-2">
-        <Button text="Yes" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => storeGame(true)}/>
-        <Button text="No" color="bg-indigo-300" hoverColor="hover:bg-indigo-400" onClick={() => storeGame(false)}/>
+        <Button text="Yes" color="bg-pink-300" hoverColor="hover:bg-pink-400" onClick={() => storeGame(true)}/>
+        <Button text="No" color="bg-pink-300" hoverColor="hover:bg-pink-400" onClick={() => storeGame(false)}/>
       </div>
     </Modal>
   </article>);

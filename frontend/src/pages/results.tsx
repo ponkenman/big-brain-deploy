@@ -14,6 +14,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+
 import { Bar } from 'react-chartjs-2';
 import { AlertContext } from "../App";
 import Modal from "../components/modal";
@@ -78,37 +79,35 @@ function GetResults(props: {sessionId: string }) {
 
   results.map((person, index) => {
     let totalScore = 0;
-    person.answers.map((currAnswer) => {
-      // Does not account for multiple choice
-      if (currAnswer.correct && gameData[index] && gameData[index].points !== undefined) {
+    console.log(index)
+    console.log(person.answers);
+    person.answers.map((currAnswer, answerIndex) => {
+      if (currAnswer.correct && gameData[answerIndex] && gameData[answerIndex].points !== undefined) {
         const duration = calculateSecondsTaken(currAnswer.questionStartedAt, currAnswer.answeredAt);
-        const questionDuration = gameData[index].duration;
+        const questionDuration = gameData[answerIndex].duration;
         if (duration < 0.25 * questionDuration) {
-          console.log("points scored" + gameData[index].points);
-          totalScore += gameData[index].points;
+          console.log("points scored" + gameData[answerIndex].points);
+          totalScore += gameData[answerIndex].points;
         } else {
-          console.log("points scored" + gameData[index].points * ((duration / questionDuration) - 0.25));
-          totalScore += gameData[index].points * ((duration / questionDuration) - 0.25);
+          console.log("points scored" + gameData[answerIndex].points * ((duration / questionDuration) - 0.25));
+          totalScore += gameData[answerIndex].points * ((duration / questionDuration) - 0.25);
         }
       }
-      
 
-      if (questionStats.length < index + 1) {
-        questionStats.push({questionNumber: `Question ${index + 1}`, amountCorrect: currAnswer.correct ? 1 : 0, totalAttempts: 1});
+      if (questionStats.length === answerIndex) {
+        questionStats.push({questionNumber: `Question ${answerIndex + 1}`, amountCorrect: currAnswer.correct ? 1 : 0, totalAttempts: 1});
         responseTimeData.push(calculateSecondsTaken(currAnswer.questionStartedAt, currAnswer.answeredAt));
       } else {
         if (currAnswer.correct) {
-          questionStats[index].amountCorrect += 1;
+          questionStats[answerIndex].amountCorrect += 1;
         } 
 
-        questionStats[index].totalAttempts += 1;
-        responseTimeData[index] += calculateSecondsTaken(currAnswer.questionStartedAt, currAnswer.answeredAt);
+        questionStats[answerIndex].totalAttempts += 1;
+        responseTimeData[answerIndex] += calculateSecondsTaken(currAnswer.questionStartedAt, currAnswer.answeredAt);
       }
     })
 
-
     topFiveScore.push({name: person.name, score: totalScore} );
-
   });
 
   // sort top five by score then delete everyone that is not top 5
@@ -116,28 +115,30 @@ function GetResults(props: {sessionId: string }) {
   responseTimeData.map((totalTime) => {
     responseTime.push(totalTime / results.length);
   });
+  console.log(responseTimeData);
+
+  console.log(questionStats);
 
   return (<section>
-    <h1>Top 5 Users!</h1>
-    <table className="border-collapse border border-gray-400 ...">
-      <thead className="border-collapse border border-gray-400 ...">
-        <th className="border-collapse border border-gray-400 ...">Rank</th>
-        <th className="border-collapse border border-gray-400 ...">Name</th>
-        <th className="border-collapse border border-gray-400 ...">Score</th>
+    <h1 className="text-2xl font-bold pb-7">Top 5 Users!</h1>
+    <table>
+      <thead className="text-1xl border-collapse border border-gray-400 ...">
+        <th className="p-1 border-collapse border border-gray-400 ...">Rank</th>
+        <th className="p-1 border-collapse border border-gray-400 ...">Name</th>
+        <th className="p-1 border-collapse border border-gray-400 ...">Score</th>
       </thead>
       <tbody >
         {topFiveScore.map((person, index) => {
           return(
             <tr key={index} className="border-collapse border border-gray-400 ...">
-              <td className="border-collapse border border-gray-400 ...">{index + 1}</td>
-              <td className="border-collapse border border-gray-400 ...">{person.name}</td>
-              <td className="border-collapse border border-gray-400 ...">{person.score}</td>
+              <td className="px-2 border-collapse border border-gray-400 ...">{index + 1}</td>
+              <td className="px-2 border-collapse border border-gray-400 ...">{person.name}</td>
+              <td className="px-2 border-collapse border border-gray-400 ...">{person.score}</td>
             </tr>
           )
         })}
       </tbody>
     </table>
-    <h1>Average Answer Time!</h1>
     <Bar 
       data={{
         labels: questionStats.map((data) => data.questionNumber),
@@ -150,19 +151,67 @@ function GetResults(props: {sessionId: string }) {
           }
         ]
       }}
+      options={{
+        plugins: {
+          title: {
+            display: true,
+            text: "Average Percetage Correct Per Question!",
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Question Number",
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Percentage Correct",
+            },
+            min: 0,
+            max: 1,
+            ticks: {
+              callback: (data) => `${data * 100}%`,
+            }
+          }, 
+        }
+      }}
     />
-    <h1>Average Response Time</h1>
     <Bar 
       data={{
         labels: questionStats.map((data) => data.questionNumber),
         datasets: [
           {
-            label: "Average Response Time",
-            data: responseTime,
+            label: "Average Answer Time",
+            data: responseTime.map((data) => data),
             borderColor: '#9FA8DA',
             backgroundColor: '#9FA8DA'
           }
         ]
+      }}
+      options={{
+        plugins: {
+          title: {
+            display: true,
+            text: "Average Answer Time Per Question!",
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Question Number",
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Time (seconds)",
+            },
+          }, 
+        }
       }}
     />
   </section>)
@@ -172,24 +221,21 @@ export function ResultsScreen() {
   const { gameId } = useParams() as { gameId: string };
   const { sessionId } = useParams() as { sessionId: string };
   const [modal, setModal] = useState(false);
+  
 
   return (<>
     <Navbar>
       <LogoutButton />
     </Navbar>
     <h1>gameId {gameId}</h1>
-    <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
+    <main className={`bg-pink-50 p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Results</h1>
       <h1 className="text-4xl font-semibold pb-7">Session: {sessionId.toString()} </h1>
-      <Link to="/dashboard">
-        <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
-      </Link>
-      <GetResults sessionId={sessionId} />
       <div className="flex flex-row gap-2">
         <Link to="/dashboard">
-          <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
+          <Button text="Back to dashboard" color="bg-pink-200 "hoverColor="hover:bg-pink-400" />
         </Link>
-        <Button text="How do points work?" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" onClick={() => setModal(true)}/>
+        <Button text="How do points work?" color="bg-pink-200 "hoverColor="hover:bg-pink-400" onClick={() => setModal(true)}/>
       </div>
       <Modal visible={modal} setVisible={setModal}>
         <p>Points are calculated by the following:</p>
@@ -203,7 +249,7 @@ export function ResultsScreen() {
           <li>Answering at exactly 5 second duration will result in 7.5 points.</li>
           <li>Answering at the exact end will result in the minimum points for a correct answer 2.5.</li>
         </ul>
-        <Button text="Close" color="bg-indigo-300 "hoverColor="hover:bg-indigo-400" onClick={() => setModal(false)}/>
+        <Button text="Close" color="bg-pink-300 "hoverColor="hover:bg-pink-400" onClick={() => setModal(false)}/>
       </Modal>
       <GetResults sessionId={sessionId} />
     </main>

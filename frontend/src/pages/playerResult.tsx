@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
@@ -16,6 +16,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import Modal from "../components/modal";
+import LoginButton from "../components/buttons/loginButton";
 
 ChartJS.register(
   CategoryScale,
@@ -35,7 +36,6 @@ function calculateSecondsTaken(Date1: ReturnType<typeof Date.toString>, Date2: R
   
   
 function GetIndivudalResults() {
-  const token = localStorage.getItem("token") as string;
   const playerId = localStorage.getItem("playerId");
   const durationPointsString = localStorage.getItem("durationPoints");
   const durationPoints = JSON.parse(durationPointsString);
@@ -47,9 +47,8 @@ function GetIndivudalResults() {
 
   useEffect(() => {
     console.log(playerId);
-    console.log(token);
 
-    const response = fetchBackend("GET", `/play/${playerId}/results`, undefined, token);
+    const response = fetchBackend("GET", `/play/${playerId}/results`, undefined);
     response.then((data) => {
       console.log(data);
       setResults(data);
@@ -81,7 +80,6 @@ function GetIndivudalResults() {
   });
 
   return (<section>
-    <h1>Question Data!</h1>
     <Bar 
       data={{
         labels: questionNumber.map((data) => data),
@@ -91,15 +89,65 @@ function GetIndivudalResults() {
             data: playerScore.map((data) => data),
             borderColor: '#36A2EB',
             backgroundColor: '#9BD0F5',
+          }
+        ]
+      }}
+      options={{
+        plugins: {
+          title: {
+            display: true,
+            text: "Your Points Per Question!",
           },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Question Number",
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Points",
+            },
+          }, 
+        }
+      }}
+    />
+    <Bar 
+      data={{
+        labels: questionNumber.map((data) => data),
+        datasets: [
           {
             label: "Answer time per questions",
             data: results.map((data) => calculateSecondsTaken(data.questionStartedAt, data.answeredAt)),
             borderColor: '#7986CB',
             backgroundColor: '#7986CB'
           }
-        ],
-  
+        ]
+      }}
+      options={{
+        plugins: {
+          title: {
+            display: true,
+            text: "Your Answer Time Per Question!",
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Question Number",
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Time (seconds)",
+            },
+          }, 
+        }
       }}
     />
   </section>)
@@ -108,19 +156,31 @@ function GetIndivudalResults() {
 export function PlayerResultsScreen() {
   const { gameId } = useParams() as { gameId: string };
   const [modal, setModal] = useState(false);
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   return (<>
     <Navbar>
-      <LogoutButton />
+      {token !== "null" ? (
+        <LogoutButton />
+      ) : (
+        <Button text="Login" color="bg-pink-200 "hoverColor="hover:bg-pink-400" onClick={() => navigate("/login")} />
+
+      )}
     </Navbar>
     <h1>gameId {gameId}</h1>
-    <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
+    <main className={`bg-pink-50 p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Here are the your results!</h1>
-      <div className="flex flex-row gap-2">
-        <Link to="/dashboard">
-          <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
-        </Link>
-        <Button text="How do points work?" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" onClick={() => setModal(true)}/>
+      {token === "null" && (
+        <h1 className="text-2xl font-semibold pb-7">You completed this Quiz! Feel free to close this tab or login when you've finished looking at results!</h1>
+      )}
+      <div className="flex flex-column gap-2">
+        {token !== "null" && (
+          <Link to="/dashboard">
+            <Button text="Back to dashboard" color="bg-pink-200" hoverColor="hover:bg-pink-400" />
+          </Link>
+        )}
+        <Button text="How do points work?" color="bg-pink-200" hoverColor="hover:bg-pink-400" onClick={() => setModal(true)}/>
       </div>
       <Modal visible={modal} setVisible={setModal}>
         <p>Points are calculated by the following:</p>
@@ -134,7 +194,7 @@ export function PlayerResultsScreen() {
           <li>Answering at exactly 5 second duration will result in 7.5 points.</li>
           <li>Answering at the exact end will result in the minimum points for a correct answer 2.5.</li>
         </ul>
-        <Button text="Close" color="bg-indigo-300 "hoverColor="hover:bg-indigo-400" onClick={() => setModal(false)}/>
+        <Button text="Close" color="bg-pink-300 "hoverColor="hover:bg-pink-400" onClick={() => setModal(false)}/>
       </Modal>
       <GetIndivudalResults/>
     </main>
