@@ -178,7 +178,7 @@ function QuestionScreen() {
   return (question !== undefined
     ? <>
       <section>
-        <h1 className="text-4xl font-semibold pb-7">{`${question.index}) ${question.question}`}</h1>
+        <h2 className="text-4xl font-semibold pb-7">{`${question.index}) ${question.question}`}</h2>
         <div className="p-4 rounded-lg bg-pink-200">
           <QuestionMediaDisplay question={question} />
           <div className="flex flex-col items-center gap-2">

@@ -199,6 +199,20 @@ export function durationAgo(from: Date, to: Date) {
   return returnString.trim();
 }
 
+/**
+ * This calculates the seconds taken to answer a questions
+ * 
+ * @param Date1 - The question start at time
+ * @param Date2 - The question end at time
+ * @returns Time taken in seconds rounded down
+ */
+export function calculateSecondsTaken(Date1: ReturnType<typeof Date.toString>, Date2: ReturnType<typeof Date.toString>) {
+  const start = new Date(Date1);
+  const end = new Date(Date2);
+
+  return Math.floor((end.getTime() - start.getTime()) / 1000);
+}
+
 /** Tailwind CSS class to use as second argument of createAlert function for  */
 export const ALERT_SUCCESS = "bg-green-200 text-green-950 border border-green-300";
 
