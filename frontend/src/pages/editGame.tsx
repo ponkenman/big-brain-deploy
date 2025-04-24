@@ -88,7 +88,7 @@ function EditQuestionManager(props: { game: Game, setGame: StateSetter<Game|unde
       {questions.length === 0 
         ? <p> You currently have no questions! </p> 
         : questions.map(q => <EditQuestionCard key={q.id} game={props.game} q={q} setModalIdToDelete={setModalIdToDelete} setDeleteModalIsVisible={setDeleteModalIsVisible}/>)}
-      <Button text="Add Questions" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white" onClick={() => setModalIsVisible(true)}/>
+      <Button text="Add Questions" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white col-span-full" onClick={() => setModalIsVisible(true)}/>
       <Modal visible={modalIsVisible} setVisible={setModalIsVisible}>
         <form>
           <NewQuestionForm newQuestion={newQuestion} setNewQuestion={setNewQuestion}/>

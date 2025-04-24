@@ -31,18 +31,23 @@ export function PastResultsScreen() {
     <Navbar>
       <LogoutButton />
     </Navbar>
-    <main className={`bg-indigo-50 p-7 w-screen absolute top-15 min-h-full`}>
-      <h1>Past Results Library!</h1>
+    <main className={`bg-white p-7 w-screen absolute top-15 min-h-full`}>
+      <h1 className="text-4xl font-semibold pb-7">Past results</h1>
       <Link to="/dashboard">
-        <Button text="Back to dashboard" color="bg-indigo-200 "hoverColor="hover:bg-indigo-400" />
+        <Button text="Back to dashboard" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white" />
       </Link>
-      {pastSessionData.map((session) => {
-        return (
-          <div key={session.pastSessionId}>
-            <a className="text-indigo-400 hover:underline"  onClick={() => navigate(`/session/${session.pastSessionId}/results`)}>View session {session.pastSessionId} results</a>
-          </div>
-        );
-      })}
+      <div className="bg-gray-200 p-4 mt-7">
+        {pastSessionData.length === 0
+        ? <p>You currently have no past sessions</p>
+        : <>{pastSessionData.map((session) => {
+          return (
+            <div key={session.pastSessionId}>
+              <a className="text-black hover:underline hover:text-pink-400 cursor-pointer"  onClick={() => navigate(`/session/${session.pastSessionId}/results`)}>View session {session.pastSessionId} results</a>
+            </div>
+          );
+        })}</>}
+      </div>
+
     </main>
   </>)
 }
