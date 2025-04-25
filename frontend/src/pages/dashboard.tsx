@@ -2,6 +2,9 @@ import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import { AdminGamesList } from "../components/games/adminGamesList";
 
+/**
+ * This function displays the dashboard screen, everything from the dashboard to list of games owned by the user
+ */
 export function DashboardScreen () {
   return (<>
     <Navbar>

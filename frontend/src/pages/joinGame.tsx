@@ -6,6 +6,10 @@ import TextInput from "../components/forms/textInput";
 import Button from "../components/buttons/button";
 import { AlertContext } from "../App";
 
+
+/**
+ * This function displays the overall join game screen, everything from the dashboard to input session code and display name
+ */
 export function JoinGameScreen () {
   const [params,] = useSearchParams();
   const [playerName, setPlayerName] = useState("");
@@ -15,7 +19,9 @@ export function JoinGameScreen () {
 
   let messageSent = false;
 
+  // Create alert if the game code was successfully autofield
   useEffect(() => {
+    // Check if sessionId is valid and message has not been sent
     if (sessionId !== "" && !messageSent) {
       // Prevent alert from being sent twice on debug mode
       messageSent = true;
@@ -23,19 +29,26 @@ export function JoinGameScreen () {
     }
   }, []);
 
+  // A function which handles entering a session, requiring a valid sessionId and playerName
   async function enterSession() {
     if (playerName === "") {
       createAlert("Please fill in your name!");
       return;
     }
+
     const body = {
       name: playerName
     }
+
     if (sessionId === "") {
       createAlert("Please fill in a session code!");
       return;
     }
+
+    // If valid playerName and sessionId, join game
     const response = await fetchBackend("POST", `/play/join/${sessionId}`, body);
+
+    // Create alert for error, else add playerId and playerName to local storage
     if (response.error) {
       createAlert(response.error);
     } else {

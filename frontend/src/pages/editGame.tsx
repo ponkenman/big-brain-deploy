@@ -12,9 +12,15 @@ import QuestionManager from "../components/questions/questionManager";
 import IconButton from "../components/buttons/iconButton";
 import { AlertContext } from "../App";
 
+/**
+ * This function returns the question manager used to create or edit game's questions
+ * 
+ * @param props - The passed in newQuestion and setNewQuestion
+ */
 function NewQuestionForm(props: { newQuestion: Question, setNewQuestion: StateSetter<Question> }) {
   const [newQuestions, setNewQuestions] = useState<Question[]>([createDefaultQuestion()]);
 
+  // Call props.setNewQuestion to add a new question into game
   useEffect(() => {
     props.setNewQuestion(newQuestions[0]);
   }, [newQuestions]);
@@ -22,6 +28,11 @@ function NewQuestionForm(props: { newQuestion: Question, setNewQuestion: StateSe
   return (<QuestionManager labelName="Add new question" questions={newQuestions} set={setNewQuestions} createSingleQuestion={true} />)
 }
 
+/**
+ * This function shows each question with some basic information as well as edit and delete buttons
+ * 
+ * @param props - The passed in game and question, setModalIdToDelete and setDeleteModalIsVisible
+ */
 function EditQuestionCard(props: {game: Game, q: Question, setModalIdToDelete: StateSetter<number | undefined>, setDeleteModalIsVisible: StateSetter<boolean>}) {
   const navigate = useNavigate();
   return (<article className="p-4 rounded-lg bg-pink-200 flex flex-row justify-between border border-pink-400 shadow-xs">
@@ -46,6 +57,11 @@ function EditQuestionCard(props: {game: Game, q: Question, setModalIdToDelete: S
   </article>);
 }
 
+/**
+ * This function shows all questions that are able to be edited or deleted, whilst also having a button to add new questions
+ * 
+ * @param props - The passed in game, setGame and updateGame
+ */
 function EditQuestionManager(props: { game: Game, setGame: StateSetter<Game|undefined>, updateGame: (newGame: Game) => void }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [newQuestion, setNewQuestion] = useState<Question>(createDefaultQuestion());
@@ -53,10 +69,12 @@ function EditQuestionManager(props: { game: Game, setGame: StateSetter<Game|unde
   const [deleteModalIsVisible, setDeleteModalIsVisible] = useState(false);
   const [modalIdToDelete, setModalIdToDelete] = useState<number | undefined>(undefined);
 
+  // Update to appropriate question for the relevant game
   useEffect(() => {
     setQuestions(props.game.questions)
   }, [props.game]);
 
+  // Add question to current game
   function addQuestion() {
     const newGame = {...props.game, lastUpdatedAt: new Date().toISOString() } as Game;
     newGame.questions = [...questions, newQuestion];
@@ -69,10 +87,13 @@ function EditQuestionManager(props: { game: Game, setGame: StateSetter<Game|unde
     setNewQuestion(createDefaultQuestion());
   }
 
+  // Delete selected question
   function deleteQuestion() {
+    // Check if the modalId to be deleted is valid
     if (modalIdToDelete === undefined) {
       return;
     }
+
     const questionId = modalIdToDelete;
     const newGame = {...props.game};
     const newQuestions = [...newGame.questions].filter(q => q.id !== questionId);
@@ -108,6 +129,11 @@ function EditQuestionManager(props: { game: Game, setGame: StateSetter<Game|unde
   </section>)
 }
 
+/**
+ * This function shows the game id, created and last updated statistics for the current game
+ * 
+ * @param props - The passed in game
+ */
 function GameStats(props: {game: Game}) {
   return (<>
     <p className="text-gray-600">#{props.game.id}</p>
@@ -116,6 +142,11 @@ function GameStats(props: {game: Game}) {
   </>);
 }
 
+/**
+ * The managing function which has all the update functions
+ * 
+ * @param props - The passed in game
+ */
 function GameManager(props: {gameId: string }) {
   const [game, setGame] = useState<Game>();
   const [name, setName] = useState("");
@@ -124,6 +155,7 @@ function GameManager(props: {gameId: string }) {
   const [modalIsVisible, setModalIsVisible] = useState(false);
   const createAlert = useContext(AlertContext);
 
+  // Convert uploaded thumbnail to a url everytime it changes
   useEffect(() => {
     if (thumbnailFile) {
       const data = fileToDataUrl(thumbnailFile);
@@ -131,6 +163,7 @@ function GameManager(props: {gameId: string }) {
     }
   }, [thumbnailFile]);
 
+  // Get games from backend, finding the correct one through id then set game, name and thumbnail to have these fields
   useEffect(() => {
     const token = localStorage.getItem("token") as string;
     const response = fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>;
@@ -139,10 +172,10 @@ function GameManager(props: {gameId: string }) {
       setGame(game);
       setName(game.name);
       setThumbnailUrl(game.thumbnail);
-      console.log(game);
     });
   }, []);
 
+  // Update a current games questions
   function updateGame(newGame: Game) {
     const token = localStorage.getItem("token") as string;
     const response = fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>;
@@ -151,12 +184,15 @@ function GameManager(props: {gameId: string }) {
         q.correctAnswers = q.answers.filter(a => a.correct).map(a => a.text);
         q.index = i + 1;
       });
+
       const games = data.games;
       const gameIndex = games.findIndex(g => g.id === newGame.id);
       games[gameIndex] = newGame;
       const body = {
         games: games
       }
+
+      // Use put request to update question fields
       const editResponse = fetchBackend("PUT", "/admin/games", body, token);
       editResponse.then(r => {
         if (r.error) {
@@ -169,6 +205,9 @@ function GameManager(props: {gameId: string }) {
     });
   }
 
+  /**
+   * This function updates all of a game's meta data
+   */
   function updateGameMetadata() {
     const newGame = {...game, name: name, thumbnail: thumbnailUrl, lastUpdatedAt: new Date().toISOString() } as Game;
     updateGame(newGame);
@@ -186,7 +225,7 @@ function GameManager(props: {gameId: string }) {
       <Modal visible={modalIsVisible} setVisible={setModalIsVisible}>
         <form>
           <TextInput labelName="Edit name" id="game-name" type="text" defaultValue={name} onChange={e => setName(e.target.value)} />
-          <FileSelect accept=".png,.jpg,.jpeg" labelName="Upload new thumbnail (optional)" id="game-thumbnail" onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)} />
+          <FileSelect labelName="Upload new thumbnail (optional)" id="game-thumnail" accept=".png, .jpeg, .jpg" onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)} />
           <div className="flex flex-row gap-2 pt-3">
             <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={updateGameMetadata}/>
             <Button text="Cancel" color="bg-red-300" hoverColor="hover:bg-red-400" onClick={() => setModalIsVisible(false)}/>
@@ -198,6 +237,9 @@ function GameManager(props: {gameId: string }) {
   </div>);
 }
 
+/**
+ * This function displays the overall edit game screen, everything from the dashboard to game thumbnail and questions
+ */
 export function EditGameScreen() {
   const { gameId } = useParams() as { gameId: string };
 

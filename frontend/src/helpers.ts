@@ -168,7 +168,6 @@ export function isGame(data: unknown) {
   typeof g.id === "number" &&
   typeof g.name === "string" &&
   typeof g.thumbnail === "string" &&
-  typeof g.owner === "string" &&
   (typeof g.active === "number" || g.active ===  null) &&
   isDate(g.createdAt) &&
   isDate(g.lastUpdatedAt) &&

@@ -1,5 +1,5 @@
-import { SetStateAction, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
@@ -32,12 +32,12 @@ ChartJS.register(
 function GetIndivudalResults() {
   const playerId = localStorage.getItem("playerId");
   const durationPointsString = localStorage.getItem("durationPoints");
-  const durationPoints = JSON.parse(durationPointsString);
+  const durationPoints = JSON.parse(durationPointsString as string);
   const [results, setResults] = useState<AnswerResult[]>([]);
   const playerScore: number[] = [];
   const questionNumber: string[] = [];
 
-  // Calls get player result once
+  // Calls get player result once, setting the data using useState
   useEffect(() => {
     const response = fetchBackend("GET", `/play/${playerId}/results`, undefined);
     response.then((data) => {
@@ -147,7 +147,6 @@ function GetIndivudalResults() {
  * This function displays the player result screen, everything from the dashboard to the graphs
  */
 export function PlayerResultsScreen() {
-  const { gameId } = useParams() as { gameId: string };
   const [modal, setModal] = useState(false);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();

@@ -20,12 +20,16 @@ export function PastResultsScreen() {
     (fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>).then((data) => {
       const temptPastSessions: PastSessions[] = [];
       data.games.map((game) => {
+
+        // If matching game id, add ll past session to temporary array 
         if (game.id === parseInt(gameId)) {
           game.pastSessions.map((currSession: PastSessions) => {
             temptPastSessions.push(currSession);
           });
         }
       });
+
+      // Use useState to set pastSessionData, allowing it to be used outside this 
       setPastSessionData(temptPastSessions);
     });
   }, []);

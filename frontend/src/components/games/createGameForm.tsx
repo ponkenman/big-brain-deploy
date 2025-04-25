@@ -134,7 +134,7 @@ function ImportFileGameForm(props: { closeForm: () => void, games: Game[], setGa
         id: data.id,
         name: data.name,
         thumbnail: data.thumbnail,
-        owner: data.owner,
+        owner: localStorage.getItem("email") as string,
         active: data.active,
         createdAt: data.createdAt,
         lastUpdatedAt: data.lastUpdatedAt,
@@ -178,7 +178,7 @@ export default function CreateGameForm(props: { closeForm: () => void, games: Ga
   const [uploadJson, setUploadJson] = useState(false);
 
   return (<>
-    { !uploadJson 
+    {!uploadJson
       ? <>
         <ManualGameForm {...props}/>
         <button className="underline hover:opacity-50 cursor-pointer pt-2" onClick={() => setUploadJson(true)}>Import from json file instead</button>
