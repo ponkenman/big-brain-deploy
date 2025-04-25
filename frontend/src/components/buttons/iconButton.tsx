@@ -7,8 +7,8 @@
  *                svg - The image to display on the button
  *                onClick - The function to run when clicked
  */
-export default function IconButton(props: { className: string, svg: string, onClick: () => void}) {
+export default function IconButton(props: { className: string, svg: string, onClick: () => void, alt: string }) {
   return (<button className={`cursor-pointer ${props.className}`} onClick={props.onClick}>
-    <img src={props.svg} />
+    <img src={props.svg} alt={props.alt}/>
   </button>);
 }

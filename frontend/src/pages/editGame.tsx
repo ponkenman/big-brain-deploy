@@ -48,8 +48,8 @@ function EditQuestionCard(props: {game: Game, q: Question, setModalIdToDelete: S
       <p>Points: {props.q.points}</p>
     </div>
     <div className="flex flex-col gap-2">
-      <IconButton className="w-5 h-auto hover:opacity-50" onClick={() => navigate(`/game/${props.game.id}/question/${props.q.id}`)} svg="../src/assets/pencil.svg"/>
-      <IconButton className="w-5 h-auto hover:opacity-50" onClick={() => {
+      <IconButton alt="Edit question" className="w-5 h-auto hover:opacity-50" onClick={() => navigate(`/game/${props.game.id}/question/${props.q.id}`)} svg="../src/assets/pencil.svg"/>
+      <IconButton alt="Delete question" className="w-5 h-auto hover:opacity-50" onClick={() => {
         props.setModalIdToDelete(props.q.id);
         props.setDeleteModalIsVisible(true);
       }} svg="../src/assets/trash.svg"/>
@@ -217,7 +217,7 @@ function GameManager(props: {gameId: string }) {
   return (game != undefined && <div className="rounded-md bg-gray-200 p-4 my-7">
     <GameStats game={game} />
     <section className="rounded-md bg-gray-300 mt-4 px-4 pb-2 relative">
-      <h2 className="text-2xl font-semibold py-3">{game.name} <IconButton className="w-6 h-auto hover:opacity-50 inline-flex ml-1" onClick={() => setModalIsVisible(true)} svg="../src/assets/pencil.svg"/></h2>
+      <h2 className="text-2xl font-semibold py-3">{game.name} <IconButton alt="Edit game metadata" className="w-6 h-auto hover:opacity-50 inline-flex ml-1" onClick={() => setModalIsVisible(true)} svg="../src/assets/pencil.svg"/></h2>
       <p>Game thumbnail</p>
       <div className="flex flex-row justify-center border rounded-xl overflow-hidden border-pink-400 bg-pink-200 sm:w-100 my-4">
         <img src={game.thumbnail == "" ? "../src/assets/default-game-icon.png" : game.thumbnail} alt={`Thumbnail for ${game.name}`} className="object-cover object-center" />
