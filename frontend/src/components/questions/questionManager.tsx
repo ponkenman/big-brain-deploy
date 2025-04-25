@@ -76,7 +76,7 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
             <TextInput labelName={`Enter Video Embed URL`} id={`question${index}-media-video`} type="text" defaultValue={question.media} onChange={e => updateQuestion(index, {media: e.target.value, mediaType: MediaType.VIDEO})} />
           ) : <></>
           }
-          <SelectMenu labelName="Question Type" id="question-type-select" options={Object.values(QuestionType)} onChange={e => updateQuestion(index, {type: e.target.value})} defaultValue={question.type}/>
+          <SelectMenu labelName="Question Type" id={`question-type-select-${question.id}`}options={Object.values(QuestionType)} onChange={e => updateQuestion(index, {type: e.target.value})} defaultValue={question.type}/>
           {question.type === QuestionType.SINGLE_CHOICE ? (
             <SingleChoiceForm questionIndex={index} questions={props.questions} setQuestions={props.set} />
           ) : question.type === QuestionType.MULTIPLE_CHOICE ? (

@@ -1,6 +1,6 @@
 import { initialiseMockFetch, register, URL } from "./helpers";
 
-/** NOTE: JSON files assumes strict mode enabled (ie sometimes requests done twice) */
+/** NOTE: JSON file order in mock fetch data assumes strict mode enabled (ie sometimes requests done twice) */
 
 const loginData = {
   name: "Bob",
@@ -88,6 +88,7 @@ describe("Happy path of user", () => {
     // Game started, then results viewed
     cy.contains("Start game").click();
     cy.contains("Dismiss").click();
+    cy.contains("Active");
     cy.contains("Stop game").click();
     cy.contains("Yes").click();
     cy.contains("Results");

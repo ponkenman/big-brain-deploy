@@ -28,6 +28,6 @@ export default function JudgementForm(props: {questions: Question[], questionInd
   }
 
   return (<section className="flex flex-col gap-3 py-3">
-    <CheckboxInput labelName="True" id={`question${props.questionIndex}-answer$0-correct`} checked={answers[0].correct} onChange={e => {updateAnswer(e.target.checked)}} />
+    <CheckboxInput labelName="True" id={`question${props.questionIndex}-answer-correct`} checked={answers[0].correct} onChange={e => {updateAnswer(e.target.checked)}} />
   </section>);
 }
