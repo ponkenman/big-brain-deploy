@@ -10,7 +10,13 @@ import { useState } from "react";
 import FileSelect from "../forms/fileInput";
 import CloseButton from "../buttons/closeButton";
 
-
+/**
+ * This function handles all the logic for a creating and editing a question, displaying the appropraite form depending on the question type.
+ * 
+ * @param props.questions - The array of type Question for a game's questions
+ * @param props.questionIndex - The current question index
+ * @param props.setQuestions - The function called to update a game's questions
+ */
 export default function QuestionManager(props: {labelName: string, questions: Question[], set: StateSetter<Question[]>, createSingleQuestion?: boolean, mediaType?: MediaType }) {
   const [currMediaType, setCurrMediaType] = useState<MediaType>(props.mediaType ?? MediaType.NONE);
 
@@ -33,9 +39,12 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
 
   function updateQuestion (index: number, update: Partial<Question>) {
     const updatedQuestions = [...props.questions];
+    
+    // If judgement, input sample answers
     if ("type" in update) {
       updatedQuestions[index].answers = update.type === QuestionType.JUDGEMENT ? sampleJudgementAnswers : [createSampleAnswer(), createSampleAnswer()];
     }
+
     updatedQuestions[index] = {...updatedQuestions[index], ...update}
     props.set(updatedQuestions);
   }
@@ -45,6 +54,7 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
     props.set(updatedQuestions);
   }
 
+  // Chnage file input from file to a url
   function updateFileInput(index: number, fileInput: File | null ) {
     if (fileInput) {
       const data = fileToDataUrl(fileInput);

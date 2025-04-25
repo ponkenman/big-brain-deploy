@@ -3,6 +3,13 @@ import CloseButton from "../buttons/closeButton";
 import CheckboxInput from "../forms/checkboxInput";
 import TextInput from "../forms/textInput";
 
+/**
+ * This function returns a list of text input and check box input for answers.
+ * 
+ * @param props.answers - The array of type Answer for a question's answers
+ * @param props.deleteAnswer - The function called to delete answers
+ * @param props.updateAnswer - The function called to update a question's answers
+ */
 export default function CreateAnswerCards(props: {answers: Answer[], deleteAnswer: (answerIndex: number) => void, updateAnswer: (answerIndex: number, update: Partial<Answer>) => void }) {
   return (props.answers.map((answer, answerIndex) => {
     return (

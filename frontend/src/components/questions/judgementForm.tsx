@@ -2,9 +2,17 @@ import { StateSetter, Question, Answer,  } from "../../types";
 import CheckboxInput from "../forms/checkboxInput";
 import { useEffect, useState } from "react";
 
+/**
+ * This function returns a checkbox for the judgement form.
+ * 
+ * @param props.questions - The array of type Question for a game's questions
+ * @param props.questionIndex - The current question index
+ * @param props.setQuestions - The function called to update a game's questions
+ */
 export default function JudgementForm(props: {questions: Question[], questionIndex: number, setQuestions: StateSetter<Question[]> }) {
   const [answers, setAnswers] = useState<Answer[]>(props.questions[props.questionIndex].answers);
 
+  // Set the game's questions (put request in question manager) everytime answers changes
   useEffect(() => {
     const newQuestions = [...props.questions];
     newQuestions[props.questionIndex].answers = answers;
@@ -22,9 +30,10 @@ export default function JudgementForm(props: {questions: Question[], questionInd
         id: Math.floor(Math.random() * 1000000),
         text: "False",
         correct: correct === false,
-      }];
+      }
+    ];
+
     setAnswers(updatedAnswers);
-    console.log(updatedAnswers);
   }
 
   return (<section className="flex flex-col gap-3 py-3">

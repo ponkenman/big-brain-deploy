@@ -4,6 +4,7 @@
  * 
  * @param props.className - The class name styling to format the button
  * @param props.svg - The image to display on the button
+ * @param props.svg - The alt tage to display when the svg cannot be loaded
  * @param props.onClick - The function to run when clicked
  */
 export default function IconButton(props: { className: string, svg: string, onClick: () => void, alt: string }) {

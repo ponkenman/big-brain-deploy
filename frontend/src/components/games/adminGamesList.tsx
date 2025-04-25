@@ -40,6 +40,7 @@ export function AdminGamesList() {
 
   // Whenever game state array and gamesLength are out of sync, updates games
   useEffect(() => {
+    console.log(gamesLength);
     getGames();
   }, [gamesLength, showCreateGameForm]);
 
