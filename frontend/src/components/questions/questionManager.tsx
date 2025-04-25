@@ -62,6 +62,7 @@ export default function QuestionManager(props: {labelName: string, questions: Qu
     }
   }
 
+  // While return output very large, more difficult to refactor into different components as all relevant to question state
   return (<div className="">
     <label className="text-lg font-medium">{props.labelName}</label>
     <section className="flex flex-col gap-4">

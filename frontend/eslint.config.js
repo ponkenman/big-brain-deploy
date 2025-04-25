@@ -4,10 +4,12 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import globals from "globals";
 import tseslint from "typescript-eslint";
+import stylistic from "@stylistic/eslint-plugin"
 
 export default [
   { ignores: ["dist", "src/__test__", "**/*config.js"] },
-  js.configs.recommended, ...tseslint.configs.recommended,
+  js.configs.recommended, ...tseslint.configs.recommended, 
+  stylistic.configs.recommended,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     languageOptions: {
@@ -24,6 +26,7 @@ export default [
       react,
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
+      "@stylistic": stylistic
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -53,6 +56,7 @@ export default [
       "react/jsx-one-expression-per-line": "off",
       indent: ["error", 2],
       "react/prop-types": "off",
+      "@stylistic/jsx-quotes": ["error", "prefer-double"],
     },
   },
 ];

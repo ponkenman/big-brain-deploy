@@ -46,13 +46,22 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
 
   // This function creates a game, checking if all required fields are not empty
   async function createGame() {
+    // Form validations
     if (name === "") {
-      createAlert("Name is empty!");
+      createAlert("Please enter a game name!");
       return;
     }
 
     if (questions.length === 0 && !confirmNoQuestions) {
       setConfirmNoQuestions(true);
+      return;
+    } else if (questions.some(q => q.question === "")) {
+      createAlert("Please ensure your questions are all filled in!");
+      return;
+    }
+
+    if (questions.some(q => q.answers.some(a => a.text === ""))) {
+      createAlert("Please fill in all your answers for each question!");
       return;
     }
     
