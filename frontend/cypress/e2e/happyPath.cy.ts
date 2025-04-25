@@ -36,7 +36,12 @@ describe("Happy path of user", () => {
   });
 
   it("Can create new empty game", () => {
-    mockFetchData("getGames", ["emptyGames", "emptyGames", "newGame"], ["GET", "/admin/games"]);
+    mockFetchData("getGames", [
+      // Four initial calls when page loaded
+      "emptyGames", "emptyGames", "emptyGames", "emptyGames",
+      // Two calls when new game uploaded
+      "newGame", "newGame"
+    ], ["GET", "/admin/games"]);
     mockFetchData("putNewGame", "emptyResponse", ["PUT", "/admin/games"]);
     cy.visit(URL);
     cy.contains("Register instead").click();
@@ -76,7 +81,13 @@ describe("Happy path of user", () => {
   });
 
   it("Can play game successfully and view results", () => {
-    mockFetchData("getGames", ["updatedGame", "updatedGame", "updatedGameStarted", "updatedGameAfterEnded"], ["GET", "/admin/games"]);
+    mockFetchData("getGames", [
+      // Initial load of page
+      "updatedGame", "updatedGame", 
+      // After pressing start
+      "updatedGameStarted", "updatedGameStarted", 
+      // Pressing end
+      "updatedGameAfterEnded"], ["GET", "/admin/games"]);
     mockFetchData("putGames",  "emptyResponse", ["PUT", "/admin/games"]);
     mockFetchData("mutateGame", ["mutateGameStart", "mutateGameEnd"], ["POST", "/admin/game/384405/mutate"]);
     mockFetchData("getResults", "gameResults", ["GET", "/admin/session/962832/results"]);

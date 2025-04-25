@@ -49,7 +49,7 @@ describe("Creating games", () => {
   it("Can upload game from json file and view questions/modals", () => {
     mockFetchData("getGames", [
       // Double call on initial load
-      "noGames", "noGames", 
+      "noGames", "noGames", "noGames", "noGames", 
       // When game first uploaded
       "newGameFromJson", 
       // Double call when edit game page rendered
