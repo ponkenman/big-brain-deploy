@@ -1,5 +1,4 @@
-const URL = "http://localhost:3000"
-const BACKEND_URL = "http://localhost:5005"
+import { BACKEND_URL, register, URL } from "./helpers";
 
 const loginData = {
   name: "Bob",
@@ -7,32 +6,6 @@ const loginData = {
   password: "password",
   confirmPassword: "password"
 }
-
-const register = ({name, email, password, confirmPassword}: {name: string, email: string, password: string, confirmPassword: string}) => {
-  if (name !== "") {
-    cy.get("#register-name")
-    .focus()
-    .type(name);
-  }
-  if (email !== "") {
-    cy.get("#register-email")
-    .focus()
-    .type(email);
-  }
-  if (password !== "") {
-    cy.get("#register-password")
-    .focus()
-    .type(password);
-  }
-  if (confirmPassword !== "") {
-    cy.get("#register-password-confirm")
-    .focus()
-    .type(confirmPassword);
-  }
-  cy.get("form button").contains("Register").click();
-  
-}
-
 
 describe("template spec", () => {
   beforeEach(() => {
@@ -97,7 +70,8 @@ describe("template spec", () => {
       it(`Error when ${name}`, () => {
         cy.contains("Register instead").click();
         register(input);
-        // TODO: check error message appears
+        // Check that error appears
+        cy.get("[role=alert]").should("have.class", "bg-red-200");
       });
     });
 

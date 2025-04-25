@@ -168,7 +168,7 @@ function ImportFileGameForm(props: { closeForm: () => void, games: Game[], setGa
   }
   return (<form>
     <div className="pb-2">
-      <FileSelect labelName="Upload game data from json" id="game-upload" onChange={e => setJsonFilePath(e.target.files ? e.target.files[0] : null)}/>
+      <FileSelect labelName="Upload game data from json" id="game-upload" accept=".json" onChange={e => setJsonFilePath(e.target.files ? e.target.files[0] : null)}/>
     </div>
     <SubmitGameButtons submit={() => gameUpload(jsonFilePath)} close={props.closeForm}/>
   </form>);
