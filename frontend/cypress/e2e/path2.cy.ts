@@ -51,7 +51,7 @@ describe("Creating games", () => {
       // Double call on initial load
       "noGames", "noGames", "noGames", "noGames", 
       // When game first uploaded
-      "newGameFromJson", 
+      "newGameFromJson", "newGameFromJson", 
       // Double call when edit game page rendered
       "newGameFromJson", "newGameFromJson",
       // Double call when edit question page rendered
