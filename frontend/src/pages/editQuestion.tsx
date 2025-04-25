@@ -8,10 +8,17 @@ import { Game, MediaType, Question } from "../types";
 import QuestionManager from "../components/questions/questionManager";
 import { AlertContext } from "../App";
 
+
+/**
+ * This function contains all the logic for editing a question
+ * 
+ * @param props - The passed in gameId and questionId
+ */
 function EditQuestionManager(props: { gameId: string, questionId: string }) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const createAlert = useContext(AlertContext);
 
+  // This sets the questions field after getting the relevant game from backend
   useEffect(() => {
     const token = localStorage.getItem("token") as string;
     const response = fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>;
@@ -21,20 +28,21 @@ function EditQuestionManager(props: { gameId: string, questionId: string }) {
     });
   }, []);
 
-  useEffect(() => {
-    console.log(questions);
-  }, [questions]);
-
+  // This function updates the questions field for the relevant game
   function updateQuestion() {
     const token = localStorage.getItem("token") as string;
     const response = fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>;
+
     response.then(data => {
+      // Find game and update the specific question according to the findQuestionIndex
       const game = data.games.find(g => g.id.toString() === props.gameId) as Game;
       const questionIndex = game.questions.findIndex(q => q.id.toString() === props.questionId);
       game.questions[questionIndex] = questions[0];
-      console.log(data);
+
+      // Update the questions field through a put request
       const body = data;
       const editResponse = fetchBackend("PUT", "/admin/games", body, token);
+
       editResponse.then(r => {
         if (r.error) {
           createAlert(r.error);
@@ -58,8 +66,12 @@ function EditQuestionManager(props: { gameId: string, questionId: string }) {
     </form>);
 }
 
+/**
+ * This function displays the overall edit question screen, everything from the dashboard to game media and points
+ */
 export function EditQuestionScreen() {
   const { gameId, questionId } = useParams() as { gameId: string, questionId: string };
+
   return (<>
     <Navbar>
       <LogoutButton />

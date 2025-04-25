@@ -238,7 +238,7 @@ function GameManager(props: {gameId: string }) {
 }
 
 /**
- *  * This function displays the overall edit game screen, everything from the dashboard to game thumbnail and questions
+ * This function displays the overall edit game screen, everything from the dashboard to game thumbnail and questions
  */
 export function EditGameScreen() {
   const { gameId } = useParams() as { gameId: string };
