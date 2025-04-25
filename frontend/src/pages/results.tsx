@@ -30,6 +30,8 @@ ChartJS.register(
 
 /**
  * This function gets the average results for amount of points and answer time, formatting it into a table and charts
+ * 
+ * @param props the passed in sessionId
  */
 function GetResults(props: {sessionId: string }) {
   const token = localStorage.getItem("token") as string;
@@ -217,7 +219,6 @@ function GetResults(props: {sessionId: string }) {
  * This function displays the overall result screen, everything from the dashboard to the graphs
  */
 export function ResultsScreen() {
-  const { gameId } = useParams() as { gameId: string };
   const { sessionId } = useParams() as { sessionId: string };
   const [modal, setModal] = useState(false);
 
