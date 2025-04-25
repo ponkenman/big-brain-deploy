@@ -24,8 +24,9 @@ function ManageSession(props: {sessionId: string }) {
   // Update current position, otherwise when switching between dashboard and manageSession, it will alway appear as -1 to start
   useEffect(() => {
     (fetchBackend("GET", `/admin/session/${props.sessionId}/status`, undefined, token)).then((data) => {
-      console.log(data);
+      // If error, create alert and do not set position
       if ("error" in data) {
+        createAlert(data.error);
         return;
       }
 
@@ -39,16 +40,18 @@ function ManageSession(props: {sessionId: string }) {
   async function advanceGame() {
     // Get all games from backend
     (fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>).then((data) => {
+      // If error when trying to advance an inactive game, create alert
       if ("error" in data) {
-        navigate(`/session/${props.sessionId}}/results`);
+        createAlert("You've reached the end of the game!", ALERT_SUCCESS);
+        setStopGameModal(true);
         return;
       }
     
       // Find current game
       const currentGame = data.games.filter(currGame => currGame.active === parseInt(props.sessionId));
 
+      // If length is equal to zero, no active games, show stop game modal
       if (currentGame.length === 0) {
-        console.log("1");
         createAlert("You've reached the end of the game!", ALERT_SUCCESS);
         setStopGameModal(true);
         return;
@@ -59,12 +62,10 @@ function ManageSession(props: {sessionId: string }) {
 
       // Reached the end of game, show modal to view results or return to dashboard
       if (position === currentGame[0].questions.length) {
-        console.log("1");
         createAlert("You've reached the end of the game!", ALERT_SUCCESS);
         setStopGameModal(true);
         return;
       } 
-
 
       const body = {
         mutationType: "ADVANCE"
@@ -130,8 +131,10 @@ function ManageSession(props: {sessionId: string }) {
     // Get all games from backend
     const response = await fetchBackend("GET", "/admin/games", undefined, token) as { games: Game[] };
     let sortedGames = response.games;
+
+    // If getting games from backend was successfull, sort games by date otherwise create an alert for error
     if ("error" in response) {
-      console.log(response.error);
+      createAlert(response.error as string);
     } else {
       sortedGames = response.games.toSorted((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
     }
@@ -145,7 +148,7 @@ function ManageSession(props: {sessionId: string }) {
     }
     
     // Find the correct game and push this session's results into that game's past sessions
-    const gameId = JSON.parse(localStorage.getItem("gameId"));
+    const gameId = JSON.parse(localStorage.getItem("gameId") as string);
     const gameIndex = sortedGames.findIndex(g => g.id === gameId);
     sortedGames[gameIndex].pastSessions.push(pastSession);
 
@@ -155,6 +158,8 @@ function ManageSession(props: {sessionId: string }) {
     
     // Store game
     const response3 = await fetchBackend("PUT", "/admin/games", body, token);
+
+    // Create alert depending if adding past session to back end was successful or not
     if (response3.error) {
       createAlert(response3.error);
     } else {

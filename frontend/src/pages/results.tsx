@@ -46,6 +46,7 @@ function GetResults(props: {sessionId: string }) {
   useEffect(() => {
     const response = fetchBackend("GET", `/admin/session/${parseInt(props.sessionId)}/results`, undefined, token);
     response.then((data) => {
+      // If no error when getting session results from backend update results using data
       if ("error" in data) {
         createAlert(data.error);
         navigate("/dashboard")
@@ -57,11 +58,13 @@ function GetResults(props: {sessionId: string }) {
 
     const response2 = fetchBackend("GET", `/admin/session/${parseInt(props.sessionId)}/status`, undefined, token);
     response2.then((data) => {
+      // If no error when getting game data from backend update gameData using data
       if ("error" in data) {
         createAlert(data.error);
         navigate("/dashboard")
         return;
       }
+
       setGameData(data.results.questions);
     });
 
@@ -96,15 +99,17 @@ function GetResults(props: {sessionId: string }) {
           questionStats[answerIndex].amountCorrect += 1;
         } 
 
+        // Increase totalAttempts and total seconds taken to answer fields
         questionStats[answerIndex].totalAttempts += 1;
         responseTimeData[answerIndex] += calculateSecondsTaken(currAnswer.questionStartedAt, currAnswer.answeredAt);
       }
     })
 
+    // Add each user and their total to top five score
     topFiveScore.push({name: person.name, score: totalScore} );
   });
 
-  // sort top five by score then delete everyone that is not top 5
+  // Sort by score then delete everyone that is not top 5
   topFiveScore.sort((a,b) => b.score - a.score).splice(5, topFiveScore.length);
   responseTimeData.map((totalTime) => {
     responseTime.push(totalTime / results.length);
