@@ -1,4 +1,4 @@
-import { BACKEND_URL, mockFetchData, register, URL } from "./helpers";
+import { initialiseMockFetch, register, URL } from "./helpers";
 
 /** NOTE: JSON files assumes strict mode enabled (ie sometimes requests done twice) */
 
@@ -9,10 +9,15 @@ const loginData = {
   confirmPassword: "password"
 }
 
+const mockFetchData = initialiseMockFetch(name => `../fixtures/happyPath/${name}.json`)
+
 describe("Happy path of user", () => {
   beforeEach(() => {
-    // Mock POST /admin/auth/register
-    mockFetchData("register", "../fixtures/register.json", ["POST", "/admin/auth/register"]);
+    // Mock common HTTP requests
+    mockFetchData("register", "register", ["POST", "/admin/auth/register"]);
+    mockFetchData("putGames", "emptyResponse", ["PUT", "/admin/games"]);
+    mockFetchData("logout", "emptyResponse", ["POST", "/admin/auth/logout"]);
+    mockFetchData("login", "register", ["POST", "/admin/auth/login"]);
   });
 
   it("Root URL redirects to login page", () => {
@@ -21,7 +26,7 @@ describe("Happy path of user", () => {
   });
 
   it("Can register successfully", () => {
-    mockFetchData("gamesEmpty", "../fixtures/emptyGames.json", ["GET", "/admin/games"]);
+    mockFetchData("gamesEmpty", "emptyGames", ["GET", "/admin/games"]);
     cy.visit(URL);
 
     // Click Register button
@@ -31,8 +36,8 @@ describe("Happy path of user", () => {
   });
 
   it("Can create new empty game", () => {
-    mockFetchData("getGames", ["../fixtures/emptyGames.json", "../fixtures/emptyGames.json", "../fixtures/newGame.json"], ["GET", "/admin/games"]);
-    mockFetchData("putNewGame", "../fixtures/emptyResponse.json", ["PUT", "/admin/games"]);
+    mockFetchData("getGames", ["emptyGames", "emptyGames", "newGame"], ["GET", "/admin/games"]);
+    mockFetchData("putNewGame", "emptyResponse", ["PUT", "/admin/games"]);
     cy.visit(URL);
     cy.contains("Register instead").click();
     register(loginData);
@@ -51,8 +56,7 @@ describe("Happy path of user", () => {
 
   it("Can update name and thumbnail of game", () => {
     // Register and click edit button
-    mockFetchData("getGames", ["../fixtures/newGame.json", "../fixtures/newGame.json", "../fixtures/newGame.json", "../fixtures/newGame.json", "../fixtures/updatedGame.json"], ["GET", "/admin/games"]);
-    mockFetchData("putGames", "../fixtures/emptyResponse.json", ["PUT", "/admin/games"]);
+    mockFetchData("getGames", ["newGame", "newGame", "newGame", "newGame", "updatedGame"], ["GET", "/admin/games"]);
     cy.visit(URL);
     cy.contains("Register instead").click();
     register(loginData);
@@ -72,11 +76,11 @@ describe("Happy path of user", () => {
   });
 
   it("Can play game successfully and view results", () => {
-    mockFetchData("getGames", ["../fixtures/updatedGame.json", "../fixtures/updatedGame.json", "../fixtures/updatedGameStarted.json", "../fixtures/updatedGameAfterEnded.json"], ["GET", "/admin/games"]);
-    mockFetchData("putGames", "../fixtures/emptyResponse.json", ["PUT", "/admin/games"]);
-    mockFetchData("mutateGame", ["../fixtures/mutateGameStart.json", "../fixtures/mutateGameEnd"], ["POST", "/admin/game/384405/mutate"]);
-    mockFetchData("getResults", "../fixtures/gameResults.json", ["GET", "/admin/session/962832/results"]);
-    mockFetchData("getResultsStatus", "../fixtures/gameResultsStatus.json", ["GET", "/admin/session/962832/status"]);
+    mockFetchData("getGames", ["updatedGame", "updatedGame", "updatedGameStarted", "updatedGameAfterEnded"], ["GET", "/admin/games"]);
+    mockFetchData("putGames",  "emptyResponse", ["PUT", "/admin/games"]);
+    mockFetchData("mutateGame", ["mutateGameStart", "mutateGameEnd"], ["POST", "/admin/game/384405/mutate"]);
+    mockFetchData("getResults", "gameResults", ["GET", "/admin/session/962832/results"]);
+    mockFetchData("getResultsStatus", "gameResultsStatus", ["GET", "/admin/session/962832/status"]);
 
     cy.visit(URL);
     cy.contains("Register instead").click();
@@ -90,9 +94,7 @@ describe("Happy path of user", () => {
   });
 
   it("Can logout and login", () => {
-    mockFetchData("getGames", "../fixtures/emptyGames.json", ["GET", "/admin/games"]);
-    mockFetchData("logout", "../fixtures/emptyResponse.json", ["POST", "/admin/auth/logout"]);
-    mockFetchData("login", "../fixtures/register.json", ["POST", "/admin/auth/login"]);
+    mockFetchData("getGames", "emptyGames", ["GET", "/admin/games"]);
 
     cy.visit(URL);
     cy.contains("Register instead").click();

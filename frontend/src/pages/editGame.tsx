@@ -225,7 +225,7 @@ function GameManager(props: {gameId: string }) {
       <Modal visible={modalIsVisible} setVisible={setModalIsVisible}>
         <form>
           <TextInput labelName="Edit name" id="game-name" type="text" defaultValue={name} onChange={e => setName(e.target.value)} />
-          <FileSelect labelName="Upload new thumbnail (optional)" id="game-thumnail" accept=".png, .jpeg, .jpg" onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)} />
+          <FileSelect labelName="Upload new thumbnail (optional)" id="game-thumbnail" accept=".png, .jpeg, .jpg" onChange={e => setThumbnailFile(e.target.files ? e.target.files[0] : null)} />
           <div className="flex flex-row gap-2 pt-3">
             <Button text="Submit" color="bg-emerald-300" hoverColor="hover:bg-emerald-400" onClick={updateGameMetadata}/>
             <Button text="Cancel" color="bg-red-300" hoverColor="hover:bg-red-400" onClick={() => setModalIsVisible(false)}/>
