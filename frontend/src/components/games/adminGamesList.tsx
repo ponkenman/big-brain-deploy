@@ -1,27 +1,36 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import GameCard from "./gameCard";
 import { APIError, Game } from "../../types";
 import { fetchBackend } from "../../helpers";
 import Button from "../buttons/button";
 import CreateGameForm from "./createGameForm";
 import Modal  from "../modals/modal";
+import { AlertContext } from "../../App";
 
+/**
+ * This function displays all games that the admin owns
+ */
 export function AdminGamesList() {
   const [games, setGames] = useState<Game[]>([]);
   const [gamesLength, setGamesLength] = useState(1);
   const [showCreateGameForm, setShowCreateGameForm] = useState(false);
+  const createAlert = useContext(AlertContext);
 
   /** 
    * Updates games made by user from backend
    */ 
   async function getGames() {
     const token = localStorage.getItem("token");
+    // Check if token is valid to proceed
     if (!token) {
       return;
     }
+
     const response = await fetchBackend("GET", "/admin/games", undefined, token) as { games: Game[] }| APIError;
+
+    // Create alert if an error occurred, otherwise set games and gamesLength
     if ("error" in response) {
-      console.log(response.error);
+      createAlert(response.error);
     } else {
       // Sort games by most recent created
       setGames(response.games.toSorted((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt)));

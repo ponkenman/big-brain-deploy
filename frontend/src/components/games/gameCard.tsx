@@ -7,6 +7,14 @@ import { Game, PastSessions, Question, StateSetter } from "../../types";
 import IconButton from "../buttons/iconButton";
 import { AlertContext } from "../../App";
 
+/**
+ * This function returns a button of menu's depending on if the current session is active or not
+ * 
+ * @param props.startGame - The function called to start a game
+ * @param props.stopGame - The function called to stop a game
+ * @param props.currSession - The currents session id
+ * @param props.gameId - The current game id
+ */
 function GameCardButtonMenu(props: { startGame: () => void, stopGame: () => void, currSession: number | null, gameId: number}) {
   const navigate = useNavigate();
   return (<div className="flex flex-col gap-3">
@@ -20,6 +28,13 @@ function GameCardButtonMenu(props: { startGame: () => void, stopGame: () => void
   </div>);
 }
 
+/**
+ * This function displays the game on dashboard, showing the quiz name, amount of questions, total length and all other interactions.
+ * 
+ * @param props.games - The current games
+ * @param props.setGamesLength - The function called to set games length
+ * @param props.gameId - The current game id
+ */
 export default function GameCard(props: { games: Game[], setGamesLength: StateSetter<number>, gameId: number }) {
   const [modal, setModal] = useState(false);
   const openModal = () => setModal(true);
@@ -31,13 +46,11 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
   const [stopGameModal, setStopGameModal] = useState(false);
   const createAlert = useContext(AlertContext);
 
-  useEffect(() => {
-    console.log(props);
-  }, []);
-
+  // This function deletes the selected game
   async function deleteGame() {
     openModal();
 
+    // Check if token is valid and user is logged in
     const token = localStorage.getItem("token");
     if (!token) {
       createAlert("Invalid token!");
@@ -48,84 +61,90 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
     const body = {
       games: updatedGames
     }
-    console.log(body);
-
+    
+    // Update modified games list
     const response = await fetchBackend("PUT", "/admin/games", body, token);
     if (response.error) {
       createAlert(response.error);
     } else {
       createAlert("Sucessfully deleted a game!", ALERT_SUCCESS);
+      
+      // Update gamesLength to update games list in adminGamesList
       props.setGamesLength(-1);
     }
+  
     closeModal();
   }
 
+  // Calculate total duration of a game
   const calcTotalDuration = (questions: Question[]): number => {
     return questions.reduce((prev, curr) => prev + curr.duration, 0);
   }
 
+  // Start a game
   async function startGame() {
     const token = localStorage.getItem("token") as string;
     const body = {
       mutationType: "START"
     }
+    
     const response = await fetchBackend("POST", `/admin/game/${props.gameId}/mutate`, body, token);
     if (response.error) {
-      console.log(response.error);
       createAlert(response.error);
     } else {
       // By setting gamesLength to -1, triggers useEffect hook in adminGamesList which auto updates game list
       props.setGamesLength(-1);
-      console.log("Done!");
       createAlert("Successfully started game!", ALERT_SUCCESS);
       setPlayGameModal(true);
     }
   }
 
+  // Stop a game
   async function stopGame() {
     const token = localStorage.getItem("token") as string;
     const body = {
       mutationType: "END"
     }
+
     const response = await fetchBackend("POST", `/admin/game/${props.gameId}/mutate`, body, token);
     if (response.error) {
-      console.log(response.error);
       createAlert(response.error);
     } else {
       // By setting gamesLength to +1, triggers useEffect hook in adminGamesList which auto updates game list
       props.setGamesLength(+1);
-      console.log("Done!");
       createAlert("Successfully stop[ed game!", ALERT_SUCCESS);
       setStopGameModal(true);
     }
   }
 
+  // Copy join game link to clipboard
   function copyToClipBoard() {
     navigator.clipboard.writeText(`${window.origin}/join?sessionId=${currSession}`); 
     createAlert("Successfully copied link!", ALERT_SUCCESS);
   }
 
+  // Store game in past sessions
   async function storeGame(seeResults: boolean) {
     const token = localStorage.getItem("token") as string;
     const response = await fetchBackend("GET", "/admin/games", undefined, token) as { games: Game[] };
     let sortedGames = response.games;
-    console.log(response);
+    
+    // If no eror, sort games in order of creation
     if ("error" in response) {
-      console.log(response.error);
+      createAlert(response.error as string);
     } else {
       sortedGames = response.games.toSorted((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
     }
 
     if (currSession == null) {
-      console.log("Invalid session");
       createAlert("Invalid session");
       setStopGameModal(false);
       return;
     }
 
+    // If error when getting results, session has already ended
     const response2 = await fetchBackend("GET", `/admin/session/${currSession}/results`, undefined, token);
     if ("error" in response2) {
-      console.log(response2.error);
       createAlert(response2.error);
       setStopGameModal(false);
       return;
@@ -144,26 +163,26 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
       games: sortedGames
     }
     
+    // Create alert based on the response of storing the game
     const response3 = await fetchBackend("PUT", "/admin/games", body, token);
-    console.log("entered response.then")
-    
-    console.log(response3);
     if (response3.error) {
-      console.log(response3.error);
       createAlert(response3.error);
     } else {
       createAlert("Stored an old game!", ALERT_SUCCESS);
-      console.log(sortedGames);
     }
-    
+
+    // Navigate to results page if seeResults is true, otherwise just close modal and remain on dashboard
     if (seeResults) {
       navigate(`/session/${currSession}/results`);
     } else {
       setStopGameModal(false);
     }
+
+    // Make sure current session is stopped
     setCurrSession(null);
   }
 
+  // Set current session status to game's active status everytime props.games changes
   useEffect(() => {
     const game = props.games.find(game => game.id === props.gameId) as Game;
     setCurrSession(game.active);
