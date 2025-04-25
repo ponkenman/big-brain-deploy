@@ -1,2 +1,6 @@
-1. Add questions into create game
-2. Delete answers in create game and edit game
+- Allowing answers to be deleted when editing question
+- Allowing questions and answers to be added to the question while first created
+- Alert system: colours, auto dismissal after four seconds, dismissing one dismisses all, global (so alerts stay visible even if new page or logged out)
+- Attempt at good UI
+- Typescript used for entire project 
+- Also added more strict eslint rules for entire project

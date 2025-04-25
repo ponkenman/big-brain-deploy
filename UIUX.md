@@ -10,6 +10,7 @@ UX
 - alerts provide immediate feedback, coloured red/green, auto dismissed, and deleting one deletes all
 - warnings given on forms for validation
 - modals used instead of jumping to new pages to streamline productivity
+- allowing question to be created all at once rather than going to other page for it
 - using familiar and common design patterns
 - instructions where necessary eg minigames, points
 - minimalist information and icons rather than merely words so user not overloaded
