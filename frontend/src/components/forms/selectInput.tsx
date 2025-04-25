@@ -3,12 +3,11 @@ import React from "react";
 /**
  * The select input component which takes in props labelName, id, defaultValue, options, and onChange function.
  * 
- * @param props - The passed in labelName, id, defaultValue, options and onChange function.
- *                labelName - The label name to be displayed on the check box component
- *                id - The id for the check box component
- *                defaultValue - The default value to be displayed on the select menu
- *                options - The options available for the select menu
- *                OnChange - The function to run when the state of checkbox changes
+ * @param props.labelName - The label name to be displayed on the check box component
+ * @param props.id - The id for the check box component
+ * @param props.defaultValue - The default value to be displayed on the select menu
+ * @param props.options - The options available for the select menu
+ * @param props.onChange - The function to run when the state of checkbox changes
  */
 export default function SelectMenu<T extends string>(props: { labelName: string, id: string, defaultValue?: string, options: T[]; onChange: React.ChangeEventHandler<HTMLSelectElement>}) {
   return (<div className="py-2">

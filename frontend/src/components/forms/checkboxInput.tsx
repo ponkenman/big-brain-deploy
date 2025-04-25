@@ -3,11 +3,10 @@ import React from "react";
 /**
  * The check box component which takes in props labelName, id, checked and onChange function.
  * 
- * @param props - The passed in labelName, id, checked and onChange function.
- *                labelName - The label name to be displayed on the check box component
- *                id - The id for the check box component
- *                checked - The boolean value which determines if the checkbox is ticked or not
- *                OnChange - The function to run when the state of checkbox changes
+ * @param props.labelName - The label name to be displayed on the check box component
+ * @param props.id - The id for the check box component
+ * @param props.checked - The boolean value which determines if the checkbox is ticked or not
+ * @param props.onChange - The function to run when the state of checkbox changes
  */
 export default function CheckboxInput(props: { labelName: string, id: string, checked?: boolean, onChange: React.ChangeEventHandler<HTMLInputElement>}) {
   return (<div className="py-2">

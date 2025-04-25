@@ -8,6 +8,12 @@ import FileSelect from "../forms/fileInput";
 import { Game, Question, StateSetter } from "../../types";
 import { AlertContext } from "../../App";
 
+/**
+ * The buttons used to either submit or cancel creating a game
+ * 
+ * @param props.submit - The function to run  to submit a form
+ * @param props.close - The function to run to close a form
+ */
 function SubmitGameButtons(props: {submit: () => void, close: () => void}) {
   return (<div className="flex flex-row gap-2">
     <Button text="Submit" color="bg-green-300" hoverColor="hover:bg-green-400" onClick={props.submit}/>
@@ -15,6 +21,13 @@ function SubmitGameButtons(props: {submit: () => void, close: () => void}) {
   </div>);
 }
 
+/**
+ * This function handles all the logic for creating a game by manually inputting each field.
+ * 
+ * @param props.closeForm - The function used to close a form
+ * @param props.games - The currents games
+ * @param props.setGamesLength - The function to run in order to update games length
+ */
 function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number> }) {
   const [name, setName] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -23,6 +36,7 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
   const [confirmNoQuestions, setConfirmNoQuestions] = useState(false);
   const createAlert = useContext(AlertContext);
 
+  // Convert thumbnail file to a url
   useEffect(() => {
     if (thumbnailFile) {
       const data = fileToDataUrl(thumbnailFile);
@@ -30,11 +44,13 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
     }
   }, [thumbnailFile]);
 
+  // This function creates a game, checking if all required fields are not empty
   async function createGame() {
     if (name === "") {
       createAlert("Name is empty!");
       return;
     }
+
     if (questions.length === 0 && !confirmNoQuestions) {
       setConfirmNoQuestions(true);
       return;
@@ -45,6 +61,7 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
       createAlert("Invalid token!");
       return;
     }
+
     const email = localStorage.getItem("email");
     if (!email) {
       createAlert("Invalid email!");
@@ -77,18 +94,22 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
       games: updateGames
     }
 
+    // If all inputs are valid, append game to existing games
     const response = await fetchBackend("PUT", "/admin/games", body, token);
+
     if (response.error) {
       createAlert(response.error);
     } else {
       createAlert("Created a game!", ALERT_SUCCESS);
-      console.log(newGame);
+
+      // Update gamesLength to update games list in adminGamesList
       props.setGamesLength(-1);
     }
 
     props.closeForm();
   }
 
+  // Update confirmNoQuestions everytime questions changes 
   useEffect(() => {
     if (questions.length !== 0) {
       setConfirmNoQuestions(false);
@@ -104,13 +125,21 @@ function ManualGameForm(props: { closeForm: () => void, games: Game[], setGamesL
   </form>);
 }
 
+/**
+ * This function handles all the logic for creating a game by uploading a .json file.
+ * 
+ * @param props.closeForm - The function used to close a form
+ * @param props.games - The currents games
+ * @param props.setGamesLength - The function to run in order to update games length
+ */
 function ImportFileGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number> }) {
   const [jsonFilePath, setJsonFilePath] = useState<File | null>(null);
   const token = localStorage.getItem("token") as string;
   const createAlert = useContext(AlertContext);
 
-
+  // Upload a game file based on the input
   async function gameUpload(fileInput: File | null ) {
+    // Check if the file input is a file
     if (!fileInput) {
       createAlert("Invalid upload");
       return;
@@ -118,13 +147,12 @@ function ImportFileGameForm(props: { closeForm: () => void, games: Game[], setGa
 
     const reader = new FileReader();
     reader.onload = (evt) => {
+      // Convert file to javascript objects
       const fileContent = evt.target.result as string;
       const data = JSON.parse(fileContent);
-      console.log(data);
-    
-      console.log("before error");
+
+      // Using type guards, check if the .json upload is valid
       if (!isGame(data)) {
-        console.log("error setting");
         createAlert("Invlid JSON format");
         return;
       }
@@ -141,23 +169,22 @@ function ImportFileGameForm(props: { closeForm: () => void, games: Game[], setGa
         questions: data.questions
       }
     
-      console.log(props.games);
-    
       const updateGames = [...props.games, newGame];
     
       const body = {
         games: updateGames
       }
-    
+
+      // Add valid game to games
       const response = fetchBackend("PUT", "/admin/games", body, token);
       response.then((data) => {
         if ("error" in data) {
           createAlert(data.error);
         } else {
-          console.log(props.games);
           createAlert("Successfully uploaded a game!", ALERT_SUCCESS);
-          console.log(newGame);
-          props.setGamesLength(+1);
+
+          // Update gamesLength to update games list in adminGamesList
+          props.setGamesLength(-1);
         }
       }).then(() => {
         props.closeForm();
@@ -174,6 +201,13 @@ function ImportFileGameForm(props: { closeForm: () => void, games: Game[], setGa
   </form>);
 }
 
+/**
+ * This function displays manualGameForm and importGameForm depending on which one the user selects.
+ * 
+ * @param props.closeForm - The function used to close a form
+ * @param props.games - The currents games
+ * @param props.setGamesLength - The function to run in order to update games length
+ */
 export default function CreateGameForm(props: { closeForm: () => void, games: Game[], setGamesLength: StateSetter<number> }) {
   const [uploadJson, setUploadJson] = useState(false);
 
