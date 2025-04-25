@@ -110,9 +110,9 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
     if (response.error) {
       createAlert(response.error);
     } else {
-      // By setting gamesLength to +1, triggers useEffect hook in adminGamesList which auto updates game list
-      props.setGamesLength(+1);
-      createAlert("Successfully stop[ed game!", ALERT_SUCCESS);
+      // By setting gamesLength to -1, triggers useEffect hook in adminGamesList which auto updates game list
+      props.setGamesLength(-1);
+      createAlert("Successfully stopped game!", ALERT_SUCCESS);
       setStopGameModal(true);
     }
   }
