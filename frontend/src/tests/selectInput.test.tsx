@@ -4,7 +4,6 @@ import SelectMenu from "../components/forms/selectInput";
 import { describe, expect, it } from "vitest";
 
 let number = 0
-// props: { labelName: string, id: string, defaultValue?: string, options: T[]; onChange: React.ChangeEventHandler<HTMLSelectElement>}) {
 const [defaultProps]: Parameters<typeof SelectMenu> = [{
     labelName: "SelectMenu",
     id: "selectMenu",
@@ -13,12 +12,12 @@ const [defaultProps]: Parameters<typeof SelectMenu> = [{
     onChange: () => number++
 }];
 
-describe("FileInput", () => {
+describe("SelectInput", () => {
     it("renders", () => {
         render(<SelectMenu {...defaultProps} />);
     })
 
-    it("Fires onChange function when ticked and unticked", () => {
+    it("Fires onChange function when selecting MediaType.text", () => {
         render(<SelectMenu {...defaultProps} />);
         expect(screen.getByText("None")).toBeVisible();
 
@@ -29,5 +28,6 @@ describe("FileInput", () => {
         });
 
         expect(screen.getByText("Text Stimulus")).toBeVisible();
+        expect(number).to.be.eq(1);
     });
 });

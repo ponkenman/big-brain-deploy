@@ -2,7 +2,6 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import FileSelect from "../components/forms/fileInput";
 
 let number = 0
-// labelName: string, id: string, accept: string | undefined, onChange: React.ChangeEventHandler<HTMLInputElement>
 const [defaultProps]: Parameters<typeof FileSelect> = [{
     labelName: "FileInput",
     id: "fileinput",
@@ -15,7 +14,7 @@ describe("FileInput", () => {
         render(<FileSelect {...defaultProps} />);
     })
 
-    it("Fires onChange function when ticked and unticked", () => {
+    it("Fires onChange function when selecting a file", () => {
         render(<FileSelect {...defaultProps} />);
         const fileInput = screen.getByLabelText("FileInput") as HTMLInputElement;
         
