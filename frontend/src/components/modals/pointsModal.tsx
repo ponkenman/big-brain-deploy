@@ -1,19 +1,21 @@
-import Modal from "./modal";
-import { StateSetter } from "../../types";
+import Modal from './modal'
+import { StateSetter } from '../../types'
 
 /**
  * Creates a modal wrapper around the children HTML elements
  * @param props - visible and setVisible store whether modal is visible in state
- * @returns 
+ * @returns
  */
-export default function PointsModal(props: {visible: boolean, setVisible: StateSetter<boolean>}) {
+export default function PointsModal(props: { visible: boolean, setVisible: StateSetter<boolean> }) {
   return (
     <Modal visible={props.visible} setVisible={props.setVisible}>
       <p>Points are calculated by the following:</p>
       <ul>
         <p>If you answer correctly within the first 25% of the question duration you get full points.</p>
-        <p>If answered after the first 25% of the question duration, each subsequent % will lose that percent
-        of the full points rounded up.</p>
+        <p>
+          If answered after the first 25% of the question duration, each subsequent % will lose that percent
+          of the full points rounded up.
+        </p>
         <p>Incorrect answers gives no points.</p>
         <br></br>
         <li>For Example:</li>
@@ -22,5 +24,5 @@ export default function PointsModal(props: {visible: boolean, setVisible: StateS
         <li>Answering at the exact end will result in the minimum points for a correct answer 3.</li>
       </ul>
     </Modal>
-  );
+  )
 };

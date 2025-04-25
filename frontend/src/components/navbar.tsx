@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react'
 
 export default function Navbar(props: { children?: ReactNode, colour?: string, textColour?: string }) {
   return (
@@ -7,5 +7,6 @@ export default function Navbar(props: { children?: ReactNode, colour?: string, t
       <div className={`items-center flex flex-row gap-2 justify-evenly ${props.textColour ? props.textColour : `text-black`}`}>
         {props.children}
       </div>
-    </nav>);
+    </nav>
+  )
 }

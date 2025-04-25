@@ -1,82 +1,84 @@
-import { useContext, useEffect, useState } from "react";
-import { ALERT_SUCCESS, fetchBackend } from "../helpers";
-import Navbar from "../components/navbar";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import TextInput from "../components/forms/textInput";
-import Button from "../components/buttons/button";
-import { AlertContext } from "../App";
-
+import { useContext, useEffect, useState } from 'react'
+import { ALERT_SUCCESS, fetchBackend } from '../helpers'
+import Navbar from '../components/navbar'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import TextInput from '../components/forms/textInput'
+import Button from '../components/buttons/button'
+import { AlertContext } from '../App'
 
 /**
  * This function displays the overall join game screen, everything from the dashboard to input session code and display name
  */
-export function JoinGameScreen () {
-  const [params,] = useSearchParams();
-  const [playerName, setPlayerName] = useState("");
-  const [sessionId, setSessionId] = useState<string>(params.get("sessionId") ?? "");
-  const navigate = useNavigate();
-  const createAlert = useContext(AlertContext);
+export function JoinGameScreen() {
+  const [params] = useSearchParams()
+  const [playerName, setPlayerName] = useState('')
+  const [sessionId, setSessionId] = useState<string>(params.get('sessionId') ?? '')
+  const navigate = useNavigate()
+  const createAlert = useContext(AlertContext)
 
-  let messageSent = false;
+  let messageSent = false
 
   // Create alert if the game code was successfully autofield
   useEffect(() => {
     // Check if sessionId is valid and message has not been sent
-    if (sessionId !== "" && !messageSent) {
+    if (sessionId !== '' && !messageSent) {
       // Prevent alert from being sent twice on debug mode
-      messageSent = true;
-      createAlert("Successfully autofilled game code!", ALERT_SUCCESS);
+      messageSent = true
+      createAlert('Successfully autofilled game code!', ALERT_SUCCESS)
     }
-  }, []);
+  }, [])
 
   // A function which handles entering a session, requiring a valid sessionId and playerName
   async function enterSession() {
-    if (playerName === "") {
-      createAlert("Please fill in your name!");
-      return;
+    if (playerName === '') {
+      createAlert('Please fill in your name!')
+      return
     }
 
     const body = {
-      name: playerName
+      name: playerName,
     }
 
-    if (sessionId === "") {
-      createAlert("Please fill in a session code!");
-      return;
+    if (sessionId === '') {
+      createAlert('Please fill in a session code!')
+      return
     }
 
     // If valid playerName and sessionId, join game
-    const response = await fetchBackend("POST", `/play/join/${sessionId}`, body);
+    const response = await fetchBackend('POST', `/play/join/${sessionId}`, body)
 
     // Create alert for error, else add playerId and playerName to local storage
     if (response.error) {
-      createAlert(response.error);
-    } else {
-      localStorage.setItem("playerId", response.playerId);
-      localStorage.setItem("playerName", playerName);
-      navigate(`/play`);
+      createAlert(response.error)
+    }
+    else {
+      localStorage.setItem('playerId', response.playerId)
+      localStorage.setItem('playerName', playerName)
+      navigate(`/play`)
     }
   }
 
-  return (<>
-    <Navbar>
-      <Link to="/join">
-        <Button text="Join a game" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white" />
-      </Link>
-      <Link to="/register">
-        <Button text="Register" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white"/>
-      </Link>
-      <Link to="/login">
-        <Button text="Login" color="bg-pink-200 "hoverColor="hover:bg-pink-400 hover:text-white" />
-      </Link>
-    </Navbar>
-    <main className={`bg-white p-7 w-screen absolute top-15 min-h-full`}>
-      <h1 className="text-4xl font-semibold pb-7">Join game</h1>
-      <form className="rounded-md bg-gray-100 p-4">
-        <TextInput labelName="Enter session code" id="session-code-input" type="text" defaultValue={sessionId} onChange={e => setSessionId(e.target.value)}/>
-        <TextInput labelName="Enter display name" id="display-name-input" type="text" onChange={e => setPlayerName(e.target.value)}/>
-        <Button text="Enter game" color="bg-pink-300 mt-2" hoverColor="hover:bg-pink-400 hover:text-white" onClick={enterSession}/>
-      </form>
-    </main>
-  </>);
+  return (
+    <>
+      <Navbar>
+        <Link to="/join">
+          <Button text="Join a game" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white" />
+        </Link>
+        <Link to="/register">
+          <Button text="Register" color="bg-pink-200" hoverColor="hover:bg-pink-400 hover:text-white" />
+        </Link>
+        <Link to="/login">
+          <Button text="Login" color="bg-pink-200 "hoverColor="hover:bg-pink-400 hover:text-white" />
+        </Link>
+      </Navbar>
+      <main className="bg-white p-7 w-screen absolute top-15 min-h-full">
+        <h1 className="text-4xl font-semibold pb-7">Join game</h1>
+        <form className="rounded-md bg-gray-100 p-4">
+          <TextInput labelName="Enter session code" id="session-code-input" type="text" defaultValue={sessionId} onChange={e => setSessionId(e.target.value)} />
+          <TextInput labelName="Enter display name" id="display-name-input" type="text" onChange={e => setPlayerName(e.target.value)} />
+          <Button text="Enter game" color="bg-pink-300 mt-2" hoverColor="hover:bg-pink-400 hover:text-white" onClick={enterSession} />
+        </form>
+      </main>
+    </>
+  )
 }

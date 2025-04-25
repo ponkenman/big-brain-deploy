@@ -1,67 +1,67 @@
-import React from "react"
+import React from 'react'
 
 export type Answer = {
   id: number
-  text: string,
+  text: string
   correct: boolean
 }
 
 export type DurationPoints = {
-  duration: number,
+  duration: number
   points: number
 }
 
 export enum QuestionType {
-  SINGLE_CHOICE = "Single Choice",
-  MULTIPLE_CHOICE = "Multiple Choice",
-  JUDGEMENT = "Judgement"
+  SINGLE_CHOICE = 'Single Choice',
+  MULTIPLE_CHOICE = 'Multiple Choice',
+  JUDGEMENT = 'Judgement',
 }
 
 export enum MediaType {
-  NONE = "None",
-  IMAGE = "Image",
-  VIDEO = "Video",
-  TEXT = "Text Stimulus"
+  NONE = 'None',
+  IMAGE = 'Image',
+  VIDEO = 'Video',
+  TEXT = 'Text Stimulus',
 }
 
 export type Question = {
-  id: number,
-  type: string,
-  media: string,
+  id: number
+  type: string
+  media: string
   mediaType: string
-  question: string,
-  answers: Answer[],
-  correctAnswers: string[],
+  question: string
+  answers: Answer[]
+  correctAnswers: string[]
   duration: number
-  points: number,
+  points: number
   index: number
 }
 
-export interface QuestionPlayerData extends Omit<Question, "correctAnswers"> {
+export interface QuestionPlayerData extends Omit<Question, 'correctAnswers'> {
   isoTimeLastQuestionStarted: ReturnType<typeof Date.toString>
 }
 
 export type Game = {
-  pastSessions: PastSessions[],
-  id: number,
-  name: string,
-  thumbnail: string,
-  owner: string,
-  active: number | null,
-  createdAt: ReturnType<typeof Date.toString>,
-  lastUpdatedAt: ReturnType<typeof Date.toString>,
+  pastSessions: PastSessions[]
+  id: number
+  name: string
+  thumbnail: string
+  owner: string
+  active: number | null
+  createdAt: ReturnType<typeof Date.toString>
+  lastUpdatedAt: ReturnType<typeof Date.toString>
   questions: Question[]
 }
 
 export type AnswerResult = {
-  answeredAt: ReturnType<typeof Date.toString>,
-  answers: string[],
-  correct: boolean, 
+  answeredAt: ReturnType<typeof Date.toString>
+  answers: string[]
+  correct: boolean
   questionStartedAt: ReturnType<typeof Date.toString>
 }
 
 export type PersonResult = {
-  answers: AnswerResult[],
+  answers: AnswerResult[]
   name: string
 }
 
@@ -70,18 +70,18 @@ export type GameResults = {
 }
 
 export type PastSessions = {
-  pastSessionId: number | null,
+  pastSessionId: number | null
   result: PersonResult[]
 }
 
 export type TopFiveScore = {
-  name: string,
+  name: string
   score: number
 }
 
 export type QuestionStats = {
-  questionNumber: string,
-  amountCorrect: number,
+  questionNumber: string
+  amountCorrect: number
   totalAttempts: number
 }
 
@@ -90,10 +90,9 @@ export type APIError = {
 }
 
 export enum FileMedia {
-  PNG = ".png",
-  JPG = ".jpg",
-  JPEG = ".jpeg"
+  PNG = '.png',
+  JPG = '.jpg',
+  JPEG = '.jpeg',
 }
 
-export type StateSetter<T> = React.Dispatch<React.SetStateAction<T>>;
-
+export type StateSetter<T> = React.Dispatch<React.SetStateAction<T>>
