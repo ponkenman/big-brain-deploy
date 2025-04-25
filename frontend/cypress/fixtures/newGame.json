@@ -1,0 +1,16 @@
+{
+    "games": [
+        {
+            "owner": "bob@email.com",
+            "active": null,
+            "oldSessions": [],
+            "pastSessions": [],
+            "id": 384405,
+            "name": "My new game",
+            "thumbnail": "",
+            "createdAt": "2025-04-25T01:27:19.218Z",
+            "lastUpdatedAt": "2025-04-25T01:27:19.218Z",
+            "questions": []
+        }
+    ]
+}

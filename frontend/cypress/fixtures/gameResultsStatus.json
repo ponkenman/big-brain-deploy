@@ -1,0 +1,10 @@
+{
+    "results": {
+        "active": false,
+        "answerAvailable": false,
+        "isoTimeLastQuestionStarted": null,
+        "position": -1,
+        "questions": [],
+        "players": []
+    }
+}
