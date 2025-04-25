@@ -15,10 +15,10 @@ import { AlertContext } from "../../App";
  * @param props.currSession - The currents session id
  * @param props.gameId - The current game id
  */
-function GameCardButtonMenu(props: { startGame: () => void, stopGame: () => void, currSession: number | null, gameId: number}) {
+function GameCardButtonMenu(props: { startGame: () => void, stopGame: () => void, currSession: number | null, inactive: boolean, gameId: number}) {
   const navigate = useNavigate();
   return (<div className="flex flex-col gap-3">
-    {props.currSession === null  
+    {props.inactive
       ? <Button text="Start game" color="bg-green-300" hoverColor="hover:bg-green-600 hover:text-white" onClick={props.startGame}/>
       : (<>
         <Button text="Manage session" color="bg-pink-300" hoverColor="hover:bg-pink-400 hover:text-white" onClick={() => navigate(`/session/${props.currSession}`)}/>
@@ -45,6 +45,7 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
   const [playGameModal, setPlayGameModal] = useState(false);
   const [stopGameModal, setStopGameModal] = useState(false);
   const createAlert = useContext(AlertContext);
+  const [inactive, setInactive] = useState(true);
 
   // This function deletes the selected game
   async function deleteGame() {
@@ -138,7 +139,7 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
 
     if (currSession == null) {
       createAlert("Invalid session");
-      setStopGameModal(false);
+      setStopGameModal(true);
       return;
     }
 
@@ -146,7 +147,7 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
     const response2 = await fetchBackend("GET", `/admin/session/${currSession}/results`, undefined, token);
     if ("error" in response2) {
       createAlert(response2.error);
-      setStopGameModal(false);
+      setStopGameModal(true);
       return;
     }
     
@@ -171,13 +172,15 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
       createAlert("Stored an old game!", ALERT_SUCCESS);
     }
 
+    // By setting gamesLength to -1, triggers useEffect hook in adminGamesList which auto updates game list
+    props.setGamesLength(-1);
+    
     // Navigate to results page if seeResults is true, otherwise just close modal and remain on dashboard
     if (seeResults) {
       navigate(`/session/${currSession}/results`);
     } else {
       setStopGameModal(false);
     }
-
     // Make sure current session is stopped
     setCurrSession(null);
   }
@@ -185,7 +188,12 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
   // Set current session status to game's active status everytime props.games changes
   useEffect(() => {
     const game = props.games.find(game => game.id === props.gameId) as Game;
-    setCurrSession(game.active);
+    if (game.active === null) {
+      setInactive(true);
+    } else {
+      setInactive(false);
+      setCurrSession(game.active);
+    }
   }, [props.games]);
 
   return (<article className="rounded-lg bg-white border border-gray-400 h-auto overflow-hidden shadow-lg">
@@ -206,7 +214,7 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
           </div>
         </div>
       </div>
-      <GameCardButtonMenu startGame={startGame} stopGame={stopGame} currSession={currSession} gameId={props.gameId}/>
+      <GameCardButtonMenu startGame={startGame} stopGame={stopGame} currSession={currSession} inactive={inactive} gameId={props.gameId}/>
     </div>
     <Modal visible={modal} setVisible={setModal}>
       <p className="font-semibold">Confirm delete</p>
