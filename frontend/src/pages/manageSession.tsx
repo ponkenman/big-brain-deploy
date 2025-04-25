@@ -1,13 +1,18 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ALERT_SUCCESS, fetchBackend } from "../helpers";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
 import { Game, PastSessions } from "../types";
-import Modal from "../components/modal";
+import Modal from "../components/modals/modal";
 import { AlertContext } from "../App";
 
+/**
+ * The function which contains all other functions, containing all relevant const to be shared across
+ * 
+ * @param props the passed in sessionId
+ */
 function ManageSession(props: {sessionId: string }) {
   const navigate = useNavigate();
   const [stopGameModal, setStopGameModal] = useState(false);
@@ -15,42 +20,64 @@ function ManageSession(props: {sessionId: string }) {
   const [numQuestions, setNumQuestions] = useState(0);
   const token = localStorage.getItem("token") as string;
   const createAlert = useContext(AlertContext);
+
+  // Update current position, otherwise when switching between dashboard and manageSession, it will alway appear as -1 to start
+  useEffect(() => {
+    (fetchBackend("GET", `/admin/session/${props.sessionId}/status`, undefined, token)).then((data) => {
+      console.log(data);
+      if ("error" in data) {
+        return;
+      }
+
+      setPosition(data.results.position);
+    });
+  }, []);
   
+  /**
+   * This function advances the game, checking if it has reached the end
+   */
   async function advanceGame() {
+    // Get all games from backend
     (fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>).then((data) => {
       if ("error" in data) {
         navigate(`/session/${props.sessionId}}/results`);
         return;
       }
-      
-      if (position === numQuestions) {
-        console.log(stopGameModal);
+    
+      // Find current game
+      const currentGame = data.games.filter(currGame => currGame.active === parseInt(props.sessionId));
+
+      if (currentGame.length === 0) {
+        console.log("1");
         createAlert("You've reached the end of the game!", ALERT_SUCCESS);
         setStopGameModal(true);
         return;
       } 
-    
-      const currentGame = data.games.filter(currGame => currGame.active === parseInt(props.sessionId));
+
       setNumQuestions(currentGame[0].questions.length);
-      console.log(currentGame);
       localStorage.setItem("gameId", currentGame[0].id.toString());
+
+      // Reached the end of game, show modal to view results or return to dashboard
+      if (position === currentGame[0].questions.length) {
+        console.log("1");
+        createAlert("You've reached the end of the game!", ALERT_SUCCESS);
+        setStopGameModal(true);
+        return;
+      } 
+
 
       const body = {
         mutationType: "ADVANCE"
       }
   
+      // Advance game to next position 
       const mutateResponse = fetchBackend("POST", `/admin/game/${currentGame[0].id}/mutate`, body, token);
       mutateResponse.then(r => {
         setPosition(r.data.position);
-  
-        console.log("positiona nd numQuestions");
-        console.log(position);
-        console.log(numQuestions);
+
         if (r.error) {
-          console.log(r.error);
           createAlert(r.error);
         } else {
-          console.log("Done!");
           createAlert("Successfully advanced game!", ALERT_SUCCESS);
         }
       })
@@ -58,39 +85,34 @@ function ManageSession(props: {sessionId: string }) {
 
   }
   
+  /**
+   * This function stops a game
+   */
   async function stopGame() {
-    const stopGameToken = localStorage.getItem("token") as string;
-    (fetchBackend("GET", "/admin/games", undefined, stopGameToken) as Promise<{ games: Game[] }>).then((data) => {
-      if ("error" in data) {
-        navigate(`/session/${props.sessionId}}/results`);
-        return;
-      }
-      
-      if (position === numQuestions) {
-        createAlert("You've reached the end of the game!", ALERT_SUCCESS);
-        setStopGameModal(true);
-        return;
-      }
-    })
+    // Check if game has already ended (advanced to end and didn't proceed to results or dashboard)
+    if (position === numQuestions) {
+      createAlert("You've reached the end of the game!", ALERT_SUCCESS);
+      setStopGameModal(true);
+      return;
+    }
 
     const token = localStorage.getItem("token") as string;
     const body = {
       mutationType: "END"
     }
-
+    
+    // Stop game by getting all games and finding the correct game to stop
     const response = fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>;
     response.then(data => {
       const currentGame = data.games.filter(currGame => currGame.active === parseInt(props.sessionId));
-      setNumQuestions(currentGame[0].questions.length);
       localStorage.setItem("gameId", currentGame[0].id.toString());
 
+      // Stop game and show modal to redirect to results or dashboard
       const mutateResponse = fetchBackend("POST", `/admin/game/${currentGame[0].id}/mutate`, body, token);
       mutateResponse.then(r => {
         if (r.error) {
-          console.log(r.error);
           createAlert(r.error);
         } else {
-          console.log("Done!");
           createAlert("Successfully stoped game!", ALERT_SUCCESS);
           setStopGameModal(true);
         }
@@ -98,46 +120,48 @@ function ManageSession(props: {sessionId: string }) {
     });
   }
 
+  /**
+   * This function stores a game, called regardless when see result or return to dashboard is clicked. Navigating
+   * to results or dashboard depending on the parameters
+   * 
+   * @param seeResults - Boolean value if they want to navigate to results
+   */
   async function storeGame(seeResults: boolean) {
+    // Get all games from backend
     const response = await fetchBackend("GET", "/admin/games", undefined, token) as { games: Game[] };
     let sortedGames = response.games;
-    console.log(response);
     if ("error" in response) {
       console.log(response.error);
     } else {
       sortedGames = response.games.toSorted((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
     }
 
+    // Get session results
     const response2 = await fetchBackend("GET", `/admin/session/${parseInt(props.sessionId)}/results`, undefined, token);
-    console.log(response2);
-
     
     const pastSession: PastSessions = {
       pastSessionId: parseInt(props.sessionId),
       result: response2.results
     }
     
+    // Find the correct game and push this session's results into that game's past sessions
     const gameId = JSON.parse(localStorage.getItem("gameId"));
     const gameIndex = sortedGames.findIndex(g => g.id === gameId);
     sortedGames[gameIndex].pastSessions.push(pastSession);
-    console.log(sortedGames);
 
     const body = {
       games: sortedGames
     }
     
+    // Store game
     const response3 = await fetchBackend("PUT", "/admin/games", body, token);
-    console.log("entered response.then")
-    
-    console.log(response3);
     if (response3.error) {
-      console.log(response3.error);
       createAlert(response3.error);
     } else {
       createAlert("Stored an old game!", ALERT_SUCCESS);
-      console.log(sortedGames);
     }
     
+    // Navigate to results page or dashboard depending on seeResults boolean
     if (seeResults) {
       navigate(`/session/${props.sessionId}/results`)
     } else {
@@ -147,13 +171,13 @@ function ManageSession(props: {sessionId: string }) {
 
   return (
     <form className="py-2">
-      <h1 className="text-4xl font-semibold pb-7">Current position {position} </h1>
+      <h2 className="text-4xl font-semibold pb-7">Current position {position} </h2>
       {position === -1 ? (
-        <h2 className="text-4xl font-semibold pb-7">The game has not started yet</h2>
+        <h3 className="text-4xl font-semibold pb-7">The game has not started yet</h3>
       ) : position !== numQuestions ? (
-        <h2 className="text-4xl font-semibold pb-7">Current Question: {position} </h2>
+        <h3 className="text-4xl font-semibold pb-7">Current Question: {position} </h3>
       ) : (
-        <h2 className="text-4xl font-semibold pb-7">End Quiz</h2>
+        <h3 className="text-4xl font-semibold pb-7">End Quiz</h3>
       )}
 
       <div className="flex flex-row gap-2 pt-3">
@@ -175,6 +199,9 @@ function ManageSession(props: {sessionId: string }) {
   )
 }
 
+/**
+ * This function displays the manage session screen, everything from the dashboard to advance and stop game
+ */
 export function ManageSessionScreen() {
   const { sessionId } = useParams() as { sessionId: string };
   localStorage.setItem("sessionId", sessionId);

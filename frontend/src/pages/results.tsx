@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import LogoutButton from "../components/buttons/logoutButton";
 import Button from "../components/buttons/button";
-import { fetchBackend } from "../helpers";
+import { calculateSecondsTaken, fetchBackend } from "../helpers";
 import { QuestionStats, PersonResult, TopFiveScore, Question } from "../types";
 import {
   Chart as ChartJS,
@@ -17,7 +17,7 @@ import {
 
 import { Bar } from 'react-chartjs-2';
 import { AlertContext } from "../App";
-import Modal from "../components/modal";
+import PointsModal from "../components/modals/pointsModal";
 
 ChartJS.register(
   CategoryScale,
@@ -27,20 +27,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-/**
- * This calculates the seconds taken to answer a questions
- * 
- * @param Date1 - The question start at time
- * @param Date2 - The question end at time
- * @returns Time taken in seconds rounded down
- */
-function calculateSecondsTaken(Date1: ReturnType<typeof Date.toString>, Date2: ReturnType<typeof Date.toString>) {
-  const start = new Date(Date1);
-  const end = new Date(Date2);
-
-  return Math.floor((end.getTime() - start.getTime()) / 1000);
-}
 
 /**
  * This function gets the average results for amount of points and answer time, formatting it into a table and charts
@@ -125,7 +111,7 @@ function GetResults(props: {sessionId: string }) {
   });
 
   return (<section>
-    <h1 className="text-2xl font-bold pb-7">Top 5 Users!</h1>
+    <h3 className="text-2xl font-bold pb-7">Top 5 Users!</h3>
     <table>
       <thead className="text-1xl border-collapse border border-gray-400 ...">
         <th className="p-1 border-collapse border border-gray-400 ...">Rank</th>
@@ -151,8 +137,8 @@ function GetResults(props: {sessionId: string }) {
           {
             label: "Percentage Correct",
             data: questionStats.map((data) => (data.amountCorrect / data.totalAttempts)),
-            borderColor: '#9FA8DA',
-            backgroundColor: '#9FA8DA'
+            borderColor: '#fed7e2',
+            backgroundColor: '#fed7e2'
           }
         ]
       }}
@@ -191,8 +177,8 @@ function GetResults(props: {sessionId: string }) {
           {
             label: "Average Answer Time",
             data: responseTime.map((data) => data),
-            borderColor: '#9FA8DA',
-            backgroundColor: '#9FA8DA'
+            borderColor: '#fed7e2',
+            backgroundColor: '#fed7e2'
           }
         ]
       }}
@@ -234,31 +220,16 @@ export function ResultsScreen() {
     <Navbar>
       <LogoutButton />
     </Navbar>
-    <h1>gameId {gameId}</h1>
     <main className={`bg-white p-7 w-screen absolute top-15 min-h-full`}>
       <h1 className="text-4xl font-semibold pb-7">Results</h1>
-      <h2 className="text-xl font-semibold pb-7">Session: {sessionId.toString()} </h2>
+      <h2 className="text-xl font-semibold pb-7">Session: {sessionId.toString()}</h2>
       <div className="flex flex-row gap-2 mb-5">
         <Link to="/dashboard">
-          <Button text="Back to dashboard" color="bg-pink-200 "hoverColor="hover:bg-pink-400" />
+          <Button text="Back to dashboard" color="bg-pink-200" hoverColor="hover:bg-pink-400" />
         </Link>
-        <Button text="How do points work?" color="bg-pink-200 "hoverColor="hover:bg-pink-400" onClick={() => setModal(true)}/>
+        <Button text="How do points work?" color="bg-pink-200" hoverColor="hover:bg-pink-400" onClick={() => setModal(true)}/>
       </div>
-      <Modal visible={modal} setVisible={setModal}>
-        <p>Points are calculated by the following:</p>
-        <ul>
-          <p>If you answer correctly within the first 25% of the question duration you get full points.</p>
-          <p>If answered after the first 25% of the question duration, each subsequent % will lose that percent
-          of the full points rounded up.</p>
-          <p>Incorrect answers gives no points.</p>
-          <br></br>
-          <li>For Example:</li>
-          <li>For a 10 seconds 10 point question, answering within 2.5 will give full points.</li>
-          <li>Answering at exactly 5 second duration will result in 7.5 points.</li>
-          <li>Answering at the exact end will result in the minimum points for a correct answer 3.</li>
-        </ul>
-        <Button text="Close" color="bg-pink-300 "hoverColor="hover:bg-pink-400" onClick={() => setModal(false)}/>
-      </Modal>
+      <PointsModal visible={modal} setVisible={setModal} />
       <GetResults sessionId={sessionId} />
     </main>
   </>)

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { StateSetter } from "../types";
-import CloseButton from "./buttons/closeButton";
+import { StateSetter } from "../../types";
+import CloseButton from "../buttons/closeButton";
 
 /**
  * Creates a modal wrapper around the children HTML elements

@@ -14,14 +14,14 @@ export function PastResultsScreen() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token") as string;
   const { gameId } = useParams() as { gameId: string };
-  
+
+  // Get games and add all past sessions to an array if it matches game id
   useEffect(() =>{
     (fetchBackend("GET", "/admin/games", undefined, token) as Promise<{ games: Game[] }>).then((data) => {
       const temptPastSessions: PastSessions[] = [];
       data.games.map((game) => {
         if (game.id === parseInt(gameId)) {
           game.pastSessions.map((currSession: PastSessions) => {
-            console.log(currSession);
             temptPastSessions.push(currSession);
           });
         }
