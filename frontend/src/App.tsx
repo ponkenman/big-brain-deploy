@@ -33,6 +33,11 @@ function PrivateRoute(props: { children: ReactNode }) {
   return (props.children);
 }
 
+/**
+ * This function handles createAlert logic and redirecting to pages
+ * 
+ * @returns 
+ */
 function App() {
   // Create global alerts system between pages on website
   const [alerts, setAlerts] = useState<AlertData[]>([]);

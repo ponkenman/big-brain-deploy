@@ -1,11 +1,17 @@
 import { Answer, AnswerResult, Game, MediaType, PastSessions, PersonResult, Question, QuestionType } from "./types";
 
+/***
+ * Valid fetch option interface for backend calls
+ */
 interface FetchOptions {
   method: "GET"|"POST"|"PUT"|"DELETE",
   headers: Record<string, string>,
   body?: string
 }
 
+/***
+ * A function that modularises backend function calls
+ */
 export async function fetchBackend(
   httpMethod: "GET"|"POST"|"PUT"|"DELETE", 
   urlFragment: string,
@@ -66,6 +72,9 @@ export function fileToDataUrl(file: File) {
   return dataUrlPromise;
 }
 
+/***
+ * Default answer template as a placeholder
+ */
 export function createSampleAnswer(): Answer {
   return {
     text: "", 
@@ -74,6 +83,9 @@ export function createSampleAnswer(): Answer {
   };
 }
 
+/***
+ * Default question template as a placeholder
+ */
 export function createDefaultQuestion(): Question {
   return {
     id: Math.floor(Math.random() * 1000000),
@@ -89,6 +101,9 @@ export function createDefaultQuestion(): Question {
   }
 }
 
+/**
+ * Sample judgement answers serving as placeholders
+ */
 export const sampleJudgementAnswers = [{
   id: Math.floor(Math.random() * 1000000),
   text: "True",
@@ -99,6 +114,12 @@ export const sampleJudgementAnswers = [{
   correct: true,
 }];
 
+/**
+ * Type guard for isAnswer, checking if all relevant fields are valid for type Answer
+ * 
+ * @param data - The JSON.parsed object
+ * @returns - True if valid, false if invalid
+ */
 export function isAnswer(data: unknown) {
   const ans = data as Answer;
 
@@ -107,6 +128,12 @@ export function isAnswer(data: unknown) {
   typeof ans.correct === "boolean";
 }
 
+/**
+ * Type guard for isQuestion, checking if all relevant fields are valid for type Question
+ * 
+ * @param data - The JSON.parsed object
+ * @returns - True if valid, false if invalid
+ */
 export function isQuestion(data: unknown) {
   const q = data as Question;
 
@@ -125,12 +152,24 @@ export function isQuestion(data: unknown) {
   typeof q.index === "number";
 }
 
+/**
+ * Type guard for isDate, checking if the string passed in is a valid date
+ * 
+ * @param data - The JSON.parsed object
+ * @returns - True if valid, false if invalid
+ */
 export function isDate(data: unknown) {
   const date = new Date (data as Date);
 
   return  date instanceof Date && !isNaN(date.getTime());
 }
 
+/**
+ * Type guard for isAnswerResult, checking if all relevant fields are valid for type AnswerResult
+ * 
+ * @param data - The JSON.parsed object
+ * @returns - True if valid, false if invalid
+ */
 export function isAnswerResult(data: unknown) {
   const aR = data as AnswerResult;
 
@@ -142,6 +181,12 @@ export function isAnswerResult(data: unknown) {
   isDate(aR.questionStartedAt);
 }
 
+/**
+ * Type guard for isPersonResult, checking if all relevant fields are valid for type PersonResult
+ * 
+ * @param data - The JSON.parsed object
+ * @returns - True if valid, false if invalid
+ */
 export function isPersonResult(data: unknown) {
   const pR = data as PersonResult;
 
@@ -151,6 +196,12 @@ export function isPersonResult(data: unknown) {
   typeof pR.name === "string";
 }
 
+/**
+ * Type guard for isPastSessions, checking if all relevant fields are valid for type PastSessions
+ * 
+ * @param data - The JSON.parsed object
+ * @returns - True if valid, false if invalid
+ */
 export function isPastSessions(data: unknown) {
   const pS = data as PastSessions;
 
@@ -160,6 +211,12 @@ export function isPastSessions(data: unknown) {
   pS.result.every(result => isPersonResult(result));
 }
 
+/**
+ * Type guard for isGame, checking if all relevant fields are valid for type Game
+ * 
+ * @param data - The JSON.parsed object
+ * @returns - True if valid, false if invalid
+ */
 export function isGame(data: unknown) {
   const g = data as Game;
   
