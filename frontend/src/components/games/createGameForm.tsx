@@ -159,9 +159,9 @@ function ImportFileGameForm(props: { closeForm: () => void, games: Game[], setGa
           console.log(newGame);
           props.setGamesLength(+1);
         }
+      }).then(() => {
+        props.closeForm();
       });
-
-      props.closeForm();
     };
   
     reader.readAsText(fileInput);

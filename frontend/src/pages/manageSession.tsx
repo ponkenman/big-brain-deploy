@@ -114,7 +114,7 @@ function ManageSession(props: {sessionId: string }) {
         if (r.error) {
           createAlert(r.error);
         } else {
-          createAlert("Successfully stoped game!", ALERT_SUCCESS);
+          createAlert("Successfully stopped game!", ALERT_SUCCESS);
           setStopGameModal(true);
         }
       });

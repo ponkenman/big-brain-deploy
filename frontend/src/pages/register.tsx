@@ -6,6 +6,9 @@ import TextInput from "../components/forms/textInput";
 import Button from "../components/buttons/button";
 import { AlertContext } from "../App";
 
+/**
+ * This function displays the overall register screen, everything from the dashboard to name, email and password inputs
+ */
 export function RegisterScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,29 +22,36 @@ export function RegisterScreen() {
     window.scrollTo(0, 0);
   }, []);
 
+  // This function handles the register logic
   async function register() {
     if (name === "") {
       createAlert("Name is empty!");
       return;
     }
+
     if (email === "") {
       createAlert("Email is empty!");
       return;
     }
+
     if (password === "") {
       createAlert("Password is empty!");
       return;
     }
+
     if (password !== confirmPassword) {
       createAlert("Passwords do not match");
       return;
     }
+
     const body = {
       email: email,
       password: password,
       name: name,
     }
+    // If all inputs are valid, register user via backend post request
     const response = await fetchBackend("POST", "/admin/auth/register", body);
+    // If user already exists or other error, createAlert otherwise add token and email to local storage and navigate to dashboard
     if (response.error) {
       createAlert(response.error);
     } else {
