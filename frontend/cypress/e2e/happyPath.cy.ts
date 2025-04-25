@@ -50,6 +50,7 @@ describe("Happy path of user", () => {
   });
 
   it("Can update name and thumbnail of game", () => {
+    // Register and click edit button
     mockFetchData("getGames", ["../fixtures/newGame.json", "../fixtures/newGame.json", "../fixtures/newGame.json", "../fixtures/newGame.json", "../fixtures/updatedGame.json"], ["GET", "/admin/games"]);
     mockFetchData("putGames", "../fixtures/emptyResponse.json", ["PUT", "/admin/games"]);
     cy.visit(URL);
@@ -57,12 +58,15 @@ describe("Happy path of user", () => {
     register(loginData);
     cy.get("#root > main > div > article > div.p-5 > div.mb-5 > div > div.flex.flex-col.gap-2 > button:nth-child(1)").click();
 
+    // Now on edit game page, click edit button near title
     cy.get("#root > main > div > section.rounded-md.bg-gray-300.mt-4.px-4.pb-2.relative > h2 > button").click();
+    // Uplaod new name and thumbnail
     cy.get("#game-name").should("have.value", "My new game");
     cy.get("#game-name").focus().type(" 2");
     cy.get("#game-thumbnail").selectFile("cypress/assets/placeholder.png");
     cy.get("#game-thumbnail").should("have.value", "C:\\fakepath\\placeholder.png");
     cy.contains("Submit").click();
+    // New title should be present
     cy.get("[role=alert]").should("have.class", "bg-green-200");
     cy.contains("My new game 2");
   });
@@ -77,6 +81,7 @@ describe("Happy path of user", () => {
     cy.visit(URL);
     cy.contains("Register instead").click();
     register(loginData);
+    // Game started, then results viewed
     cy.contains("Start game").click();
     cy.contains("Dismiss").click();
     cy.contains("Stop game").click();
@@ -84,7 +89,7 @@ describe("Happy path of user", () => {
     cy.contains("Results");
   });
 
-  it.only("Can logout and login", () => {
+  it("Can logout and login", () => {
     mockFetchData("getGames", "../fixtures/emptyGames.json", ["GET", "/admin/games"]);
     mockFetchData("logout", "../fixtures/emptyResponse.json", ["POST", "/admin/auth/logout"]);
     mockFetchData("login", "../fixtures/register.json", ["POST", "/admin/auth/login"]);
@@ -93,10 +98,12 @@ describe("Happy path of user", () => {
     cy.contains("Register instead").click();
     register(loginData);
     cy.contains("Logout").click();
+    // Fill in login form
     cy.get("#login-name").focus().type("Bob");
     cy.get("#login-email").focus().type("bob@email.com");
     cy.get("#login-password").focus().type("password");
     cy.get("form button").contains("Login").click();
+    // Login
     cy.contains("Dashboard");
   });
 });
