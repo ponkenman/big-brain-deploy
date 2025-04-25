@@ -95,7 +95,7 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
       // By setting gamesLength to +1, triggers useEffect hook in adminGamesList which auto updates game list
       props.setGamesLength(+1);
       console.log("Done!");
-      createAlert("Successfully stoped game!", ALERT_SUCCESS);
+      createAlert("Successfully stop[ed game!", ALERT_SUCCESS);
       setStopGameModal(true);
     }
   }
