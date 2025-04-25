@@ -87,7 +87,8 @@ describe("Happy path of user", () => {
       // After pressing start
       "updatedGameStarted", "updatedGameStarted", 
       // Pressing end
-      "updatedGameAfterEnded"], ["GET", "/admin/games"]);
+      "updatedGameAfterEnded", "updatedGameAfterEnded", "updatedGameAfterEnded"
+    ], ["GET", "/admin/games"]);
     mockFetchData("putGames",  "emptyResponse", ["PUT", "/admin/games"]);
     mockFetchData("mutateGame", ["mutateGameStart", "mutateGameEnd"], ["POST", "/admin/game/384405/mutate"]);
     mockFetchData("getResults", "gameResults", ["GET", "/admin/session/962832/results"]);

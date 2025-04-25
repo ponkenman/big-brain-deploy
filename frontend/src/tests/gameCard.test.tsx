@@ -90,6 +90,7 @@ const defaultProps: { gameId: number, games: Game[], setGamesLength: () => void 
     setGamesLength: () => {},
 }
 
+// Note: need to wrap in Router as implementation uses useNavigate
 const TestGameCard = (props: { gameId: number, games: Game[], setGamesLength: () => void }) => {
     return (<BrowserRouter>
         <Routes>
@@ -213,7 +214,7 @@ describe("GameCard", () => {
         expect(screen.getByText("Active")).toBeVisible();
         expect(screen.getByText("Manage session")).toBeVisible();
         expect(screen.getByText("Stop game")).toBeVisible(); 
-        // Start gaem button no longer exists
+        // Start game button no longer exists
         expect(screen.queryByText("Start game")).toBeNull();
     });
 });
