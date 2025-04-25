@@ -6,6 +6,9 @@ import Button from "../components/buttons/button";
 import TextInput from "../components/forms/textInput";
 import { AlertContext } from "../App";
 
+/**
+ * This function displays the overall login screen, everything from the dashboard to email, name and password inputs
+ */
 export function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,6 +21,7 @@ export function LoginScreen() {
     window.scrollTo(0, 0);
   }, []);
 
+  // This function handles the login logic, checking for valid inputs
   async function login() {
     if (name === "") {
       createAlert("Name is empty!");
@@ -31,11 +35,14 @@ export function LoginScreen() {
       createAlert("Password is empty!");
       return;
     }
+
     const body = {
       email: email,
       password: password,
       name: name,
     }
+
+    // If all inputs are valid, add token and email to local storage and navigate to dashboard
     const response = await fetchBackend("POST", "/admin/auth/login", body);
     if (response.error) {
       createAlert(response.error);

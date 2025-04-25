@@ -13,7 +13,7 @@ export function AdminGamesList() {
 
   /** 
    * Updates games made by user from backend
-   *  */ 
+   */ 
   async function getGames() {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -31,10 +31,8 @@ export function AdminGamesList() {
 
   // Whenever game state array and gamesLength are out of sync, updates games
   useEffect(() => {
-    if (games.length !== gamesLength) {
-      getGames();
-    }
-  }, [gamesLength]);
+    getGames();
+  }, [gamesLength, showCreateGameForm]);
 
   return (<>
     <Button text="Create Game" color="bg-pink-300" hoverColor="hover:bg-pink-400 hover:text-white" onClick={() => setShowCreateGameForm(true)}/>

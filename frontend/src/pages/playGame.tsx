@@ -6,6 +6,11 @@ import { Answer, DurationPoints, MediaType, QuestionPlayerData, QuestionType } f
 import { AlertContext } from "../App";
 import Button from "../components/buttons/button";
 
+/**
+ * This function displays the media from the question
+ * 
+ * @param props - The passed in question
+ */
 function QuestionMediaDisplay(props: {question: QuestionPlayerData}) {
   let component;
   switch (props.question.mediaType) {
@@ -33,16 +38,23 @@ function QuestionMediaDisplay(props: {question: QuestionPlayerData}) {
   default:
     component = <></>;
   }
+
   return (component);
 }
 
-// in seconds
+/**
+ * This function returns the time remaining in seconds
+ */
 function questionTimeRemaining(question: QuestionPlayerData) {
   const date = new Date(question.isoTimeLastQuestionStarted);
   date.setSeconds(date.getSeconds() + question.duration);
+
   return Math.floor((date.getTime() - Date.now()) / 1000);
 }
 
+/**
+ * This function handles all game logic, displays the current question media and the answers
+ */
 function QuestionScreen() {
   const [question, setQuestion] = useState<QuestionPlayerData | undefined>();
   const [secondsRemaining, setSecondsRemaining] = useState<number | undefined>();
@@ -57,31 +69,35 @@ function QuestionScreen() {
   let timerExists = false;
   let currQuestionId: number;
 
+  // Get current question from backend and add relevant information to local storage
   useEffect(() => {
     (fetchBackend("GET",`/play/${playerId}/question`)).then(data =>{
-      console.log(data.question);
       const currDurationPoints: DurationPoints = {
         duration: data.question.duration, 
         points: data.question.points
       }
-  
+
+      // Append previous current question duration and points to previous to be used in playerResults
       setDurationPoints(prev => [...prev, currDurationPoints]);
 
       localStorage.setItem("durationPoints", JSON.stringify(durationPoints));
-      console.log(JSON.stringify(durationPoints));
     });
+    // Run everytime the question changes
   }, [question]);
 
+  // Get current question from backend, set question if different and poll every second for countdown
   useEffect(() => {
     let timerId: ReturnType<typeof setTimeout>;
     function requestBackend() {
       (fetchBackend("GET",`/play/${playerId}/question`) as Promise<{ question: QuestionPlayerData } | { error: string }>).then(data =>{
+        // If can't find current question, game has navigate to view results
         if ("error" in data) {
           navigate(`/play/${playerId}}/results`)
           return;
         } 
+
+        // If new question, set question and call setSeconds remaning to initiate countdown from other useEffect
         if (data.question.id != currQuestionId) {
-          console.log('Set new question!');
           setQuestion(data.question);
           currQuestionId = data.question.id;
           if (questionTimeRemaining(data.question) > 0) {
@@ -99,37 +115,48 @@ function QuestionScreen() {
       requestBackend();
       timerExists = true;
     }
+
     return () => clearTimeout(timerId);
   }, []);
 
+  // Countdown logic- Updates seconds remaining everytime it changes, ending when time reamining reaches 0
   useEffect(() => {
+    // If invalid question, don't countdown
     if (!question) {
       return;
     }
+
     let timer: ReturnType<typeof setTimeout>;
     const timeRemaining = questionTimeRemaining(question);
+
+    // If valid question and timeRemaining is greater than 0, countdown and loop again
     if (timeRemaining > 0) {
       timer = setTimeout(() => setSecondsRemaining(questionTimeRemaining(question)), 1000);
     }
+  
     return () => clearTimeout(timer);
   }, [secondsRemaining]);
 
+  // Check if countdown has run out in order to submit answers
   useEffect(() => {
+    // Check if countdown is active
     if (secondsRemaining === undefined || secondsRemaining > 0) {
       return;
     }
+
     // One second buffer to fetch question data 
     setTimeout(() => {
       fetchBackend("GET", `/play/${playerId}/answer`).then(data => {
-        console.log(data);
         if (data.error) {
           return;
         }
+        // If countdown is not active, set answers
         setCorrectAnswers(data.answers);
       });
     }, 1000);
   }, [secondsRemaining]);
 
+  // This function contains the logic for changing an answer
   function changeAnswer(answer: Answer) {
     if (!question) {
       return;
@@ -159,15 +186,13 @@ function QuestionScreen() {
       newAnswers = selectedAnswers.toSpliced(index, 1);
     }
     setSelectedAnswers(newAnswers);
+    
     const body = {
       answers: newAnswers.map(a => a.text)
     }
+
     fetchBackend("PUT", `/play/${playerId}/answer`, body).then(d => console.log(d));
   }
-
-  useEffect(() => {
-    console.log(selectedAnswers);
-  }, [selectedAnswers]);
 
   // Reset selectedAnswers and correctAnswers on new question
   useEffect(() => {
@@ -200,7 +225,9 @@ function QuestionScreen() {
     </>);
 }
 
-// Screen visible to player while game has not yet started
+/**
+ * Screen visible to player while game has not yet started
+ */
 function LobbyScreen() {
   const [text, setText] = useState("Play minigame");
   const [isPlaying, setIsPlaying] = useState(false);
@@ -209,19 +236,24 @@ function LobbyScreen() {
   const [leaderboard, setLeaderboard] = useState<number[]>([]);
   const [recentScore, setRecentScore] = useState<string>("");
 
+  // Mini game to test reaction time
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>;
+
+    // Check if game has started
     if (!isGreen && isPlaying) {
       // Run only after 2 seconds, then regular intervals thereafter
       timer = setTimeout(() => {
         timer = setInterval(() => {
           if (!isGreen && isPlaying) {
+            // Generate random numbers until 7, setting state to green
             const randomNum = Math.floor(Math.random() * 10);
             if (randomNum === 7) {
               setText("Now!");
               setTimestamp(Date.now());
               setIsGreen(true);
             }
+
             if (randomNum === 2) {
               setText("Almost there...");
             }
@@ -233,6 +265,7 @@ function LobbyScreen() {
     return () => clearInterval(timer);
   }, [isPlaying, isGreen]);
 
+  // This function handles the user input when testing reaction time
   function onClick() {
     const responseTime = Date.now();
     if (!isPlaying) {
@@ -241,6 +274,7 @@ function LobbyScreen() {
       return;
     }
 
+    // If button is clicked when not green, reset
     if (!isGreen) {
       setRecentScore(`Failed!`);
       setText("Play minigame");
@@ -249,8 +283,10 @@ function LobbyScreen() {
       setIsPlaying(false);
       return;
     }
+
     const score = responseTime - timestamp;
     setRecentScore(`${score} ms`);
+    // If valid click, add to sorted leaderboard
     if (leaderboard.length < 5) {
       setLeaderboard([...leaderboard, score].toSorted((a, b) => a - b));
     } else {
@@ -261,6 +297,8 @@ function LobbyScreen() {
         setLeaderboard(newLeaderboard);
       }
     }
+
+    // Reset mini-game
     setText("Play minigame");
     setTimestamp(0);
     setIsGreen(false);
@@ -284,20 +322,25 @@ function LobbyScreen() {
   </>);
 }
 
+/**
+ * This function handles the logic for game state screen, displaying lobby or questions screen
+ */
 function GameStateScreen() {
   const [started, setStarted] = useState(false);
   const navigate = useNavigate();
   const createAlert = useContext(AlertContext);
   let timerExists = false;
+
   useEffect(() => {
     // Requests session data every second and updates corresponding values only if data changed
     let timerId: ReturnType<typeof setTimeout>;
 
+    // Get player status from backend
     function requestBackend() {
       const playerId = localStorage.getItem("playerId");
       if (started === false) {
         fetchBackend("GET", `/play/${playerId}/status`).then(data => {
-          console.log(data);
+          // Handle errors, navigiating to joinGame page if session has ended early otherwise create an alert
           if (data.error) {
             if (data.error === "Session ID is not an active session") {
               // Session has stopped early
@@ -308,6 +351,8 @@ function GameStateScreen() {
             }
             return;
           }
+
+          // If game started does not match, set according to get request
           if (started != data.started) {
             setStarted(data.started);
           } else {
@@ -332,7 +377,9 @@ function GameStateScreen() {
   );
 }
 
-
+/**
+ * This function displays the overall play game screen, everything from the dashboard to lobby and questions
+ */
 export function PlayGameScreen () {
   const navigate = useNavigate();
 
