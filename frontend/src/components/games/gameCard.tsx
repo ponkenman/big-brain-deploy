@@ -209,8 +209,8 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
             <p>{game.questions ? calcTotalDuration(game.questions) : "0"} seconds</p>
           </div>
           <div className="flex flex-col gap-2">
-            <IconButton alt="Edit game" className="w-5 h-auto hover:opacity-50" onClick={() => navigate(`/game/${props.gameId}`)} svg="src/assets/pencil.svg"/>
-            <IconButton alt="Delete game" className="w-5 h-auto hover:opacity-50" onClick={openModal} svg="src/assets/trash.svg"/>
+            <IconButton ariaLabel="Edit game" alt="Edit game" className="w-5 h-auto hover:opacity-50" onClick={() => navigate(`/game/${props.gameId}`)} svg="src/assets/pencil.svg"/>
+            <IconButton ariaLabel="Delete game" alt="Delete game" className="w-5 h-auto hover:opacity-50" onClick={openModal} svg="src/assets/trash.svg"/>
           </div>
         </div>
       </div>
@@ -230,7 +230,7 @@ export default function GameCard(props: { games: Game[], setGamesLength: StateSe
       <p>Copy the link below and share it to invite users to join the game!</p>
       <div className="py-2 px-1 my-2 border border-black rounded-lg flex flex-row justify-between">
         <p className="font-semibold">{`${window.origin}/join?sessionId=${currSession}`}</p>
-        <IconButton alt="Copy link" className="w-5 h-auto hover:opacity-50" onClick={copyToClipBoard} svg="src/assets/clipboard.svg"/>
+        <IconButton ariaLabel="Copy link" alt="Copy link" className="w-5 h-auto hover:opacity-50" onClick={copyToClipBoard} svg="src/assets/clipboard.svg"/>
       </div>
   
       <div className="flex flex-row gap-2">

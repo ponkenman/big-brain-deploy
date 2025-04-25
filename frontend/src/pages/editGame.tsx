@@ -48,8 +48,8 @@ function EditQuestionCard(props: {game: Game, q: Question, setModalIdToDelete: S
       <p>Points: {props.q.points}</p>
     </div>
     <div className="flex flex-col gap-2">
-      <IconButton alt="Edit question" className="w-5 h-auto hover:opacity-50" onClick={() => navigate(`/game/${props.game.id}/question/${props.q.id}`)} svg="../src/assets/pencil.svg"/>
-      <IconButton alt="Delete question" className="w-5 h-auto hover:opacity-50" onClick={() => {
+      <IconButton ariaLabel="Edit question" alt="Edit question" className="w-5 h-auto hover:opacity-50" onClick={() => navigate(`/game/${props.game.id}/question/${props.q.id}`)} svg="../src/assets/pencil.svg"/>
+      <IconButton ariaLabel="Delete question" alt="Delete question" className="w-5 h-auto hover:opacity-50" onClick={() => {
         props.setModalIdToDelete(props.q.id);
         props.setDeleteModalIsVisible(true);
       }} svg="../src/assets/trash.svg"/>
