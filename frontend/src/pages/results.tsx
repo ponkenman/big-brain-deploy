@@ -174,7 +174,7 @@ function GetResults(props: { sessionId: string }) {
               min: 0,
               max: 1,
               ticks: {
-                callback: data => `${data * 100}%`,
+                callback: data => `${data as number * 100}%`,
               },
             },
           },

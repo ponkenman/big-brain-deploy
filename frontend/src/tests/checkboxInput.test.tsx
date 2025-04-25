@@ -9,6 +9,10 @@ const [defaultProps]: Parameters<typeof CheckboxInput> = [{
   onChange: () => number++,
 }]
 
+interface temp extends Element {
+  checked: boolean
+}
+
 describe('CheckboxInput', () => {
   it('renders', () => {
     render(<CheckboxInput {...defaultProps} />)
@@ -16,9 +20,9 @@ describe('CheckboxInput', () => {
 
   it('Fires onChange function when ticked and unticked', () => {
     const elem = render(<CheckboxInput {...defaultProps} />)
-    const checkbox = elem.container.querySelector('#checkbox')
+    const checkbox = elem.container.querySelector('#checkbox') as temp;
     fireEvent.click(checkbox)
-    expect(checkbox.checked)
+    expect(checkbox.checked);
     fireEvent.click(checkbox)
     expect(!checkbox.checked)
     expect(number).to.be.eq(2)
@@ -26,7 +30,7 @@ describe('CheckboxInput', () => {
 
   it('Initialises as checked if passed in props', () => {
     const elem = render(<CheckboxInput {...{ ...defaultProps, checked: true }} />)
-    const checkbox = elem.container.querySelector('#checkbox')
+    const checkbox = elem.container.querySelector('#checkbox') as temp;
     expect(checkbox.checked)
   })
 })

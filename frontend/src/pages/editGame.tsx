@@ -270,7 +270,7 @@ function GameManager(props: { gameId: string }) {
         <h2 className="text-2xl font-semibold py-3">
           {game.name}
           {' '}
-          <IconButton alt="Edit game metadata" className="w-6 h-auto hover:opacity-50 inline-flex ml-1" onClick={() => setModalIsVisible(true)} svg="../src/assets/pencil.svg" />
+          <IconButton ariaLabel="Edit game metadata" alt="Edit game metadata" className="w-6 h-auto hover:opacity-50 inline-flex ml-1" onClick={() => setModalIsVisible(true)} svg="../src/assets/pencil.svg" />
         </h2>
         <p>Game thumbnail</p>
         <div className="flex flex-row justify-center border rounded-xl overflow-hidden border-pink-400 bg-pink-200 sm:w-100 my-4">

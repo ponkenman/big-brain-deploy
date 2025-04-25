@@ -31,7 +31,7 @@ export const register = ({ name, email, password, confirmPassword }: { name: str
 }
 
 export function initialiseMockFetch(pathFilter: (name: string) => string) {
-  return function mockFetchData(alias: string, jsonFilePath: string | string[], [httpMethod, urlFragment, options, token]: Parameters<typeof fetchBackend>) {
+  return function mockFetchData(alias: string, jsonFilePath: string | string[], [httpMethod, urlFragment,]: Parameters<typeof fetchBackend>) {
     let index = 0
     function getFixture() {
       return Array.isArray(jsonFilePath) ? jsonFilePath.map(pathFilter)[index++] : pathFilter(jsonFilePath)

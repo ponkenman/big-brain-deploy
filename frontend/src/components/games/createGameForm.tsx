@@ -162,7 +162,7 @@ function ImportFileGameForm(props: { closeForm: () => void, games: Game[], setGa
     const reader = new FileReader()
     reader.onload = (evt) => {
       // Convert file to javascript objects
-      const fileContent = evt.target.result as string
+      const fileContent = (evt.target as FileReader).result as string
       const data = JSON.parse(fileContent)
 
       // Using type guards, check if the .json upload is valid

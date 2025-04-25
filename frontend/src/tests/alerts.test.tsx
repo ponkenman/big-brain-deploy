@@ -1,8 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { AlertData, AlertMenu } from '../components/alert'
 import { useState } from 'react'
-import { a } from 'vitest/dist/chunks/suite.qtkXWc6R.js'
 
 const testAlert: AlertData = {
   key: 0,
@@ -14,12 +13,6 @@ const testAlert2: AlertData = {
   key: 1,
   message: 'Relax, it\'s a drill',
   timestamp: Date.now(),
-}
-
-const alertsArray: AlertData[] = []
-
-function setAlerts(data: AlertData) {
-  alertsArray.push(data)
 }
 
 // const [alerts, setAlerts] = useState<AlertData[]>([]);

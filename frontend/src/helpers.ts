@@ -66,7 +66,7 @@ export function fileToDataUrl(file: File) {
   const reader = new FileReader()
   const dataUrlPromise = new Promise<string>((resolve, reject) => {
     reader.onerror = reject
-    reader.onload = () => resolve(reader.result)
+    reader.onload = () => resolve(reader.result as string)
   })
   reader.readAsDataURL(file)
   return dataUrlPromise
